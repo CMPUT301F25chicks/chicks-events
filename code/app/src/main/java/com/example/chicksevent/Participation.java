@@ -29,4 +29,15 @@ public class Participation {
             service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
         }
     }
+
+    public void declineInvitation(FirebaseService service) {
+        if (status == EntrantStatus.INVITED) {
+            status = EntrantStatus.DECLINED;
+
+            // Update Firebase subcollection
+            HashMap<String, Object> update = new HashMap<>();
+            update.put("status", "DECLINED");
+            service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
+        }
+    }
 }
