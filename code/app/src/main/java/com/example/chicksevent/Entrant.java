@@ -2,7 +2,12 @@ package com.example.chicksevent;
 
 public class Entrant extends User {
 
-    private FirebaseService entrantDatabase;
+    private FirebaseService entrantService;
+
+    Entrant() {
+        super();
+        entrantService = new FirebaseService("Entrant");
+    }
 
     public void joinWaitingList() {
 

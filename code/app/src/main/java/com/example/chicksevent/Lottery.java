@@ -2,6 +2,8 @@ package com.example.chicksevent;
 
 public class Lottery {
 
+    Lottery() {}
+
     public void rerollAttendees() {
 
     }

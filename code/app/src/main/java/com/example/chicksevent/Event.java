@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Event {
     private Organizer organizer;
-    private FirebaseDatabase eventDatabase;
+    private FirebaseService eventService;
 
     private Date registrationStart;
     private Date registrationEnd;
@@ -19,7 +19,9 @@ public class Event {
     private WaitingList waitingList;
 
 
-
+    Event() {
+        eventService = new FirebaseService("Event");
+    }
     public void sendNotification() {
 
     }
