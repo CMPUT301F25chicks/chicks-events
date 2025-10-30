@@ -1,7 +1,11 @@
 package com.example.chicksevent;
 
 public class Organizer extends User {
-    private FirebaseService organizerDatabase;
+    private FirebaseService organizerService;
+
+    Organizer() {
+        organizerService = new FirebaseService("Organizer");
+    }
 
     public void sendSelectedNotification() {
 

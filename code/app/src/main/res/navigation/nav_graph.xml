@@ -7,10 +7,9 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="chicksevent.FirstFragment"
+        android:name="com.example.chicksevent.FirstFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first"
-        >
+        tools:layout="@layout/fragment_first">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
@@ -18,17 +17,12 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="chicksevent.SecondFragment"
+        android:name="com.example.chicksevent.SecondFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second"
-
-        >
+        tools:layout="@layout/fragment_second">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
-        <argument
-            android:name="myArg"
-            app:argType="integer" />
     </fragment>
 </navigation>
