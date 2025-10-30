@@ -35,5 +35,11 @@ public class Entrant extends User {
         }
     }
 
+    public void rejoinWaitingList(String eventId) {
+        Participation p = participationsMap.get(eventId);
+        if (p != null) {
+            p.rejoinWaitingList(entrantService);
+        }
+    }
 
 }

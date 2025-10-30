@@ -40,4 +40,14 @@ public class Participation {
             service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
         }
     }
+
+    public void rejoinWaitingList(FirebaseService service) {
+        if (status == EntrantStatus.UNINVITED) {
+            status = EntrantStatus.WAITING;
+        }
+        // Update Firebase subcollection
+        HashMap<String, Object> update = new HashMap<>();
+        update.put("status", "WAITING");
+        service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
+    }
 }
