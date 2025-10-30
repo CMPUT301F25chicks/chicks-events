@@ -7,11 +7,11 @@
 }
 
 android {
-    namespace = "com.example.listycity5"
+    namespace = "com.example.chicksevent"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.listycity5"
+        applicationId = "com.example.chicksevent"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
