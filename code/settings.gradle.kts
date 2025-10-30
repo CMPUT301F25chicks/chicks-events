@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ChicksEvents"
+rootProject.name = "ChicksEvent"
 include(":app")
  

@@ -1,10 +1,30 @@
 {
   "project_info": {
     "project_number": "87426739311",
+    "firebase_url": "https://listycity-friedchicken-default-rtdb.firebaseio.com",
     "project_id": "listycity-friedchicken",
     "storage_bucket": "listycity-friedchicken.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87426739311:android:7daee343018d581d96719a",
+        "android_client_info": {
+          "package_name": "com.example.chicksevent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPJJpnjhFD8AdkT2pTzUqx3cHL4HU87GA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:87426739311:android:1b5f59477fce065796719a",

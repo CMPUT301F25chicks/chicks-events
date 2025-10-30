@@ -1,7 +1,5 @@
 package com.example.chicksevent;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 public class Organizer extends User {
     private FirebaseService organizerDatabase;
 
@@ -22,6 +20,10 @@ public class Organizer extends User {
     }
 
     public void listEntrants() {
+
+    }
+
+    public void rerollAttendees() {
 
     }
 

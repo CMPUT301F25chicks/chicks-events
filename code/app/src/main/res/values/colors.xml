@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="screenBackground">#2196F3</color>
+    <color name="buttonBackground">#673AB7</color>
 </resources>
