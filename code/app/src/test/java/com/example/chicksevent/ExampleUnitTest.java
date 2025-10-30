@@ -1,4 +1,4 @@
-package com.example.lab5_starter;
+package com.example.chicksevent;
 
 import org.junit.Test;
 

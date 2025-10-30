@@ -1,4 +1,4 @@
-package com.example.listycity5;
+package com.example.chicksevent;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 

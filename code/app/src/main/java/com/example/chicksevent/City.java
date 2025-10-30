@@ -1,4 +1,4 @@
-package com.example.listycity5;
+package com.example.chicksevent;
 
 import java.io.Serializable;
 
