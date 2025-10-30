@@ -40,4 +40,18 @@ public class FirebaseService {
     public DatabaseReference getReference() {
         return reference;
     }
+
+    public void updateEntry(String id, HashMap<String, Object> updates) {
+        reference.child(id).updateChildren(updates)
+                .addOnSuccessListener(a -> Log.d("FirebaseService", "Update Success"))
+                .addOnFailureListener(e -> Log.e("FirebaseService", "Update Failed", e));
+    }
+
+    public void updateSubCollectionEntry(String parentId, String subCollectionName, String subId, HashMap<String, Object> updates) {
+        reference.child(parentId).child(subCollectionName).child(subId)
+                .updateChildren(updates)
+                .addOnSuccessListener(a -> Log.d("FirebaseService", "SubCollection Update Success"))
+                .addOnFailureListener(e -> Log.e("FirebaseService", "SubCollection Update Failed", e));
+    }
+
 }
