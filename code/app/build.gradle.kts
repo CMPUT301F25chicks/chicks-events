@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.firebase.database)
     testImplementation(libs.junit)
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.firebase:firebase-database:20.3.1")
