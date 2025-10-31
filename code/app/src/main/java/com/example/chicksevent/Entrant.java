@@ -5,12 +5,19 @@ import java.util.Map;
 
 public class Entrant extends User {
 
-    private FirebaseService entrantService;
-    private Map<String, Participation> participationsMap; // eventId → Participation
+    FirebaseService entrantService;
+    Map<String, Participation> participationsMap; // eventId → Participation
     Entrant() {
         super();
         entrantService = new FirebaseService("Entrant");
         participationsMap = new HashMap<>();
+    }
+
+    // Constructor for unit testing with mock
+    public Entrant(FirebaseService service, Map<String, Participation> participation) {
+        super();
+        this.entrantService = service;
+        this.participationsMap = participation;
     }
 
     public void joinWaitingList() {

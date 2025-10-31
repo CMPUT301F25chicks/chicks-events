@@ -3,30 +3,28 @@ package com.example.chicksevent;
 import java.util.HashMap;
 
 public class Participation {
-    private String eventId;       // The event this participation refers to
-    private String entrantId;     // The entrant participating
-    private EntrantStatus status; // Current state of this participation
 
-    public Participation(String eventId, String entrantId, EntrantStatus status) {
-        this.eventId = eventId;
+    private String entrantId;
+    private String eventId;
+    private EntrantStatus status;
+
+    public Participation(String entrantId, String eventId, EntrantStatus status) {
         this.entrantId = entrantId;
+        this.eventId = eventId;
         this.status = status;
     }
 
-    // Getter methods
-    public String getEventId() { return eventId; }
-    public String getEntrantId() { return entrantId; }
-    public EntrantStatus getStatus() { return status; }
+    public EntrantStatus getStatus() {
+        return status;
+    }
 
-    // Accept invitation if the entrant was invited
     public void acceptInvitation(FirebaseService service) {
         if (status == EntrantStatus.INVITED) {
             status = EntrantStatus.ACCEPTED;
 
-            // Update Firebase subcollection
             HashMap<String, Object> update = new HashMap<>();
             update.put("status", "ACCEPTED");
-            service.updateSubCollectionEntry(eventId, "participation", entrantId, update);
+            service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
         }
     }
 
@@ -34,10 +32,9 @@ public class Participation {
         if (status == EntrantStatus.INVITED) {
             status = EntrantStatus.DECLINED;
 
-            // Update Firebase subcollection
             HashMap<String, Object> update = new HashMap<>();
             update.put("status", "DECLINED");
-            service.updateSubCollectionEntry(eventId, "participation", entrantId, update);
+            service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
         }
     }
 
@@ -45,11 +42,9 @@ public class Participation {
         if (status == EntrantStatus.UNINVITED) {
             status = EntrantStatus.WAITING;
 
-            // Only update Firebase when status actually changes
             HashMap<String, Object> update = new HashMap<>();
             update.put("status", "WAITING");
-            service.updateSubCollectionEntry(eventId, "participation", entrantId, update);
+            service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
         }
     }
-
 }
