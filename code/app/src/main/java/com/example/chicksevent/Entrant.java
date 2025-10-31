@@ -24,6 +24,6 @@ public class Entrant extends User {
     public void declineInvitation() {
 
     }
-
-
 }
+
+
