@@ -7,10 +7,10 @@ public class Participation {
     private String entrantId;     // The entrant participating
     private EntrantStatus status; // Current state of this participation
 
-    public Participation(String eventId, String entrantId) {
+    public Participation(String eventId, String entrantId, EntrantStatus status) {
         this.eventId = eventId;
         this.entrantId = entrantId;
-        this.status = EntrantStatus.WAITING; // default when joining waiting list
+        this.status = status;
     }
 
     // Getter methods
@@ -26,7 +26,30 @@ public class Participation {
             // Update Firebase subcollection
             HashMap<String, Object> update = new HashMap<>();
             update.put("status", "ACCEPTED");
-            service.updateSubCollectionEntry(entrantId, "participation", eventId, update);
+            service.updateSubCollectionEntry(eventId, "participation", entrantId, update);
         }
     }
+
+    public void declineInvitation(FirebaseService service) {
+        if (status == EntrantStatus.INVITED) {
+            status = EntrantStatus.DECLINED;
+
+            // Update Firebase subcollection
+            HashMap<String, Object> update = new HashMap<>();
+            update.put("status", "DECLINED");
+            service.updateSubCollectionEntry(eventId, "participation", entrantId, update);
+        }
+    }
+
+    public void rejoinWaitingList(FirebaseService service) {
+        if (status == EntrantStatus.UNINVITED) {
+            status = EntrantStatus.WAITING;
+
+            // Only update Firebase when status actually changes
+            HashMap<String, Object> update = new HashMap<>();
+            update.put("status", "WAITING");
+            service.updateSubCollectionEntry(eventId, "participation", entrantId, update);
+        }
+    }
+
 }
