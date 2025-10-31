@@ -8,7 +8,7 @@ public class Organizer extends User {
     }
 
     public void sendSelectedNotification() {
-
+        
     }
 
     // us 02.07.01
