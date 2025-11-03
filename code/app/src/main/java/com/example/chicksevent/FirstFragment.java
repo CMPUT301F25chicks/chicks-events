@@ -43,10 +43,10 @@ public class FirstFragment extends Fragment {
 
 //        service.deleteEntry(id);
 
-        binding.buttonFirst.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-        );
+//        binding.buttonFirst.setOnClickListener(v ->
+//                NavHostFragment.findNavController(FirstFragment.this)
+//                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
+//        );
     }
 
     @Override
