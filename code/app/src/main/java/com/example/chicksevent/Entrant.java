@@ -25,5 +25,10 @@ public class Entrant extends User {
 
     }
 
+    public void isAdmin() {
+    }
 
+    public void isOrganizer() {
+
+    }
 }

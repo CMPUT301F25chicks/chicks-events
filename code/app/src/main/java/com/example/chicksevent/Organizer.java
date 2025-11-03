@@ -65,4 +65,10 @@ public class Organizer extends User {
 
     }
 
+    public void isAdmin() {
+    }
+
+    public void isOrganizer() {
+
+    }
 }
