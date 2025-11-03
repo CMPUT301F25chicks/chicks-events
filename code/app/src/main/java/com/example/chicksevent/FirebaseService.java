@@ -33,11 +33,16 @@ public class FirebaseService {
     }
 
     public String editEntry(String id, HashMap<String, Object> data){
-        deleteEntry(id);
-        return addEntry(data);
+        reference.child(id).updateChildren(data)
+                .addOnSuccessListener(a -> Log.d("FirestoreTest", "Success"))
+                .addOnFailureListener(e -> Log.e("FirestoreTest", "Failed", e));
+        return id;
     }
+
 
     public DatabaseReference getReference() {
         return reference;
     }
 }
+
+

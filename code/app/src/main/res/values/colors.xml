@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="purpleText">#EFADF9</color>
+    <color name="teal_700">#018786</color>
+    <color name="darkPurple">#593160</color>
+    <color name="darkRed">#943030</color>
+    <color name="dateBox">#EADDFF</color>
+    <color name="lightRed">#E78282</color>
+
 </resources>
