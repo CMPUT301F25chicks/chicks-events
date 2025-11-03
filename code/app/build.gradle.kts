@@ -37,6 +37,11 @@ android {
 
 dependencies {
 
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
