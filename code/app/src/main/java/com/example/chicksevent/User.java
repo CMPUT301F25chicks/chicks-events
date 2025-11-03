@@ -10,4 +10,12 @@ public class User {
     User() {
         userService = new FirebaseService("User");
     }
+
+    public Boolean isAdmin() {
+        return false;
+    }
+
+    public Boolean isOrganizer() {
+        return false;
+    }
 }

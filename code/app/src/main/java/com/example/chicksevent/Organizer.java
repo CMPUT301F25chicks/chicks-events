@@ -35,4 +35,12 @@ public class Organizer extends User {
 
     }
 
+    public Boolean isOrganizer() {
+        return true;
+    }
+
+    public Boolean isAdmin() {
+        return false;
+    }
+
 }

@@ -25,5 +25,12 @@ public class Entrant extends User {
 
     }
 
+    public Boolean isOrganizer() {
+        return false;
+    }
+
+    public Boolean isAdmin() {
+        return false;
+    }
 
 }
