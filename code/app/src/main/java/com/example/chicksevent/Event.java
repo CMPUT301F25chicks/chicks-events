@@ -27,6 +27,7 @@ public class Event {
     public Event() {}
 
 
+
     // getters and setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }

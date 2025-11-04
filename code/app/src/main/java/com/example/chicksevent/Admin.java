@@ -28,6 +28,7 @@ public class Admin extends User {
 
     }
 
+    
     // US 03.05.01
     public Task<List<Event>> browseEvents() {
         TaskCompletionSource<List<Event>> tcs = new TaskCompletionSource<>();
