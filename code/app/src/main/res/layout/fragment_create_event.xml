@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/inputName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Name" />
+
+        <EditText
+            android:id="@+id/inputDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Details"
+            android:inputType="textMultiLine"
+            android:minLines="3" />
+
+        <EditText
+            android:id="@+id/inputStartDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Start (YYYY-MM-DD)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/inputEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event End (YYYY-MM-DD)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/inputRegStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Reg Start (YYYY-MM-DD)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/inputRegEnd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Reg End (YYYY-MM-DD)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/inputLimit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Entrant Limit"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/inputTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tags (space-separated)"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btnPublish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Publish" />
+
+        <ImageView
+            android:id="@+id/qrImage"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

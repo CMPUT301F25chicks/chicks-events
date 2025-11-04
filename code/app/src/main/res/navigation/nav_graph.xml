@@ -25,4 +25,30 @@
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/EventDetailFragment"
+        android:name="com.example.chicksevent.EventDetailFragment"
+        android:label="Event">
+        <argument android:name="eventId" app:argType="string" />
+        <deepLink app:uri="chicks://event/{eventId}" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.example.chicksevent.FirstFragment"
+        android:label="First Fragment">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_CreateEventFragment"
+            app:destination="@id/createEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.example.chicksevent.CreateEventFragment"
+        android:label="Create Event" />
+
+
+
 </navigation>
