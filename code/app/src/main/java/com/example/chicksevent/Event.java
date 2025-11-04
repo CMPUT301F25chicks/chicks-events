@@ -20,6 +20,12 @@ public class Event {
 
     private String eventId;
 
+    private ArrayList<String> tagList;
+
+    Boolean checkTag(String tag) {
+        return tagList.contains(tag);
+    }
+
 
 
 }

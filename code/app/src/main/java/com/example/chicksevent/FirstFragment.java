@@ -1,6 +1,8 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.databinding.FragmentFirstBinding;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FirstFragment extends Fragment {
@@ -54,11 +57,25 @@ public class FirstFragment extends Fragment {
         u.listEvents();
 
         Entrant e = new Entrant(androidId, "lkajwlekrj234lkawer");
-//        e.joinWaitingList(EntrantStatus.WAITING);
-//        e.leaveWaitingList(EntrantStatus.WAITING);
-
-//        e.joinWaitingList(EntrantStatus.WAITING);
         e.swapStatus(EntrantStatus.INVITED);
+
+
+        e.updateWaitingListSize(EntrantStatus.INVITED).addOnCompleteListener(task -> {
+            Log.i("RTD8", String.format("amazing num %d", task.getResult()));
+        });
+//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
+//        }, 1000);
+
+        ArrayList<String> filterList = new ArrayList<>();
+        filterList.add("sportswer");
+        u.filterEvents(filterList).addOnCompleteListener(task -> {
+            Log.i("RTD8", String.format("good sh %b", task.getResult()));
+        });
+
+
+
+//        Log.i("RTD8", "wtf " + e.getWaitingListSize(EntrantStatus.INVITED));
 
 //        service.deleteEntry(id);
 

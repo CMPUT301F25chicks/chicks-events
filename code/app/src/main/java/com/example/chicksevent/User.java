@@ -5,12 +5,15 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class User {
 
@@ -18,12 +21,42 @@ public class User {
     private FirebaseService userService;
     private FirebaseService eventService;
     private String userId;
+    private String username;
+    private String phoneNumber;
+    private String email;
     String TAG = "RTD8";
 
     User(String userId) {
         userId = userId;
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
+    }
+
+    public Task<Boolean> filterEvents(ArrayList<String> filterList) {
+        Log.i(TAG, "what");
+        Log.i(TAG, "e" + eventService);
+        return eventService.getReference().get().continueWith(task -> {
+            Log.d(TAG, "=== All Children at Root filter ===");
+
+            // Iterate through all children
+            for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
+                String key = childSnapshot.getKey();
+                String[] value = ((Map<String, String>) childSnapshot.getValue()).get("tag").split(" ");
+
+
+                Log.d(TAG, "Key: " + key);
+                for (String val : value) {
+                    if (filterList.contains(val)) {
+                        return true;
+                    }
+                }
+                Log.d(TAG, "Value: " + value);
+                Log.d(TAG, "---");
+            }
+
+//                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
+            return false;
+        });
     }
 
     public void listEvents() {
@@ -52,38 +85,6 @@ public class User {
                 Log.e(TAG, "Error reading data: " + databaseError.getMessage());
             }
         });
-    }
-
-    public void printAllChildrenDetailed() {
-        eventService.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "=== Detailed Children at Root ===");
-
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    printSnapshot(childSnapshot, 0);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Error: " + databaseError.getMessage());
-            }
-        });
-    }
-
-    // Recursive method to print nested data
-    private void printSnapshot(DataSnapshot snapshot, int level) {
-        String indent = new String(new char[level * 2]).replace('\0', ' ');
-
-        if (snapshot.hasChildren()) {
-            Log.d(TAG, indent + snapshot.getKey() + ":");
-            for (DataSnapshot child : snapshot.getChildren()) {
-                printSnapshot(child, level + 1);
-            }
-        } else {
-            Log.d(TAG, indent + snapshot.getKey() + ": " + snapshot.getValue());
-        }
     }
 
 //    public void listEvents() {
