@@ -1,6 +1,8 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +37,28 @@ public class FirstFragment extends Fragment {
         service = new FirebaseService("bruhmoment");
         HashMap<String, Object> data = new HashMap<>();
 
-        data.put("username", "jim");
-        data.put("age", 43);
-        String id = service.addEntry(data);
-        data.put("phoneNumber", "403-420-6767");
-        id = service.editEntry(id, data);
+//        data.put("username", "jim");
+//        data.put("age", 43);
+//        String id = service.addEntry(data);
+//        data.put("phoneNumber", "403-420-6767");
+//        id = service.editEntry(id, data);
+
+        String androidId = Settings.Secure.getString(
+                getContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID
+        );
+        Log.i("FirestoreTest", "Android ID: " + androidId);
+//        return androidId;
+
+        User u = new User(androidId);
+        u.listEvents();
+
+        Entrant e = new Entrant(androidId, "lkajwlekrj234lkawer");
+//        e.joinWaitingList(EntrantStatus.WAITING);
+//        e.leaveWaitingList(EntrantStatus.WAITING);
+
+//        e.joinWaitingList(EntrantStatus.WAITING);
+        e.swapStatus(EntrantStatus.INVITED);
 
 //        service.deleteEntry(id);
 

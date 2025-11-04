@@ -2,8 +2,11 @@ package com.example.chicksevent;
 
 public class Organizer extends User {
     private FirebaseService organizerService;
+    private String organizerId;
 
-    Organizer() {
+    Organizer(String id) {
+        super(id);
+        organizerId = id;
         organizerService = new FirebaseService("Organizer");
     }
 

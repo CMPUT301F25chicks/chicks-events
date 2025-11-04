@@ -2,9 +2,11 @@ package com.example.chicksevent;
 
 public class Admin extends User {
     private FirebaseService adminService;
+    private String adminId;
 
-    Admin() {
-        super();
+    Admin(String id) {
+        super(id);
+        adminId = id;
         adminService = new FirebaseService("Admin");
     }
     public void deleteEvent() {
