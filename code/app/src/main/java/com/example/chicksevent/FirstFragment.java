@@ -54,15 +54,9 @@ public class FirstFragment extends Fragment {
 //        return androidId;
 
         User u = new User(androidId);
-        u.listEvents();
-
-        Entrant e = new Entrant(androidId, "lkajwlekrj234lkawer");
-        e.swapStatus(EntrantStatus.INVITED);
+//        u.listEvents();
 
 
-        e.updateWaitingListSize(EntrantStatus.INVITED).addOnCompleteListener(task -> {
-            Log.i("RTD8", String.format("amazing num %d", task.getResult()));
-        });
 //        new Handler(Looper.getMainLooper()).postDelayed(() -> {
 //            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
 //        }, 1000);
@@ -72,6 +66,52 @@ public class FirstFragment extends Fragment {
         u.filterEvents(filterList).addOnCompleteListener(task -> {
             Log.i("RTD8", String.format("good sh %b", task.getResult()));
         });
+
+        Organizer o = new Organizer(androidId);
+
+
+        Event event = new Event(
+                "abc123",                           // id
+                "Swimming Lessons",                 // name
+                "Kids learn freestyle and backstroke", // eventDetails
+                "2026-01-01",                       // eventStartDate
+                "2026-02-01",                       // eventEndDate
+                "2025-11-13",                       // registrationStartDate
+                "2025-12-30",                       // registrationEndDate
+                30,                                 // entrantLimit
+                o.getOrganizerId(),                           // organizer
+                null,                               // poster
+                "sports kids swimming"              // tag
+        );
+
+        event.createEvent();
+
+        Log.d("RTD8", "even id: " + event.getId());
+
+        Entrant e = new Entrant(androidId, event.getId());
+        e.joinWaitingList();
+
+
+//        e.swapStatus(EntrantStatus.INVITED);
+
+
+//        e.updateWaitingListSize(EntrantStatus.INVITED).addOnCompleteListener(task -> {
+//            Log.i("RTD8", String.format("amazing num %d", task.getResult()));
+//        });
+//        e.joinWaitingList();
+
+//        o.listEntrants();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
+            Log.i("RTD8", "what are in here here");
+            o.getMatchingEvent(EntrantStatus.WAITING).addOnSuccessListener(task -> {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    o.listEntrants(task);
+                }, 1000);
+            });
+
+        }, 1000);
+
 
 
 

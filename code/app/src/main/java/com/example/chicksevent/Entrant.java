@@ -28,6 +28,7 @@ public class Entrant extends User {
         this.entrantId = id;
         this.status = EntrantStatus.WAITING; // default when joining waiting list
     }
+
     // Getter methods
     public String getEventId() { return eventId; }
     public String getEntrantId() { return entrantId; }
@@ -62,7 +63,7 @@ public class Entrant extends User {
         leaveWaitingList(EntrantStatus.WAITING);
     }
     public void joinWaitingList(EntrantStatus status) {
-        Log.i("FirestoreTest", "hi");
+        Log.i("RTD8", "hi wtf is " + eventId);
 
         String statusString = status.toString();
         this.status = status;
