@@ -30,7 +30,6 @@ public class FirstFragment extends Fragment {
 
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
