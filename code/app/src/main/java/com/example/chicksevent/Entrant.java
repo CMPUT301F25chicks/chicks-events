@@ -17,6 +17,8 @@ public class Entrant extends User {
     private String eventId;       // The event this participation refers to
     private String entrantId;     // The entrant participating
     private EntrantStatus status; // Current state of this participation
+
+    private Organizer organizer;
     public int _waitingListSize = -1;
 
     Entrant(String id, String eventId) {
@@ -27,6 +29,7 @@ public class Entrant extends User {
         this.eventId = eventId;
         this.entrantId = id;
         this.status = EntrantStatus.WAITING; // default when joining waiting list
+
     }
 
     // Getter methods

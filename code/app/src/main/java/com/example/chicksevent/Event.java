@@ -29,14 +29,16 @@ public class Event {
     private String registrationEndDate;     // "YYYY-MM-DD"
 
     private int entrantLimit;
-    private String organizer;
+    private Organizer organizer;
     private String poster;   // nullable URL (or null)
     private String tag;      // space-separated tags
+    private String entrantId;
 
-    public Event(String id, String name, String eventDetails,
+    public Event(String entrantId, String id, String name, String eventDetails,
                  String eventStartDate, String eventEndDate,
                  String registrationStartDate, String registrationEndDate,
-                 int entrantLimit, String organizer, String poster, String tag) {
+                 int entrantLimit, String poster, String tag) {
+        this.entrantId = entrantId;
         this.id = id;
         this.name = name;
         this.eventDetails = eventDetails;
@@ -45,9 +47,11 @@ public class Event {
         this.registrationStartDate = registrationStartDate;
         this.registrationEndDate = registrationEndDate;
         this.entrantLimit = entrantLimit;
-        this.organizer = organizer;
+
         this.poster = poster;
         this.tag = tag;
+
+
     } // Required by Firebase
     public void createEvent(){
 
@@ -67,6 +71,8 @@ public class Event {
         map.put("poster", getPoster());              // null is fine; it will simply be omitted
         map.put("tag", getTag());
         id = eventService.addEntry(map, id);
+
+        this.organizer = new Organizer(entrantId, id);
     }
 
     // --- Getters and setters ---
@@ -95,8 +101,8 @@ public class Event {
     public int getEntrantLimit() { return entrantLimit; }
     public void setEntrantLimit(int entrantLimit) { this.entrantLimit = entrantLimit; }
 
-    public String getOrganizer() { return organizer; }
-    public void setOrganizer(String organizer) { this.organizer = organizer; }
+    public Organizer getOrganizer() { return organizer; }
+    public void setOrganizer(Organizer organizer) { this.organizer = organizer; }
 
     public String getPoster() { return poster; }
     public void setPoster(String poster) { this.poster = poster; }

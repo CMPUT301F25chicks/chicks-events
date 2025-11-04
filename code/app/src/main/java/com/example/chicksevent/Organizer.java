@@ -14,10 +14,12 @@ public class Organizer extends User {
     private FirebaseService eventService;
     private FirebaseService waitingListService;
     private String organizerId;
+    private String eventId;
 
-    Organizer(String id) {
+    Organizer(String id, String eventId) {
         super(id);
         organizerId = id;
+        this.eventId = eventId;
         waitingListService = new FirebaseService("WaitingList");
         organizerService = new FirebaseService("Organizer");
         eventService = new FirebaseService("Event");
@@ -27,46 +29,46 @@ public class Organizer extends User {
         return organizerId;
     }
 
-    public Task<String> getMatchingEvent(EntrantStatus status) {
-        Log.i(TAG, "org id: " + organizerId);
+//    public Task<String> getMatchingEvent(EntrantStatus status) {
+//        Log.i(TAG, "org id: " + organizerId);
+//
+////        Log.i(TAG, "e" + eventService);
+////        w
+//
+//        return eventService.getReference().get().continueWith(task -> {
+//            Log.d(TAG, "=== All Events listing entrant ===");
+//
+//            // Iterate through all children
+//            for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
+//                String key = childSnapshot.getKey();
+//                Map<String,String> obj = (Map<String,String>) childSnapshot.getValue();
+//                String value = obj.get("organizer");
+//
+//                Log.d(TAG, "Key ev: " + key);
+//                Log.d(TAG, "Value ev: " + value);
+//                Log.d(TAG, "---");
+//
+//                if (value.compareTo(organizerId) == 0) {
+//
+//                    Log.d(TAG, "---" + key);
+//                    Log.d(TAG, "status: " + status.toString());
+////                        return key;
+//
+//
+//                    return key;
+//                }
+//            }
+//
+////                Log.d(TAG, "Total children: " + task.getResult().getChildrenCount());
+//            return null;
+//        });
+//
+//    }
 
-//        Log.i(TAG, "e" + eventService);
-//        w
-
-        return eventService.getReference().get().continueWith(task -> {
-            Log.d(TAG, "=== All Events listing entrant ===");
-
-            // Iterate through all children
-            for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
-                String key = childSnapshot.getKey();
-                Map<String,String> obj = (Map<String,String>) childSnapshot.getValue();
-                String value = obj.get("organizer");
-
-                Log.d(TAG, "Key ev: " + key);
-                Log.d(TAG, "Value ev: " + value);
-                Log.d(TAG, "---");
-
-                if (value.compareTo(organizerId) == 0) {
-
-                    Log.d(TAG, "---" + key);
-                    Log.d(TAG, "status: " + status.toString());
-//                        return key;
-
-
-                    return key;
-                }
-            }
-
-//                Log.d(TAG, "Total children: " + task.getResult().getChildrenCount());
-            return null;
-        });
-
+    public void listEntrants() {
+        listEntrants(EntrantStatus.WAITING);
     }
-
-    public void listEntrants(String eventId) {
-        listEntrants(eventId, EntrantStatus.WAITING);
-    }
-    public void listEntrants(String eventId, EntrantStatus status) {
+    public void listEntrants(EntrantStatus status) {
         Log.i(TAG, "in here " + eventId + " " + status);
         waitingListService.getReference().child(eventId).child(status.toString())
                 .addValueEventListener(new ValueEventListener() {

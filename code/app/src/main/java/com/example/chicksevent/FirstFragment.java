@@ -67,10 +67,9 @@ public class FirstFragment extends Fragment {
             Log.i("RTD8", String.format("good sh %b", task.getResult()));
         });
 
-        Organizer o = new Organizer(androidId);
-
 
         Event event = new Event(
+                u.getUserId(),
                 "abc123",                           // id
                 "Swimming Lessons",                 // name
                 "Kids learn freestyle and backstroke", // eventDetails
@@ -79,7 +78,6 @@ public class FirstFragment extends Fragment {
                 "2025-11-13",                       // registrationStartDate
                 "2025-12-30",                       // registrationEndDate
                 30,                                 // entrantLimit
-                o.getOrganizerId(),                           // organizer
                 null,                               // poster
                 "sports kids swimming"              // tag
         );
@@ -104,14 +102,16 @@ public class FirstFragment extends Fragment {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
 //            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
             Log.i("RTD8", "what are in here here");
-            o.getMatchingEvent(EntrantStatus.WAITING).addOnSuccessListener(task -> {
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    o.listEntrants(task);
-                }, 1000);
-            });
+//            event.getOrganizer().getMatchingEvent(EntrantStatus.WAITING).addOnSuccessListener(task -> {
+//                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            event.getOrganizer().listEntrants();
+//                }, 1000);
+//            });
 
         }, 1000);
 
+        Notification n = new Notification(u.getUserId(), event.getId(), NotificationType.WAITING, "this is a notification to people on waitaing list");
+        n.createNotification();
 
 
 

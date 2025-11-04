@@ -27,7 +27,7 @@ public class User {
     String TAG = "RTD8";
 
     User(String userId) {
-        userId = userId;
+        this.userId = userId;
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
     }
@@ -57,6 +57,10 @@ public class User {
 //                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
             return false;
         });
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public void listEvents() {
