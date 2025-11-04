@@ -30,23 +30,34 @@ public class FirstFragment extends Fragment {
 
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        service = new FirebaseService("bruhmoment");
-        HashMap<String, Object> data = new HashMap<>();
 
-        data.put("username", "jim");
-        data.put("age", 43);
-        String id = service.addEntry(data);
-        data.put("phoneNumber", "403-420-6767");
-        id = service.editEntry(id, data);
+        Admin admin = new Admin();
 
-//        service.deleteEntry(id);
+        // shows on logcat
+        admin.browseEvents()
+                .addOnSuccessListener(events -> {
+                    StringBuilder sb = new StringBuilder();
+                    if (events.isEmpty()) {
+                        sb.append("No events found.\n");
+                    } else {
+                        for (Event e : events) {
+                            sb.append("ID: ").append(e.getId())
+                                    .append(" | Name: ").append(e.getName())
+                                    .append(" | Start: ").append(e.getEventStartDate())
+                                    .append(" | End: ").append(e.getEventEndDate())
+                                    .append("\n");
+                        }
+                    }
 
-//        binding.buttonFirst.setOnClickListener(v ->
-//                NavHostFragment.findNavController(FirstFragment.this)
-//                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        );
+                    android.util.Log.d("BrowseEvents", sb.toString());
+
+                })
+                .addOnFailureListener(err -> {
+                    android.util.Log.e("BrowseEvents", "Failed to fetch events", err);
+                });
     }
 
     @Override
