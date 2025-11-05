@@ -118,6 +118,10 @@ public class FirstFragment extends Fragment {
 
         event.getOrganizer().sendWaitingListNotification(EntrantStatus.WAITING, "this is a message to all waiting list people");
 
+        String eventId = "jinn-event";
+
+        Lottery lottery = new Lottery(eventId);
+        lottery.runLottery();
 //        Notification n = new Notification(u.getUserId(), event.getId(), NotificationType.WAITING, "this is a notification to people on waitaing list");
 //        n.createNotification();
 
