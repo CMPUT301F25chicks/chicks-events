@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/filter"
+    android:layout_width="48dp"
+    android:layout_height="42dp"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="344dp"
+    android:layout_alignParentTop="true"
+    android:layout_marginTop="76dp"
+    android:clipToOutline="true"
+    />
+
