@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+
+import com.example.chicksevent.User;
 import com.example.chicksevent.databinding.FragmentFirstBinding;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,7 +24,7 @@ import java.util.HashMap;
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
-    private FirebaseService service;
+    // private FirebaseService service; // No longer needed directly here for these tests
 
     @Override
     public View onCreateView(
@@ -37,34 +39,45 @@ public class FirstFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        service = new FirebaseService("bruhmoment");
-        HashMap<String, Object> data = new HashMap<>();
 
-        String androidId = Settings.Secure.getString(
+        // Get the unique device ID to use for the test user
+        java.lang.String androidId = Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
-        Log.i("FirestoreTest", "Android ID used for test: " + androidId);
+        Log.i("USER_TEST", "Android ID used for test: " + androidId);
 
-        // ======================= TEST FOR 01.02.O1 =======================
-        // As an entrant, I want to provide my personal information such as
-        //  name, email and optional phone number in the app
+        // CORRECTED: Create a single User object that we will use for all tests
+        User testUser = new User(androidId);
 
-        // Create User object identified by device ID
-        User userToUpdate = new User(androidId);
+
+        // ======================= TEST FOR CREATING/UPDATING A PROFILE =======================
+        // This test satisfies: "As an entrant, I want to provide my personal information"
+        // AND "As an entrant I want to update information"
 
         // Define personal information to be saved
         String testName = "Jinn Gay";
         String testEmail = "jinn.gay@example.com";
         String testPhone = "555-867-5309";
 
-        // update firebase
-        userToUpdate.updateProfile(testName, testEmail, testPhone);
+        // Call the update method, which creates or overwrites the user's profile
+        testUser.updateProfile(testName, testEmail, testPhone);
+        Log.d("USER_TEST", "Test initiated: updateProfile for user " + androidId);
+        // ====================================================================================
 
-        Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
-        // ===================================================================
+
+        // ======================= TEST FOR DELETING A PROFILE ================================
+        // This test satisfies: "As an entrant, I want to delete my profile"
+        testUser.deleteProfile();
+        Log.d("USER_TEST", "Test initiated: deleteProfile for user " + androidId);
+        // ====================================================================================
 
 
+        /*
+        // ======================= ALL OLDER TESTS COMMENTED OUT =============================
+
+        //        service = new FirebaseService("bruhmoment");
+        //        HashMap<String, Object> data = new HashMap<>();
         //        data.put("username", "jim");
         //        data.put("age", 43);
         //        String id = service.addEntry(data);
@@ -137,10 +150,8 @@ public class FirstFragment extends Fragment {
         //
         //        service.deleteEntry(id);
         //
-        //        binding.buttonFirst.setOnClickListener(v ->
-        //                NavHostFragment.findNavController(FirstFragment.this)
-        //                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-        //        );
+        // ===================================================================================
+        */
     }
 
     @Override

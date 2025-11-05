@@ -67,6 +67,20 @@ public class User {
         userService.editEntry(userId, updates);
     }
 
+    // In User.java
+
+    /**
+     * Deletes the user's entire profile from the Firebase database.
+     * This is an irreversible action.
+     */
+    public void deleteProfile() {
+        if (userId == null || userId.isEmpty()) {
+            Log.e(TAG, "Cannot delete profile: User ID is not set.");
+            return;
+        }
+        userService.deleteEntry(userId);
+        Log.i(TAG, "Deletion requested for user: " + userId);
+    }
 
     public Task<Boolean> filterEvents(ArrayList<String> filterList) {
         Log.i(TAG, "what");
