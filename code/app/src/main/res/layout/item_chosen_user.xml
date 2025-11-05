@@ -26,18 +26,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:tint="@color/purpleText" />
+        app:tint="@color/dateBox" />
 
     <ImageButton
         android:id="@+id/btn_check"
         android:layout_width="29dp"
         android:layout_height="34dp"
-        android:layout_marginEnd="368dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_check"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/purpleText"
-        tools:layout_editor_absoluteY="-5dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/darkGreen" />
 
     <LinearLayout
         android:id="@+id/info_container"
@@ -52,12 +52,12 @@
         app:layout_constraintVertical_bias="0.555">
 
         <TextView
-            android:id="@+id/tv_event_name"
+            android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Halloween Party"
+            android:text="USER"
             android:textColor="@color/purpleText"
-            android:textSize="10sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="155dp"
             tools:layout_editor_absoluteY="12dp" />
@@ -66,9 +66,9 @@
             android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NOT CHOSEN"
-            android:textColor="#E78282"
-            android:textSize="20sp"
+            android:text="STATUS: SIGNED UP"
+            android:textColor="@color/purpleText"
+            android:textSize="10sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="86dp"
             tools:layout_editor_absoluteY="11dp" />

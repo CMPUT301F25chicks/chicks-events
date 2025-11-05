@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondFragment"
+    tools:context=".ChosenListFragment"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,91 +19,83 @@
 
         <!-- Bottom button bar -->
 
+        <!-- Search bar -->
+
+        <!-- RecyclerView for notifications -->
+        <ImageButton
+            android:id="@+id/btn_check"
+            android:layout_width="29dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/baseline_arrow_back_24"
+            app:layout_constraintEnd_toStartOf="@+id/header_title"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/purpleText" />
+
         <TextView
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/michroma"
-            android:text="My Events"
+            android:text="Chosen Entrants"
             android:textColor="@color/purpleText"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.74"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/button_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/recycler_notifications"
-            app:layout_constraintTop_toBottomOf="@id/header_title"
-            android:weightSum="3">
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="376dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/darkPurple"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawableTint="@color/purpleText"
+            android:hint="Search..."
+            android:inputType="text"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="@color/purpleText"
+            android:textColorHint="@color/purpleText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_title" />
 
-            <Button
-                android:id="@+id/btn_search_events"
-                app:cornerRadius="0dp"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/purpleText"
-                android:text="Search Events"
-                android:textColor="@color/darkPurple"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btn_joined_events"
-                app:cornerRadius="0dp"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Joined Events"
-                android:textSize="12sp"
-                android:backgroundTint="@color/purpleText"
-                android:textColor="@color/darkPurple"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp"/>
-
-            <Button
-                android:id="@+id/btn_hosted_events"
-                app:cornerRadius="0dp"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Hosted Events"
-                android:textSize="12sp"
-                android:backgroundTint="@color/purpleText"
-                android:textColor="@color/darkPurple"
-                android:layout_marginStart="4dp"/>
-
-        </LinearLayout>
-
-
-        <!-- RecyclerView for notifications -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_notifications"
+            android:id="@+id/recycler_chosenUser"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingBottom="8dp"
-            tools:listitem="@layout/item_event"
-            app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+            tools:listitem="@layout/item_chosen_user"
+            app:layout_constraintBottom_toTopOf="@id/btn_notification1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_row"
+            app:layout_constraintTop_toBottomOf="@id/search_bar"
             app:layout_constraintVertical_bias="1.0" />
 
+
+        <Button
+            android:id="@+id/btn_notification1"
+            android:layout_width="71dp"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/purpleText"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/darkPurple"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_notifications" />
 
         <LinearLayout
             android:id="@+id/bottom_buttons_layout"
