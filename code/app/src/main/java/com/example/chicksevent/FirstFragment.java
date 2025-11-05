@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.databinding.FragmentFirstBinding;
 import com.google.firebase.database.FirebaseDatabase;
@@ -64,6 +65,18 @@ public class FirstFragment extends Fragment {
         Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
         // ===================================================================
 
+//        RecyclerView notificationView = view.findViewById(R.id.recycler_notifications);
+//        ArrayList<Notification> dataList = new ArrayList<Notification>();
+//        dataList.add(new Notification(androidId, ));
+//
+//        notificationAdapter = new NotificationAdapter(this, dataList);
+
+//        NotificationAdapter adapter = new NotificationAdapter();
+//        recyclerView.adapter = adapter;
+//        recyclerView.layoutManager = LinearLayoutManager(this);
+
+// Add new data
+//        adapter.submitList(newNotifications)
 
         //        data.put("username", "jim");
         //        data.put("age", 43);
