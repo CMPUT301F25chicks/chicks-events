@@ -3,6 +3,8 @@ package com.example.chicksevent;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +18,26 @@ public class Admin extends User {
         adminService = new FirebaseService("Admin");
         this.eventsService = new FirebaseService("Event");
     }
-    public void deleteEvent() {
 
+    // US 03.01.01
+    public Task<Void> deleteEvent(String eventId) {
+
+
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+        if (eventId == null || eventId.isEmpty()) {
+            tcs.setException(new IllegalArgumentException("eventId is empty"));
+            return tcs.getTask();
+            }
+
+        DatabaseReference ref = eventsService.getReference().child(eventId);
+        ref.removeValue((DatabaseError error, DatabaseReference ignored) -> {
+            if (error == null) {
+                tcs.setResult(null);
+            } else {
+                tcs.setException(error.toException());
+            }
+            });
+        return tcs.getTask();
     }
 
     public void deleteProfile() {

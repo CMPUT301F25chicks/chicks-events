@@ -35,30 +35,20 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Admin admin = new Admin();
+        String eventId = "-OdGXYckhMz90btdhkgm"; // Id of event ill delete
 
-        // shows on logcat
-        admin.browseEvents()
-                .addOnSuccessListener(events -> {
-                    StringBuilder sb = new StringBuilder();
-                    if (events.isEmpty()) {
-                        sb.append("No events found.\n");
-                    } else {
-                        for (Event e : events) {
-                            sb.append("ID: ").append(e.getId())
-                                    .append(" | Name: ").append(e.getName())
-                                    .append(" | Start: ").append(e.getEventStartDate())
-                                    .append(" | End: ").append(e.getEventEndDate())
-                                    .append("\n");
-                        }
-                    }
-
-                    android.util.Log.d("BrowseEvents", sb.toString());
-
+        admin.deleteEvent(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    android.util.Log.d("DeleteEvent", "Event deleted successfully");
                 })
-                .addOnFailureListener(err -> {
-                    android.util.Log.e("BrowseEvents", "Failed to fetch events", err);
+                .addOnFailureListener(e -> {
+                    android.util.Log.e("DeleteEvent", "Failed to delete event: " + e.getMessage());
                 });
     }
+
+
+
+
 
     @Override
     public void onDestroyView() {
