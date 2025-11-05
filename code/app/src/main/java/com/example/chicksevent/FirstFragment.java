@@ -89,6 +89,12 @@ public class FirstFragment extends Fragment {
         Entrant e = new Entrant(androidId, event.getId());
         e.joinWaitingList();
 
+        Entrant e2 = new Entrant(androidId + "poop", event.getId());
+        e2.joinWaitingList();
+
+        Organizer o = new Organizer(u.getUserId(), "jinn-event");
+        o.listEntrants(EntrantStatus.INVITED);
+
 
 //        e.swapStatus(EntrantStatus.INVITED);
 
@@ -110,8 +116,10 @@ public class FirstFragment extends Fragment {
 
         }, 1000);
 
-        Notification n = new Notification(u.getUserId(), event.getId(), NotificationType.WAITING, "this is a notification to people on waitaing list");
-        n.createNotification();
+        event.getOrganizer().sendWaitingListNotification(EntrantStatus.WAITING, "this is a message to all waiting list people");
+
+//        Notification n = new Notification(u.getUserId(), event.getId(), NotificationType.WAITING, "this is a notification to people on waitaing list");
+//        n.createNotification();
 
 
 

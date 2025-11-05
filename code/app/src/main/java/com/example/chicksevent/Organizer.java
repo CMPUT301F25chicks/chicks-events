@@ -71,12 +71,49 @@ public class Organizer extends User {
     public void listEntrants(EntrantStatus status) {
         Log.i(TAG, "in here " + eventId + " " + status);
         waitingListService.getReference().child(eventId).child(status.toString())
+            .addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.i(TAG, "IN HERE bef " + status);
+                    for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
+                        Log.i(TAG, "child key: " + childSnap.getKey());
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "Error reading data: " + databaseError.getMessage());
+                }
+            });
+    }
+
+    public void sendSelectedNotification() {
+
+    }
+
+    // us 02.07.01
+    public void sendWaitingListNotification(EntrantStatus status, String message) {
+        waitingListService.getReference().child(eventId).child(status.toString())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.i(TAG, "IN HERE bef");
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            Log.i(TAG, "child key: " + childSnap.getKey());
+//                            Log.i(TAG, "child key: " + childSnap.getKey());
+                            NotificationType notifType;
+                            switch (status) {
+                                case WAITING:
+                                    notifType = NotificationType.WAITING;
+                                    break;
+                                case INVITED:
+                                    notifType = NotificationType.INVITED;
+                                    break;
+                                default:
+                                    notifType = NotificationType.UNINVITED;
+                            }
+                            Notification n = new Notification(childSnap.getKey(), eventId, notifType, message);
+
+                            n.createNotification();
                         }
                     }
 
@@ -85,15 +122,6 @@ public class Organizer extends User {
                         Log.e(TAG, "Error reading data: " + databaseError.getMessage());
                     }
                 });
-    }
-
-    public void sendSelectedNotification() {
-
-    }
-
-    // us 02.07.01
-    public void sendWaitingListNotification() {
-
     }
 
     public void cancelDidNotSignUp() {

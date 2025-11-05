@@ -19,7 +19,6 @@ public class Entrant extends User {
     private EntrantStatus status; // Current state of this participation
 
     private Organizer organizer;
-    public int _waitingListSize = -1;
 
     Entrant(String id, String eventId) {
         super(id);
@@ -36,27 +35,6 @@ public class Entrant extends User {
     public String getEventId() { return eventId; }
     public String getEntrantId() { return entrantId; }
     public EntrantStatus getStatus() { return status; }
-
-    public Task<Integer> updateWaitingListSize(EntrantStatus status) {
-        Log.i(TAG, "what");
-//        Log.i(TAG, "e" + eventService);
-        final int[] count = new int[1];
-        count[0] = -2;
-        Log.i("RTD8", eventId);
-//        eventService.getReference().get().continueWith
-        return waitingListService.getReference().child(eventId).child(status.toString()).get().continueWith(task -> {
-            Log.d(TAG, "=== All Children at Root ===");
-
-
-
-            Log.d(TAG, "Total children: " + task.getResult().getChildrenCount());
-//                count[0] = (int) dataSnapshot.getChildrenCount();
-            _waitingListSize =  (int) task.getResult().getChildrenCount();
-            return _waitingListSize;
-        });
-
-//        return count[0];
-    }
 
     public void joinWaitingList() {
         joinWaitingList(EntrantStatus.WAITING);
