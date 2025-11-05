@@ -43,4 +43,13 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+    <string-array name="availability_options">
+        <item>Anytime</item>
+        <item>This Week</item>
+        <item>This Weekend</item>
+        <item>Next Week</item>
+        <item>Next Month</item>
+    </string-array>
+
 </resources>
