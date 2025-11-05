@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#000000"
+    tools:context=".CreateEventFragment">
+
+    <!-- Scrollable content -->
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/michroma"
+        android:text="Create Event"
+        android:textColor="@color/purpleText"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@+id/header_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingBottom="24dp">
+
+            <!-- Event Poster Upload -->
+
+            <!-- Event Name -->
+
+            <ImageView
+                android:id="@+id/img_event_poster"
+                android:layout_width="120dp"
+                android:layout_height="108dp"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:contentDescription="Event Poster"
+                android:focusable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_image"
+                app:tint="@color/purpleText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Image"
+                android:textColor="@color/darkPurple"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/img_event_poster" />
+
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Name:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_name" />
+
+            <EditText
+                android:id="@+id/et_event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Event Name"
+                android:inputType="textPersonName"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Event Description -->
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Description:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_description" />
+
+            <EditText
+                android:id="@+id/et_event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Event Description"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:gravity="top"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Event Time -->
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Time:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_time" />
+            <EditText
+                android:id="@+id/et_event_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Event Time"
+                android:inputType="datetime"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp">
+
+                <CheckBox
+                    android:id="@+id/cb_limit_waiting_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Limit number of waiting list entrants"
+                    android:textColor="@color/purpleText"/>
+
+                <EditText
+                    android:id="@+id/et_max_entrants"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter max number"
+                    android:inputType="number"
+                    android:textColorHint="@color/darkPurple"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
+            <!-- Registration Period -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registration Period"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <!-- Start Date -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/start_date_container">
+
+                    <EditText
+                        android:id="@+id/et_start_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Start Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:background="@null" />
+
+                    <ImageView
+                        android:id="@+id/icon_start_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        app:tint="@color/darkPurple"
+                        android:padding="4dp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent" />
+
+                <!-- End Date -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/end_date_container">
+
+                    <EditText
+                        android:id="@+id/et_end_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="End Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:background="@null" />
+
+                    <ImageView
+                        android:id="@+id/icon_end_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        android:padding="4dp"
+                        app:tint="@color/darkPurple" />
+                </LinearLayout>
+
+        </LinearLayout>
+
+            <!-- Geolocation Requirement -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:text="Enable Geolocation Requirement"
+                    android:textColor="@color/purpleText"
+                    android:textStyle="bold" />
+
+                <Switch
+                    android:id="@+id/switch_geo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:showText="false"
+                    android:switchMinWidth="55dp"
+                    android:thumbTint="@color/purpleText"
+                    android:trackTint="@color/dateBox" />
+            </LinearLayout>
+
+            <!-- Generate QR Code Button -->
+            <Button
+                android:id="@+id/btn_generate_qr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Generate QR Code"
+                android:backgroundTint="@color/darkPurple"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Create and Cancel Buttons (same row) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:backgroundTint="@color/darkPurple"
+                    android:textColor="@android:color/white" />
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="match_parent" />
+
+                <Button
+                    android:id="@+id/btn_create_event"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Create"
+                    android:backgroundTint="@color/purpleText"
+                    android:textColor="@color/darkPurple" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layout"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/btn_notification"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_events"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_events"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_scan"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_addEvent"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_addevents"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_profile"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_profile"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -52,9 +52,8 @@
 
         <LinearLayout
             android:id="@+id/bottom_buttons_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_width="375dp"
+            android:layout_height="58dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="5"
@@ -64,8 +63,8 @@
 
             <Button
                 android:id="@+id/btn_notification"
-                android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_width="2dp"
+                android:layout_height="58dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
@@ -76,8 +75,8 @@
 
             <Button
                 android:id="@+id/btn_events"
-                android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_width="2dp"
+                android:layout_height="58dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
@@ -88,8 +87,8 @@
 
             <Button
                 android:id="@+id/btn_scan"
-                android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_width="2dp"
+                android:layout_height="58dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
@@ -100,8 +99,8 @@
 
             <Button
                 android:id="@+id/btn_addEvent"
-                android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_width="2dp"
+                android:layout_height="58dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
@@ -112,8 +111,8 @@
 
             <Button
                 android:id="@+id/btn_profile"
-                android:layout_width="0dp"
-                android:layout_height="90dp"
+                android:layout_width="2dp"
+                android:layout_height="58dp"
                 android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
