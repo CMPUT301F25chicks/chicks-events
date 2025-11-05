@@ -40,101 +40,107 @@ public class FirstFragment extends Fragment {
         service = new FirebaseService("bruhmoment");
         HashMap<String, Object> data = new HashMap<>();
 
-//        data.put("username", "jim");
-//        data.put("age", 43);
-//        String id = service.addEntry(data);
-//        data.put("phoneNumber", "403-420-6767");
-//        id = service.editEntry(id, data);
-
         String androidId = Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
-        Log.i("FirestoreTest", "Android ID: " + androidId);
-//        return androidId;
+        Log.i("FirestoreTest", "Android ID used for test: " + androidId);
 
-        User u = new User(androidId);
-//        u.listEvents();
+        // ======================= TEST FOR 01.02.O1 =======================
+        // As an entrant, I want to provide my personal information such as
+        //  name, email and optional phone number in the app
 
+        // Create User object identified by device ID
+        User userToUpdate = new User(androidId);
 
-//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
-//        }, 1000);
+        // Define personal information to be saved
+        String testName = "Jinn Gay";
+        String testEmail = "jinn.gay@example.com";
+        String testPhone = "555-867-5309";
 
-        ArrayList<String> filterList = new ArrayList<>();
-        filterList.add("sportswer");
-        u.filterEvents(filterList).addOnCompleteListener(task -> {
-            Log.i("RTD8", String.format("good sh %b", task.getResult()));
-        });
+        // update firebase
+        userToUpdate.updateProfile(testName, testEmail, testPhone);
 
-
-        Event event = new Event(
-                u.getUserId(),
-                "abc123",                           // id
-                "Swimming Lessons",                 // name
-                "Kids learn freestyle and backstroke", // eventDetails
-                "2026-01-01",                       // eventStartDate
-                "2026-02-01",                       // eventEndDate
-                "2025-11-13",                       // registrationStartDate
-                "2025-12-30",                       // registrationEndDate
-                30,                                 // entrantLimit
-                null,                               // poster
-                "sports kids swimming"              // tag
-        );
-
-        event.createEvent();
-
-        Log.d("RTD8", "even id: " + event.getId());
-
-        Entrant e = new Entrant(androidId, event.getId());
-        e.joinWaitingList();
-
-        Entrant e2 = new Entrant(androidId + "poop", event.getId());
-        e2.joinWaitingList();
-
-        Organizer o = new Organizer(u.getUserId(), "jinn-event");
-        o.listEntrants(EntrantStatus.INVITED);
+        Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
+        // ===================================================================
 
 
-//        e.swapStatus(EntrantStatus.INVITED);
-
-
-//        e.updateWaitingListSize(EntrantStatus.INVITED).addOnCompleteListener(task -> {
-//            Log.i("RTD8", String.format("amazing num %d", task.getResult()));
-//        });
-//        e.joinWaitingList();
-
-//        o.listEntrants();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
-            Log.i("RTD8", "what are in here here");
-//            event.getOrganizer().getMatchingEvent(EntrantStatus.WAITING).addOnSuccessListener(task -> {
-//                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            event.getOrganizer().listEntrants();
-//                }, 1000);
-//            });
-
-        }, 1000);
-
-        event.getOrganizer().sendWaitingListNotification(EntrantStatus.WAITING, "this is a message to all waiting list people");
-
-        String eventId = "jinn-event";
-
-        Lottery lottery = new Lottery(eventId);
-        lottery.runLottery();
-//        Notification n = new Notification(u.getUserId(), event.getId(), NotificationType.WAITING, "this is a notification to people on waitaing list");
-//        n.createNotification();
-
-
-
-//        Log.i("RTD8", "wtf " + e.getWaitingListSize(EntrantStatus.INVITED));
-
-//        service.deleteEntry(id);
-
-//        binding.buttonFirst.setOnClickListener(v ->
-//                NavHostFragment.findNavController(FirstFragment.this)
-//                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        );
+        //        data.put("username", "jim");
+        //        data.put("age", 43);
+        //        String id = service.addEntry(data);
+        //        data.put("phoneNumber", "403-420-6767");
+        //        id = service.editEntry(id, data);
+        //
+        //        User u = new User(androidId);
+        //        u.listEvents();
+        //
+        //
+        //        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        //            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
+        //        }, 1000);
+        //
+        //        ArrayList<String> filterList = new ArrayList<>();
+        //        filterList.add("sportswer");
+        //        u.filterEvents(filterList).addOnCompleteListener(task -> {
+        //            Log.i("RTD8", String.format("good sh %b", task.getResult()));
+        //        });
+        //
+        //
+        //        Event event = new Event(
+        //                u.getUserId(),
+        //                "abc123",                           // id
+        //                "Swimming Lessons",                 // name
+        //                "Kids learn freestyle and backstroke", // eventDetails
+        //                "2026-01-01",                       // eventStartDate
+        //                "2026-02-01",                       // eventEndDate
+        //                "2025-11-13",                       // registrationStartDate
+        //                "2025-12-30",                       // registrationEndDate
+        //                30,                                 // entrantLimit
+        //                null,                               // poster
+        //                "sports kids swimming"              // tag
+        //        );
+        //
+        //        event.createEvent();
+        //
+        //        Log.d("RTD8", "even id: " + event.getId());
+        //
+        //        Entrant e = new Entrant(androidId, event.getId());
+        //        e.joinWaitingList();
+        //
+        //
+        //        e.swapStatus(EntrantStatus.INVITED);
+        //
+        //
+        //        e.updateWaitingListSize(EntrantStatus.INVITED).addOnCompleteListener(task -> {
+        //            Log.i("RTD8", String.format("amazing num %d", task.getResult()));
+        //        });
+        //        e.joinWaitingList();
+        //
+        //        o.listEntrants();
+        //        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        //            Log.i("RTD8", "ww" + String.format("%d", e._waitingListSize));
+        //            Log.i("RTD8", "what are in here here");
+        //            event.getOrganizer().getMatchingEvent(EntrantStatus.WAITING).addOnSuccessListener(task -> {
+        //                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        //            event.getOrganizer().listEntrants();
+        //                }, 1000);
+        //            });
+        //
+        //        }, 1000);
+        //
+        //        Notification n = new Notification(u.getUserId(), event.getId(), NotificationType.WAITING, "this is a notification to people on waitaing list");
+        //        n.createNotification();
+        //
+        //
+        //
+        //        Log.i("RTD8", "wtf " + e.getWaitingListSize(EntrantStatus.INVITED));
+        //
+        //        service.deleteEntry(id);
+        //
+        //        binding.buttonFirst.setOnClickListener(v ->
+        //                NavHostFragment.findNavController(FirstFragment.this)
+        //                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
+        //        );
     }
 
     @Override
