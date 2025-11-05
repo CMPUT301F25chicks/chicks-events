@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.example.chicksevent.Lottery;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -123,6 +124,17 @@ public class FirstFragment extends Fragment {
 //                NavHostFragment.findNavController(FirstFragment.this)
 //                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
 //        );
+
+        // Run lottery for this event
+        FirebaseService waitingListService = new FirebaseService("WaitingList");
+        FirebaseService eventService = new FirebaseService("Event");
+
+// Use your event ID — in your case, it's "jinn-event"
+        String eventId = "jinn-event";
+
+        Lottery lottery = new Lottery(waitingListService, eventService, eventId);
+        lottery.runLottery();
+
     }
 
     @Override
