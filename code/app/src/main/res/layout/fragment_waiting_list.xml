@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondFragment"
+    tools:context=".WaitingListFragment"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,69 +24,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/michroma"
-            android:text="My Events"
+            android:text="Waiting List"
             android:textColor="@color/purpleText"
-            android:textSize="25sp"
+            android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/button_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/recycler_notifications"
-            app:layout_constraintTop_toBottomOf="@id/header_title"
-            android:weightSum="3">
-
-            <Button
-                android:id="@+id/btn_search_events"
-                app:cornerRadius="0dp"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/purpleText"
-                android:text="Search Events"
-                android:textColor="@color/darkPurple"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btn_joined_events"
-                app:cornerRadius="0dp"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Joined Events"
-                android:textSize="12sp"
-                android:backgroundTint="@color/purpleText"
-                android:textColor="@color/darkPurple"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp"/>
-
-            <Button
-                android:id="@+id/btn_hosted_events"
-                app:cornerRadius="0dp"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Hosted Events"
-                android:textSize="12sp"
-                android:backgroundTint="@color/purpleText"
-                android:textColor="@color/darkPurple"
-                android:layout_marginStart="4dp"/>
-
-        </LinearLayout>
-
 
         <!-- RecyclerView for notifications -->
         <androidx.recyclerview.widget.RecyclerView
@@ -96,12 +41,12 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingBottom="8dp"
-            tools:listitem="@layout/item_event"
+            tools:listitem="@layout/item_notification"
             app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_row"
+            app:layout_constraintTop_toBottomOf="@id/header_title"
             app:layout_constraintVertical_bias="1.0" />
 
 
