@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:padding="16dp"
+    tools:context=".SecondFragment">
+
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_arrow_back_24"
+        android:contentDescription="Go back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/header_title"
+        android:padding="4dp"
+        app:tint="@color/purpleText" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/michroma"
+        android:text="Search Events"
+        android:textColor="@color/purpleText"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Search bar -->
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:hint="Search..."
+        android:textColor="#FFFFFF"
+        android:textColorHint="#80FFFFFF"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawableTint="#FFFFFF"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/header_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_filter" />
+
+    <ImageButton
+        android:id="@+id/btn_filter"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/black"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/search_bar"
+        app:layout_constraintTop_toBottomOf="@id/header_title"
+        app:tint="@color/purpleText" />
+
+    <LinearLayout
+        android:id="@+id/filter_panel"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/darkPurple"
+        android:padding="16dp"
+        android:elevation="10dp"
+        android:gravity="center_horizontal"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter Events"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <!-- INTERESTS SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Interests:"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Interests tags -->
+        <EditText
+            android:id="@+id/search_interest"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:hint="Search..."
+            android:textColor="#FFFFFF"
+            android:textColorHint="#80FFFFFF"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawableTint="#FFFFFF"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:inputType="text"
+            android:layout_marginBottom="8dp"
+            android:background="@color/darkPurple"/>
+
+        <!-- AVAILABILITY SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Availability:"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Availability dropdown -->
+        <Spinner
+            android:id="@+id/spinner_availability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:popupBackground="#222222"
+            android:entries="@array/availability_options"
+            android:textAlignment="center"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/purpleText" />
+
+        <!-- APPLY / CLEAR buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_clear_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Clear"
+                android:backgroundTint="#555555"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btn_apply_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Apply"
+                android:backgroundTint="@color/purpleText"
+                android:textColor="#000000"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_notifications"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        tools:listitem="@layout/item_event"
+        app:layout_constraintTop_toBottomOf="@id/search_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bottom navigation buttons -->
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btn_notification"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp"
+            android:contentDescription="Notifications" />
+
+        <Button
+            android:id="@+id/btn_events"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_events"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp"
+            android:contentDescription="Events" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_scan"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp"
+            android:contentDescription="Scan" />
+
+        <Button
+            android:id="@+id/btn_addEvent"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_addevents"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp"
+            android:contentDescription="Add Event" />
+
+        <Button
+            android:id="@+id/btn_profile"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_profile"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp"
+            android:contentDescription="Profile" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
