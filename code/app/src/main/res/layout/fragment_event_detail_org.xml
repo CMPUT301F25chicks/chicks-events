@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".HostedEventFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        android:padding="16dp">
+
+        <!-- Header -->
+
+        <!-- Event box container -->
+
+        <!-- Bottom button bar -->
+
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/michroma"
+            android:text="Event Detail"
+            android:textColor="@color/purpleText"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.203"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/event_box"
+            android:layout_width="381dp"
+            android:layout_height="477dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_notification_item"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_title"
+            app:layout_constraintVertical_bias="0.0">
+
+            <ImageView
+                android:id="@+id/img_event"
+                android:layout_width="0dp"
+                android:layout_height="168dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sample_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="71dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_date_box"
+                android:gravity="center"
+                android:text="OCT\n30"
+                android:textColor="@color/darkPurple"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_event" />
+
+            <!-- Event Details -->
+
+            <!-- Entrant Info Section -->
+
+            <TextView
+                android:id="@+id/tv_event_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Halloween Party"
+                android:textColor="@color/purpleText"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="87dp"
+                tools:layout_editor_absoluteY="176dp" />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6:00 PM - 9:00 PM"
+                android:textColor="@color/purpleText"
+                android:textSize="14sp"
+                tools:layout_editor_absoluteX="87dp"
+                tools:layout_editor_absoluteY="211dp" />
+
+            <TextView
+                android:id="@+id/tv_event_details"
+                android:layout_width="297dp"
+                android:layout_height="46dp"
+                android:lineSpacingExtra="4dp"
+                android:text="Join us for a spooky Halloween party with games, food, and prizes!"
+                android:textColor="@color/dateBox"
+                android:textSize="16sp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="404dp" />
+
+            <TextView
+                android:id="@+id/tv_entrants_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12 / 50"
+                android:textColor="@color/dateBox"
+                android:textSize="16sp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="358dp" />
+
+            <TextView
+                android:layout_width="224dp"
+                android:layout_height="22dp"
+                android:text="Registration Deadline:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="285dp" />
+
+            <TextView
+                android:id="@+id/tv_registration_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Oct 2nd"
+                android:textColor="@color/dateBox"
+                android:textSize="16sp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="260dp" />
+
+            <TextView
+                android:layout_width="257dp"
+                android:layout_height="22dp"
+                android:text="Registration Open:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="238dp" />
+
+            <TextView
+                android:id="@+id/tv_registration_deadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Oct 15th"
+                android:textColor="@color/dateBox"
+                android:textSize="16sp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="308dp" />
+
+            <TextView
+                android:layout_width="257dp"
+                android:layout_height="22dp"
+                android:text="Entrants (Current / Limit):"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="338dp" />
+
+            <TextView
+                android:layout_width="257dp"
+                android:layout_height="22dp"
+                android:text="Description:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="385dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/action_buttons_container"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/event_box"
+            app:layout_constraintBottom_toTop="@id/bottom_buttons_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="4dp">
+
+                    <Button
+                        android:id="@+id/btn_qr_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/purpleText"
+                        android:text="View QR Code"
+                        android:textColor="@color/black" />
+
+                    <Button
+                        android:id="@+id/btn_waiting_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="View Waiting List"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/purpleText"
+                        android:textColor="@color/black" />
+
+                    <Button
+                        android:id="@+id/btn_map"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/purpleText"
+                        android:text="View Map"
+                        android:textColor="@color/black" />
+
+                    <!-- Add remaining buttons here -->
+                </LinearLayout>
+            </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom_buttons_layout"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/btn_notification"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/black"
+                android:drawableTop="@drawable/ic_notification"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/btn_events"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/black"
+                android:drawableTop="@drawable/ic_events"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/btn_scan"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/black"
+                android:drawableTop="@drawable/ic_scan"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/btn_addEvent"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/black"
+                android:drawableTop="@drawable/ic_addevents"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/btn_profile"
+                android:layout_width="0dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/black"
+                android:drawableTop="@drawable/ic_profile"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="8dp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
