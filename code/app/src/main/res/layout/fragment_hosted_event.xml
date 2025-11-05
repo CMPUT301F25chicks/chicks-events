@@ -47,6 +47,8 @@
 
             <Button
                 android:id="@+id/btn_search_events"
+                app:cornerRadius="0dp"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="4dp"
@@ -58,6 +60,8 @@
 
             <Button
                 android:id="@+id/btn_joined_events"
+                app:cornerRadius="0dp"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
@@ -70,6 +74,8 @@
 
             <Button
                 android:id="@+id/btn_hosted_events"
+                app:cornerRadius="0dp"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
