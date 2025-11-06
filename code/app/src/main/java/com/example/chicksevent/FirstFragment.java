@@ -60,7 +60,7 @@ public class FirstFragment extends Fragment {
         String testPhone = "555-867-5309";
 
         // update firebase
-        userToUpdate.updateProfile(testName, testEmail, testPhone);
+//        userToUpdate.updateProfile(testName, testEmail, testPhone);
 
         Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
 
