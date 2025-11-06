@@ -16,15 +16,39 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 
-
+/**
+ * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
+ * <p>
+ * This fragment allows users to input event details such as name, description, start and end
+ * registration dates, and optionally specify a maximum number of entrants. The event is then
+ * persisted to Firebase through the {@link Event#createEvent()} method.
+ * </p>
+ *
+ * <p><b>Navigation:</b> Provides quick access to Notification and Event fragments through buttons.
+ * </p>
+ *
+ * @author Jinn Kasai
+ */
 public class CreateEventFragment extends Fragment {
 
+    /** View binding for accessing UI elements. */
     private FragmentCreateEventBinding binding;
 
+    /**
+     * Required empty public constructor for fragment inflation.
+     */
     public CreateEventFragment() {
-        // You can keep the constructor-empty and inflate via binding below
+        // Default constructor
     }
 
+    /**
+     * Inflates the layout for this fragment using ViewBinding.
+     *
+     * @param inflater  The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The root view for the fragment's layout.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -33,46 +57,56 @@ public class CreateEventFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Called after the view hierarchy associated with the fragment has been created.
+     * Initializes listeners and button click handlers.
+     *
+     * @param view The root view returned by {@link #onCreateView}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button eventButton = view.findViewById(R.id.btn_events);
 
-
+        // Navigation: move to NotificationFragment
         notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_NotificationFragment);
+            NavHostFragment.findNavController(CreateEventFragment.this)
+                    .navigate(R.id.action_CreateEventFragment_to_NotificationFragment);
         });
 
+        // Navigation: move to EventFragment
         eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_EventFragment);
+            NavHostFragment.findNavController(CreateEventFragment.this)
+                    .navigate(R.id.action_CreateEventFragment_to_EventFragment);
         });
 
-        // Show/hide "max entrants" field when checkbox changes
+        // Toggle visibility of the "Max Entrants" field
         binding.cbLimitWaitingList.setOnCheckedChangeListener((btn, checked) -> {
             binding.etMaxEntrants.setVisibility(checked ? View.VISIBLE : View.GONE);
         });
 
-        // Hook up CREATE button
-        binding.btnCreateEvent.setOnClickListener(v -> {
-            createEventFromForm();
-        });
+        // Hook up the CREATE button to event creation logic
+        binding.btnCreateEvent.setOnClickListener(v -> createEventFromForm());
 
-        // Optional: Cancel just pops back
+        // Cancel button returns to the previous screen
         binding.btnCancel.setOnClickListener(v -> requireActivity().onBackPressed());
-
-
     }
 
+    /**
+     * Reads form data, validates it, creates an {@link Event} object, and uploads it to Firebase.
+     * Displays appropriate toast messages on success or validation errors.
+     */
     private void createEventFromForm() {
-        // Read inputs
+        // Extract inputs from the form
         String name  = s(binding.etEventName.getText());
         String desc  = s(binding.etEventDescription.getText());
-        String time  = s(binding.etEventTime.getText()); // currently not stored in Event model
-        String regStart = s(binding.etStartDate.getText()); // Registration Start (from your UI)
-        String regEnd   = s(binding.etEndDate.getText());   // Registration End (from your UI)
+        String time  = s(binding.etEventTime.getText()); // Currently unused
+        String regStart = s(binding.etStartDate.getText());
+        String regEnd   = s(binding.etEndDate.getText());
 
-        // Optional max entrants
+        // Parse optional entrant limit
         int entrantLimit = 0;
         if (binding.cbLimitWaitingList.isChecked()) {
             String max = s(binding.etMaxEntrants.getText());
@@ -82,7 +116,7 @@ public class CreateEventFragment extends Fragment {
             }
         }
 
-        // Basic validation
+        // Input validation
         if (TextUtils.isEmpty(name)) {
             toast("Please enter an event name");
             return;
@@ -91,29 +125,25 @@ public class CreateEventFragment extends Fragment {
             toast("Please enter an event description");
             return;
         }
-        // You can also enforce regStart/regEnd if required
 
-        // Organizer/entrant id — using device id like you did in NotificationFragment
+        // Get device ID as the organizer identifier
         String entrantId = Settings.Secure.getString(
                 requireContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
 
-        // Your Event model also has eventStartDate / eventEndDate.
-        // If you don’t have those fields on this screen yet, pass nulls (Firebase will omit).
-        String eventStartDate = null; // TODO: add UI if needed
-        String eventEndDate   = null; // TODO: add UI if needed
+        // Placeholder values for unimplemented date fields
+        String eventStartDate = null; // TODO: add date/time picker
+        String eventEndDate   = null;
 
-        // Poster/tag are optional for now
+        // Optional poster and tag
         String poster = null;
         String tag    = null;
 
-        // id will be generated in createEvent(), pass a placeholder for constructor param
-        String placeholderId = null;
-
+        // Create the event model
         Event e = new Event(
                 entrantId,
-                placeholderId,
+                null,
                 name,
                 desc,
                 eventStartDate,
@@ -128,18 +158,31 @@ public class CreateEventFragment extends Fragment {
         // Push to Firebase
         e.createEvent();
         toast("Event created 🎉");
-        // Optionally navigate back:
         requireActivity().onBackPressed();
     }
 
+    /**
+     * Utility helper to safely trim CharSequence values.
+     *
+     * @param cs The CharSequence to trim.
+     * @return The trimmed String or an empty string if null.
+     */
     private static String s(CharSequence cs) {
         return cs == null ? "" : cs.toString().trim();
     }
 
+    /**
+     * Displays a short {@link Toast} message.
+     *
+     * @param msg The message to display.
+     */
     private void toast(String msg) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Cleans up resources by nullifying the binding when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

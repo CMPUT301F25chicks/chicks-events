@@ -13,6 +13,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Handles selection of entrants for an event lottery.
+ * <p>
+ * Reads the entrant limit and current WAITING list from Firebase, then assigns entrants to
+ * {@code INVITED} or {@code UNINVITED} and removes them from {@code WAITING}. The status
+ * transitions are written atomically to Firebase to ensure consistency and minimize UI churn.
+ * </p>
+ *
+ * <p><b>Firebase paths used:</b></p>
+ * <ul>
+ *   <li>{@code Event/{eventId}/entrantLimit}</li>
+ *   <li>{@code WaitingList/{eventId}/WAITING/{uid}}</li>
+ *   <li>{@code WaitingList/{eventId}/INVITED/{uid}}</li>
+ *   <li>{@code WaitingList/{eventId}/UNINVITED/{uid}}</li>
+ * </ul>
+ *
+ * <p><b>Note:</b> Authorization is not enforced here; callers should ensure only authorized
+ * users can run the lottery for a given event.</p>
+ *
+ * @author Jinn Kasai
+ */
 public class Lottery {
 
     private static final String TAG = "Lottery";
@@ -25,17 +46,29 @@ public class Lottery {
     private final FirebaseService eventService;       // root: "Event"
     private final String eventId;
 
+    /**
+     * Creates a lottery instance for the given event.
+     *
+     * @param eventId the event identifier whose waiting list will be processed
+     */
     public Lottery(String eventId) {
         this.waitingListService = new FirebaseService("WaitingList");
         this.eventService = new FirebaseService("Event");
         this.eventId = eventId;
     }
 
-    /** One-shot read -> decide -> single atomic write. */
+    /**
+     * Executes the lottery and applies status updates in a single atomic write.
+     * <p>
+     * On completion, eligible entrants are moved from {@code WAITING} to {@code INVITED},
+     * and the remainder (if any) are moved to {@code UNINVITED}. If there are no
+     * waiting entrants, no updates are performed. Errors are logged.
+     * </p>
+     */
     public void runLottery() {
         Log.i(TAG, "Running lottery (one-shot) for eventId=" + eventId);
 
-        // 1) Read entrantLimit ONCE
+        // Read entrantLimit once
         eventService.getReference()
                 .child(eventId)
                 .child("entrantLimit")
@@ -53,7 +86,7 @@ public class Lottery {
                         }
                         Log.i(TAG, "entrantLimit = " + limit);
 
-                        // 2) Read WAITING ONCE
+                        // Read waiting list once
                         waitingListService.getReference()
                                 .child(eventId)
                                 .child(WAITING_NODE)
@@ -68,7 +101,7 @@ public class Lottery {
                                         }
                                         Log.i(TAG, "waitingCount = " + waiting.size());
 
-                                        // 3) Decide winners/losers
+                                        // Decide invited/uninvited
                                         List<String> invited;
                                         List<String> uninvited = new ArrayList<>();
 
@@ -80,8 +113,7 @@ public class Lottery {
                                             uninvited = new ArrayList<>(waiting.subList(limit, waiting.size()));
                                         }
 
-                                        // 4) Build a single multi-location update
-                                        //    Keys are paths relative to WaitingList root.
+                                        // Build atomic multi-location update under WaitingList root
                                         Map<String, Object> updates = new HashMap<>();
                                         final String base = eventId + "/";
 
@@ -94,21 +126,16 @@ public class Lottery {
                                             updates.put(base + WAITING_NODE + "/" + uid, null); // null = delete
                                         }
 
-                                        // If no one was waiting, nothing to do
                                         if (updates.isEmpty()) {
                                             Log.i(TAG, "No WAITING entrants; nothing to update.");
                                             return;
                                         }
 
-                                        // 5) Single atomic write -> avoids repeated triggers & "shaking"
                                         DatabaseReference waitingRoot = waitingListService.getReference();
-
-// make final copies for lambda
                                         final List<String> invitedFinal = invited;
                                         final List<String> uninvitedFinal = uninvited;
                                         final Map<String, Object> updatesFinal = updates;
 
-// use the *final* copies below
                                         waitingRoot.updateChildren(updatesFinal, (error, ref) -> {
                                             if (error != null) {
                                                 Log.e(TAG, "Lottery update failed: " + error.getMessage());

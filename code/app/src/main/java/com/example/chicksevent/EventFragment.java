@@ -23,140 +23,175 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Fragment displaying a list of available events and entry points to related actions.
+ * <p>
+ * Users can view all events, filter a subset (when arguments are provided), navigate to the
+ * event-creation flow, open notifications, search, and view their joined/hosted events. The
+ * fragment binds results to a {@link ListView} via {@link EventAdapter}.
+ * </p>
+ *
+ * <p><b>Firebase roots used:</b>
+ * <ul>
+ *   <li><code>Event</code> — source of event listings</li>
+ *   <li><code>WaitingList</code> — used to compute "joined events" for the current device</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Arguments:</b> If a {@link Bundle} argument contains an <code>ArrayList<String></code>
+ * under the key <code>"eventList"</code>, the fragment displays only those events whose ids match
+ * the provided values.</p>
+ *
+ * @author Jordan Kwan
+ */
 public class EventFragment extends Fragment {
 
+    /** View binding for the event list layout. */
     private FragmentEventBinding binding;
+
+    /** Backing list for events rendered in the adapter. */
     private ArrayList<Event> eventDataList = new ArrayList<>();
+
+    /** Optional list of event ids used to filter the displayed set. */
     private ArrayList<String> eventFilterList = new ArrayList<>();
+
+    /** Whether a filter from arguments has been applied. */
     private Boolean filterApplied = false;
 
+    /** Firebase service for the "Event" root. */
     private FirebaseService eventService;
+
+    /** Firebase service for the "WaitingList" root. */
     private FirebaseService waitingListService;
 
+    /** Log tag. */
     private String TAG = "RTD8";
+
+    /** The list view displaying events. */
     ListView eventView;
+
+    /** Adapter bridging event data to the list view. */
     EventAdapter eventAdapter;
 
+    /** The Android device ID (used to correlate joined events). */
     private String androidId;
 
-
-
+    /**
+     * Inflates the fragment layout using ViewBinding.
+     */
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentEventBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
+    /**
+     * Initializes Firebase services, UI controls, adapters, and populates the list on first render.
+     *
+     * @param view The root view returned by {@link #onCreateView}.
+     * @param savedInstanceState Previously saved state, if any.
+     */
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventService = new FirebaseService("Event");
         waitingListService = new FirebaseService("WaitingList");
 
+        // Read optional filters from arguments
         Bundle args = getArguments();
         if (args != null) {
             filterApplied = true;
             eventFilterList = args.getStringArrayList("eventList");
-            // Use it to populate UI
         }
 
-
+        // Resolve device id
         androidId = Settings.Secure.getString(
-                getContext().getContentResolver(),
+                requireContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
 
+        // Navigation: Notification
         Button notificationButton = view.findViewById(R.id.btn_notification);
-
-
         notificationButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(EventFragment.this)
                         .navigate(R.id.action_EventFragment_to_NotificationFragment)
         );
 
+        // Navigation: Create Event
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_CreateEventFragment);
-        });
+        createEventButton.setOnClickListener(v ->
+                NavHostFragment.findNavController(EventFragment.this)
+                        .navigate(R.id.action_EventFragment_to_CreateEventFragment)
+        );
 
-        eventView =  view.findViewById(R.id.recycler_notifications);;
-//
+        // List & adapter setup
+        eventView = view.findViewById(R.id.recycler_notifications);
         eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
         eventView.setAdapter(eventAdapter);
 
-
+        // Toolbar buttons
         Button joinedEvents = view.findViewById(R.id.btn_joined_events);
         Button hostedEvents = view.findViewById(R.id.btn_hosted_events);
         Button searchEvents = view.findViewById(R.id.btn_search_events);
 
-        joinedEvents.setOnClickListener(l -> {
-            showJoinedEvents();
-        });
+        joinedEvents.setOnClickListener(l -> showJoinedEvents());
 
-        hostedEvents.setOnClickListener(l -> {
-            NavHostFragment.findNavController(EventFragment.this)
-                    .navigate(R.id.action_EventFragment_to_HostedEventFragment);
-        });
+        hostedEvents.setOnClickListener(l ->
+                NavHostFragment.findNavController(EventFragment.this)
+                        .navigate(R.id.action_EventFragment_to_HostedEventFragment)
+        );
 
-        searchEvents.setOnClickListener(l -> {
-            NavHostFragment.findNavController(EventFragment.this)
-                    .navigate(R.id.action_EventFragment_to_SearchEventFragment);
-        });
+        searchEvents.setOnClickListener(l ->
+                NavHostFragment.findNavController(EventFragment.this)
+                        .navigate(R.id.action_EventFragment_to_SearchEventFragment)
+        );
 
-
-//            eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
-//            eventView.setAdapter(eventAdapter);
-//        });
-
+        // Populate list (filtered or full)
         if (filterApplied) {
             listFilteredEvents();
         } else {
             listEvents();
         }
-
     }
 
+    /**
+     * Displays only those events that the current device/user has joined, inferred by
+     * scanning the <code>WaitingList</code> root for entries matching {@link #androidId}.
+     * The method updates the list view with a new adapter instance containing the filtered set.
+     */
     public void showJoinedEvents() {
-        ArrayList<String> arr = new ArrayList<>();
+        ArrayList<String> joinedEventIds = new ArrayList<>();
         waitingListService.getReference().get().continueWith(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
                 HashMap<String, HashMap<String, Object>> waitingList = (HashMap<String, HashMap<String, Object>>) ds.getValue();
+                if (waitingList == null) continue;
                 for (Map.Entry<String, HashMap<String, Object>> entry : waitingList.entrySet()) {
-//                        Log.i(TAG, "key " + entry.getKey() + " " + "value" + entry.getValue());
-                    for (Map.Entry<String, Object> entry2 : ((HashMap<String, Object>) entry.getValue()).entrySet()) {
-//                            Log.i(TAG, "what is );
+                    HashMap<String, Object> bucket = entry.getValue();
+                    if (bucket == null) continue;
+                    for (Map.Entry<String, Object> entry2 : bucket.entrySet()) {
                         String uid = entry2.getKey();
-                        if (androidId.compareTo(uid) == 0) {
-
-                            arr.add(ds.getKey());
-//                                eventDataList
+                        if (androidId.equals(uid)) {
+                            joinedEventIds.add(ds.getKey());
                             Log.i(TAG, "found event " + ds.getKey());
-//                                arr.add();
                         }
-
-
                     }
-
-
                 }
             }
 
             ArrayList<Event> newEventDataList = new ArrayList<>();
             for (Event e : eventDataList) {
+                if (e == null) continue;
                 boolean keepEvent = false;
-                for (String eventIdFilter : arr) {
+                for (String eventIdFilter : joinedEventIds) {
                     if (eventIdFilter.equals(e.getId())) {
                         keepEvent = true;
+                        break;
                     }
                 }
-                if (keepEvent) {
-                    newEventDataList.add(e);
-                }
-
+                if (keepEvent) newEventDataList.add(e);
             }
             eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
             eventView.setAdapter(eventAdapter);
@@ -165,49 +200,54 @@ public class EventFragment extends Fragment {
         });
     }
 
-    public void showHostedEvents() {
-        
-    }
+    /** Placeholder for showing events hosted by the current organizer. */
+    public void showHostedEvents() { }
 
+    /**
+     * Lists only the events whose ids are present in {@link #eventFilterList}. Results are read
+     * in one shot from the <code>Event</code> root and bound to the list view.
+     */
     public void listFilteredEvents() {
-        Log.i(TAG, "what");
-        Log.i(TAG, "e" + eventService);
+        Log.i(TAG, "listFilteredEvents");
         eventDataList = new ArrayList<>();
         eventService.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "=== SHOW the event ===");
 
-                // Iterate through all children
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String key = childSnapshot.getKey();
                     HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
-//                    new Event();
-
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    if (eventFilterList.contains(key)) {
-                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", "tag");
+
+                    if (value == null) continue;
+                    if (eventFilterList != null && eventFilterList.contains(key)) {
+                        Event e = new Event(
+                                "e",
+                                value.get("id"),
+                                value.get("name"),
+                                value.get("eventDetails"),
+                                "N/A",
+                                "N/A",
+                                value.get("registrationEndDate"),
+                                value.get("registrationStartDate"),
+                                32,
+                                "N/A",
+                                "tag"
+                        );
                         eventDataList.add(e);
                     }
-
-
-                    Log.d(TAG, "---");
                 }
+
                 EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
-
                     Bundle bundle = new Bundle();
                     bundle.putString("eventName", item.getId());
-
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
-
                 });
 
                 eventView.setAdapter(eventAdapter);
-
-
-//                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -216,42 +256,49 @@ public class EventFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * Lists all events from the <code>Event</code> root and binds them to the list view.
+     */
     public void listEvents() {
-        Log.i(TAG, "what");
-        Log.i(TAG, "e" + eventService);
+        Log.i(TAG, "listEvents");
         eventDataList = new ArrayList<>();
         eventService.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "=== SHOW the event ===");
 
-                // Iterate through all children
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String key = childSnapshot.getKey();
                     HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
-//                    new Event();
-
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", "tag");
-                    eventDataList.add(e);
+                    if (value == null) continue;
 
-                    Log.d(TAG, "---");
+                    Event e = new Event(
+                            "e",
+                            value.get("id"),
+                            value.get("name"),
+                            value.get("eventDetails"),
+                            "N/A",
+                            "N/A",
+                            value.get("registrationEndDate"),
+                            value.get("registrationStartDate"),
+                            32,
+                            "N/A",
+                            "tag"
+                    );
+                    eventDataList.add(e);
                 }
+
                 EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
-
                     Bundle bundle = new Bundle();
                     bundle.putString("eventName", item.getId());
-
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
-
                 });
 
                 eventView.setAdapter(eventAdapter);
-
-
-//                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -261,10 +308,12 @@ public class EventFragment extends Fragment {
         });
     }
 
+    /**
+     * Clears the binding reference when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
 }
