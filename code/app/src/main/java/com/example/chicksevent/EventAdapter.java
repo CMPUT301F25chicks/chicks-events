@@ -32,7 +32,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView status = view.findViewById(R.id.tv_status);
         TextView event_name = view.findViewById(R.id.tv_event_name);
         TextView tv_time = view.findViewById(R.id.tv_time);
-        Button btn_arrow = view.findViewById(R.id.btn_arrow);
+//        Button btn_arrow = view.findViewById(R.id.btn_arrow);
 //        btn_arrow.setOnClickListener(l -> {
 //            createEventButton.setOnClickListener(v -> {
 //                NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_CreateEventFragment);
