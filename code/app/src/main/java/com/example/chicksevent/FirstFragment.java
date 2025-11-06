@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,23 +31,33 @@ public class FirstFragment extends Fragment {
 
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        service = new FirebaseService("bruhmoment");
-        HashMap<String, Object> data = new HashMap<>();
 
-        data.put("username", "jim");
-        data.put("age", 43);
-        String id = service.addEntry(data);
-        data.put("phoneNumber", "403-420-6767");
-        id = service.editEntry(id, data);
+        Admin admin = new Admin();
 
-//        service.deleteEntry(id);
+        admin.browseProfiles()
+                .addOnSuccessListener(users -> {
+                    StringBuilder sb = new StringBuilder();
+                    if (users.isEmpty()) {
+                        sb.append("No profiles found.\n");
+                    } else {
+                        for (User user : users) {
+                            sb.append("Uid: ").append(user.getUid())
+                                    .append(" | Name: ").append(user.getName())
+                                    .append(" | Email: ").append(user.getEmail())
+                                    .append(" | Phone: ").append(user.getPhoneNumber())
+                                    .append("\n");
+                        }
+                    }
+                        // log to logcat to see
+                    android.util.Log.d("BrowseProfiles", sb.toString());
 
-//        binding.buttonFirst.setOnClickListener(v ->
-//                NavHostFragment.findNavController(FirstFragment.this)
-//                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        );
+                })
+                .addOnFailureListener(err -> {
+                    android.util.Log.e("BrowseProfiles", "Failed to fetch profiles", err);
+                });
     }
 
     @Override
