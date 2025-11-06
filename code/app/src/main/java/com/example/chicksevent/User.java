@@ -39,11 +39,12 @@ public class User {
         this.notificationsEnabled = true;
     }
 
-    public Task<Boolean> filterEvents(ArrayList<String> filterList) {
+    public Task<ArrayList<String>> filterEvents(ArrayList<String> filterList) {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
         return eventService.getReference().get().continueWith(task -> {
             Log.d(TAG, "=== All Children at Root filter ===");
+            ArrayList<String> eventList = new ArrayList<>();
 
             // Iterate through all children
             for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
@@ -54,7 +55,8 @@ public class User {
                 Log.d(TAG, "Key: " + key);
                 for (String val : value) {
                     if (filterList.contains(val)) {
-                        return true;
+                        eventList.add(key);
+//                        return eventList;
                     }
                 }
                 Log.d(TAG, "Value: " + value);
@@ -62,7 +64,7 @@ public class User {
             }
 
 //                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
-            return false;
+            return eventList;
         });
     }
 

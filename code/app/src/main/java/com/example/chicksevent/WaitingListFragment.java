@@ -85,13 +85,13 @@ public class WaitingListFragment extends Fragment {
         );
 
         eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_UpdateEventFragment_to_EventFragment);
+            NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_WaitingListFragment_to_EventFragment);
         });
 
         createEventButton.setOnClickListener(v -> {
 //            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
 
-            NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_UpdateEventFragment_to_CreateEventFragment);
+            NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_WaitingListFragment_to_CreateEventFragment);
         });
 
         listEntrants();

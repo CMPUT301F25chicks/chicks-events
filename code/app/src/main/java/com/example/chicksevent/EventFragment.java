@@ -27,6 +27,8 @@ public class EventFragment extends Fragment {
 
     private FragmentEventBinding binding;
     private ArrayList<Event> eventDataList = new ArrayList<>();
+    private ArrayList<String> eventFilterList = new ArrayList<>();
+    private Boolean filterApplied = false;
 
     private FirebaseService eventService;
     private FirebaseService waitingListService;
@@ -55,6 +57,14 @@ public class EventFragment extends Fragment {
         eventService = new FirebaseService("Event");
         waitingListService = new FirebaseService("WaitingList");
 
+        Bundle args = getArguments();
+        if (args != null) {
+            filterApplied = true;
+            eventFilterList = args.getStringArrayList("eventList");
+            // Use it to populate UI
+        }
+
+
         androidId = Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
@@ -81,6 +91,7 @@ public class EventFragment extends Fragment {
 
         Button joinedEvents = view.findViewById(R.id.btn_joined_events);
         Button hostedEvents = view.findViewById(R.id.btn_hosted_events);
+        Button searchEvents = view.findViewById(R.id.btn_search_events);
 
         joinedEvents.setOnClickListener(l -> {
             showJoinedEvents();
@@ -91,12 +102,22 @@ public class EventFragment extends Fragment {
                     .navigate(R.id.action_EventFragment_to_HostedEventFragment);
         });
 
+        searchEvents.setOnClickListener(l -> {
+            NavHostFragment.findNavController(EventFragment.this)
+                    .navigate(R.id.action_EventFragment_to_SearchEventFragment);
+        });
+
 
 //            eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
 //            eventView.setAdapter(eventAdapter);
 //        });
-//
-        listEvents();
+
+        if (filterApplied) {
+            listFilteredEvents();
+        } else {
+            listEvents();
+        }
+
     }
 
     public void showJoinedEvents() {
@@ -148,6 +169,53 @@ public class EventFragment extends Fragment {
         
     }
 
+    public void listFilteredEvents() {
+        Log.i(TAG, "what");
+        Log.i(TAG, "e" + eventService);
+        eventDataList = new ArrayList<>();
+        eventService.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "=== SHOW the event ===");
+
+                // Iterate through all children
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    String key = childSnapshot.getKey();
+                    HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
+//                    new Event();
+
+                    Log.d(TAG, "Key: " + key);
+                    Log.d(TAG, "Value: " + value);
+                    if (eventFilterList.contains(key)) {
+                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", "tag");
+                        eventDataList.add(e);
+                    }
+
+
+                    Log.d(TAG, "---");
+                }
+                EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
+                    NavController navController = NavHostFragment.findNavController(EventFragment.this);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventName", item.getId());
+
+                    navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
+
+                });
+
+                eventView.setAdapter(eventAdapter);
+
+
+//                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error reading data: " + databaseError.getMessage());
+            }
+        });
+    }
     public void listEvents() {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);

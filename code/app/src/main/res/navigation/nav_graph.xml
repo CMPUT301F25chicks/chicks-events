@@ -225,7 +225,7 @@
             android:id="@+id/action_WaitingListFragment_to_EventFragment"
             app:destination="@id/EventFragment" />
         <action
-            android:id="@+id/action_PoolingFragment_to_CreateEventFragment"
+            android:id="@+id/action_WaitingListFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
     </fragment>
 

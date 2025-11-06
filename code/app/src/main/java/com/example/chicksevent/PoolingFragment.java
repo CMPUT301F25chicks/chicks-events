@@ -77,13 +77,13 @@ public class PoolingFragment extends Fragment {
         );
 
         eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_UpdateEventFragment_to_EventFragment);
+            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_PoolingFragment_to_EventFragment);
         });
 
         createEventButton.setOnClickListener(v -> {
 //            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
 
-            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_UpdateEventFragment_to_CreateEventFragment);
+            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_PoolingFragment_to_CreateEventFragment);
         });
 
         poolingButton.setOnClickListener(v -> {
