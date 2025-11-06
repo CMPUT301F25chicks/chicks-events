@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -80,15 +81,21 @@ public class FirstFragment extends Fragment {
 //        NotificationAdapter notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
 //        notificationView.setLayoutManager(new LinearLayoutManager(requireContext()));
         notificationView.setAdapter(notificationAdapter);
-//        userToUpdate.getNotificationList().addOnCompleteListener(task -> {
-//            Log.i(TAG, "should i change");
-//
-//            notificationDataList = task.getResult();
-//            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
-//
-//            Log.i(TAG, String.valueOf(notificationDataList.size()));
-////            notificationAdapter.notifyDataSetChanged();
-//            notificationView.setAdapter(notificationAdapter);
+        userToUpdate.getNotificationList().addOnCompleteListener(task -> {
+            Log.i(TAG, "should i change");
+
+            notificationDataList = task.getResult();
+            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
+
+            Log.i(TAG, String.valueOf(notificationDataList.size()));
+//            notificationAdapter.notifyDataSetChanged();
+            notificationView.setAdapter(notificationAdapter);
+
+        });
+
+        Button eventButton = view.findViewById(R.id.btn_events);
+
+//        eventButton.setOnClickListener(l -> {
 //
 //        });
 
