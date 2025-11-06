@@ -77,6 +77,7 @@
                 android:id="@+id/et_event_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/purpleText"
                 android:hint="Event Name"
                 android:inputType="textPersonName"
                 android:layout_marginBottom="12dp" />
@@ -93,6 +94,7 @@
             <EditText
                 android:id="@+id/et_event_description"
                 android:layout_width="match_parent"
+                android:textColor="@color/purpleText"
                 android:layout_height="wrap_content"
                 android:hint="Event Description"
                 android:inputType="textMultiLine"
@@ -111,6 +113,7 @@
             <EditText
                 android:id="@+id/et_event_time"
                 android:layout_width="match_parent"
+                android:textColor="@color/purpleText"
                 android:layout_height="wrap_content"
                 android:hint="Event Time"
                 android:inputType="datetime"

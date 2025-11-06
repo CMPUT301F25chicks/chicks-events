@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +20,18 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
 import com.example.chicksevent.databinding.FragmentEventDetailOrgBinding;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
 
 public class EventDetailFragment extends Fragment {
 
     private FragmentEventDetailBinding binding;
+    private FirebaseService userService;
+    String userId;
+
 
     public EventDetailFragment() {
         // You can keep the constructor-empty and inflate via binding below
@@ -40,6 +49,8 @@ public class EventDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        userService = new FirebaseService("User");
+
         TextView eventName = view.findViewById(R.id.tv_event_name);
 
         Bundle args = getArguments();
@@ -52,7 +63,10 @@ public class EventDetailFragment extends Fragment {
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
-
+        userId = Settings.Secure.getString(
+                getContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID
+        );
         notificationButton.setOnClickListener(v -> {
                     NavHostFragment.findNavController(EventDetailFragment.this)
                         .navigate(R.id.action_EventDetailFragment_to_NotificationFragment);
@@ -71,16 +85,45 @@ public class EventDetailFragment extends Fragment {
         });
 
         joinButton.setOnClickListener(v -> {
-            Entrant e = new Entrant(Settings.Secure.getString(
-                    getContext().getContentResolver(),
-                    Settings.Secure.ANDROID_ID
-            ), args.getString("eventName"));
 
-            e.joinWaitingList();
+            userExists().addOnSuccessListener(boole -> {
+               if (boole) {
+                   Entrant e = new Entrant(userId, args.getString("eventName"));
+
+                   e.joinWaitingList();
+                   Toast.makeText(requireContext(),
+                           "Joined waiting list :)",
+                           Toast.LENGTH_SHORT).show();
+               } else {
+                   Toast.makeText(requireContext(),
+                           "You need to create profile to join waiting list",
+                           Toast.LENGTH_SHORT).show();
+               }
+            });
+
         });
 //        eventName
     }
 
+    public Task<Boolean> userExists() {
+        return userService.getReference().get().continueWith(ds -> {
+            boolean userExists = false;
+            for (DataSnapshot d : ds.getResult().getChildren()) {
+                Log.i("TAGwerw", d.getKey());
+                try {
+                    HashMap<String, Object> userHash = (HashMap<String, Object>) d.getValue();
+                    if (userId.equals(d.getKey())) {
+                        return true;
+                    }
+                } catch(Exception e) {
+                    Log.e("ERROR", "weird error " + e);
+                }
+
+            }
+
+            return false;
+        });
+    }
     private static String s(CharSequence cs) {
         return cs == null ? "" : cs.toString().trim();
     }

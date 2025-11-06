@@ -24,6 +24,7 @@ import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.databinding.FragmentProfileEntrantBinding;
 import com.example.chicksevent.databinding.FragmentUpdateEventDetailBinding;
 import com.example.chicksevent.databinding.FragmentWaitingListBinding;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -110,15 +111,22 @@ public class ProfileFragment extends Fragment {
         saveInfoButton.setOnClickListener(v -> updateProfile());
 
 
-        renderProfile();
+        renderProfile().addOnSuccessListener(exist -> {
+            if (!exist) {
+                editName.setText("");
+                editEmail.setText("");
+                editPhone.setText("");
+            }
+        });
 
 
 
 //        eventName
     }
 
-    private void renderProfile() {
-        userService.getReference().get().continueWith(ds -> {
+    private Task<Boolean> renderProfile() {
+        return userService.getReference().get().continueWith(ds -> {
+            boolean userExists = false;
             for (DataSnapshot d : ds.getResult().getChildren()) {
                 Log.i("TAGwerw", d.getKey());
                 try {
@@ -128,6 +136,7 @@ public class ProfileFragment extends Fragment {
                         editEmail.setText(userHash.get("email").toString());
                         editPhone.setText(userHash.get("phoneNumber").toString());
                         notificationSwitch.setChecked((boolean) userHash.get("notificationsEnabled"));
+                        return true;
                     }
                 } catch(Exception e) {
                     Log.e("ERROR", "weird error " + e);
@@ -135,7 +144,7 @@ public class ProfileFragment extends Fragment {
 
             }
 
-            return null;
+            return false;
         });
     }
 
@@ -165,6 +174,7 @@ public class ProfileFragment extends Fragment {
         editName.setText("");
         editEmail.setText("");
         editPhone.setText("");
+
         Toast.makeText(requireContext(), "You are Deleted RIP :(", Toast.LENGTH_SHORT).show();
 
     }

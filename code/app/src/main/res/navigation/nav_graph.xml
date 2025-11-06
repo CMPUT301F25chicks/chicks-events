@@ -113,7 +113,7 @@
             app:destination="@id/CreateEventFragment" />
         <action
             android:id="@+id/action_ProfileFragment_to_EventFragment"
-            app:destination="@id/SearchEventFragment" />
+            app:destination="@id/EventFragment" />
 
     </fragment>
 
