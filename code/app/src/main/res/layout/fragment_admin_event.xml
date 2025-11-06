@@ -26,7 +26,7 @@
         android:id="@+id/search_bar"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="3dp"
         android:hint="Search..."
         android:textColor="#FFFFFF"
         android:textColorHint="#80FFFFFF"
@@ -44,7 +44,7 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingBottom="8dp"
-        tools:listitem="@layout/item_event"
+        tools:listitem="@layout/item_event_deletable"
         app:layout_constraintTop_toBottomOf="@id/search_bar"
         app:layout_constraintBottom_toTopOf="@id/admin_bottom_buttons_layout"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,159 +52,161 @@
 
     <LinearLayout
         android:id="@+id/admin_bottom_buttons_layout"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal"
-        android:weightSum="6"
+        android:gravity="center"
+        android:background="@drawable/bg_admin_button_box"
+        android:padding="3dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recycler_notifications">
 
         <Button
             android:id="@+id/btn_admin_notification"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="3dp"
             android:backgroundTint="@color/black"
-            android:contentDescription="Profile"
+            android:contentDescription="admin notification"
             android:drawableTop="@drawable/notification_multiple"
-            android:drawablePadding="6dp"
+            android:drawablePadding="4dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
+            android:padding="3dp" />
 
         <Button
             android:id="@+id/btn_admin_profile"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="3dp"
             android:backgroundTint="@color/black"
-            android:contentDescription="Profile"
+            android:contentDescription="admin Profile"
             android:drawableTop="@drawable/ic_small_profile"
-            android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
+            android:padding="3dp" />
 
         <Button
             android:id="@+id/btn_admin_event"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="3dp"
             android:backgroundTint="@color/black"
-            android:contentDescription="Profile"
+            android:contentDescription="admin event"
             android:drawableTop="@drawable/ic_small_event"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
+            android:padding="6dp" />
+
+        <Button
+            android:id="@+id/btn_admin_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="3dp"
+            android:backgroundTint="@color/black"
+            android:contentDescription="admin avatar"
+            android:drawableTop="@drawable/ic_small_image"
+            android:drawableTint="@color/purpleText"
+            android:padding="3dp" />
 
         <Button
             android:id="@+id/btn_admin_facility"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="3dp"
             android:backgroundTint="@color/black"
-            android:contentDescription="Profile"
+            android:contentDescription="admin facility"
             android:drawableTop="@drawable/profile"
             android:drawableTint="@color/purpleText" />
 
         <Button
             android:id="@+id/btn_admin_scan"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="3dp"
             android:backgroundTint="@color/black"
-            android:contentDescription="Profile"
+            android:contentDescription="admin scan"
             android:drawableTop="@drawable/ic_small_scan"
-            android:drawablePadding="6dp"
+            android:drawablePadding="4dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
+            android:padding="3dp" />
+
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/bottom_buttons_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="5"
-        app:layout_constraintTop_toBottomOf="@+id/admin_bottom_buttons_layout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/btn_notification"
-            android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
             android:layout_marginHorizontal="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:drawableTop="@drawable/ic_notification"
             android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp"
-            android:contentDescription="Notifications" />
+            android:padding="8dp" />
 
         <Button
             android:id="@+id/btn_events"
-            android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
             android:layout_marginHorizontal="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:drawableTop="@drawable/ic_events"
             android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp"
-            android:contentDescription="Events" />
+            android:padding="8dp" />
 
         <Button
             android:id="@+id/btn_scan"
-            android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
             android:layout_marginHorizontal="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:drawableTop="@drawable/ic_scan"
             android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp"
-            android:contentDescription="Scan" />
+            android:padding="8dp" />
 
         <Button
             android:id="@+id/btn_addEvent"
-            android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
             android:layout_marginHorizontal="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:drawableTop="@drawable/ic_addevents"
             android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp"
-            android:contentDescription="Add Event" />
+            android:padding="8dp" />
 
         <Button
             android:id="@+id/btn_profile"
-            android:layout_width="0dp"
-            android:layout_height="90dp"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
             android:layout_marginHorizontal="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:drawableTop="@drawable/ic_profile"
             android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
-            android:padding="8dp"
-            android:contentDescription="Profile" />
+            android:padding="8dp" />
     </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

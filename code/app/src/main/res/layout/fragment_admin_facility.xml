@@ -13,30 +13,17 @@
         android:background="#000000"
         android:padding="16dp">
 
-        <ImageButton
-            android:id="@+id/btn_check"
-            android:layout_width="29dp"
-            android:layout_height="34dp"
-            android:layout_marginTop="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_arrow_back_24"
-            app:layout_constraintEnd_toStartOf="@+id/header_title"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/purpleText" />
-
         <TextView
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/michroma"
-            android:text="Chosen Entrants"
+            android:text="Browse Organizers"
             android:textColor="@color/purpleText"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold"
+            android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.74"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,8 +51,8 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingBottom="8dp"
-            tools:listitem="@layout/item_chosen_user"
-            app:layout_constraintBottom_toTopOf="@id/btn_notification1"
+            tools:listitem="@layout/item_facility"
+            app:layout_constraintBottom_toTopOf="@id/admin_bottom_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -73,20 +60,89 @@
             app:layout_constraintVertical_bias="1.0" />
 
 
-        <Button
-            android:id="@+id/btn_notification1"
-            android:layout_width="71dp"
-            android:layout_height="68dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/purpleText"
-            android:drawableTop="@drawable/ic_notification"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/darkPurple"
-            android:padding="8dp"
+        <LinearLayout
+            android:id="@+id/admin_bottom_buttons_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_admin_button_box"
+            android:padding="3dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recycler_chosenUser" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_chosenUser">
+
+            <Button
+                android:id="@+id/btn_admin_notification"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:backgroundTint="@color/black"
+                android:contentDescription="admin notification"
+                android:drawableTop="@drawable/notification_multiple"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="3dp" />
+
+            <Button
+                android:id="@+id/btn_admin_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:backgroundTint="@color/black"
+                android:contentDescription="admin Profile"
+                android:drawableTop="@drawable/ic_small_profile"
+                android:drawableTint="@color/purpleText"
+                android:padding="3dp" />
+
+            <Button
+                android:id="@+id/btn_admin_event"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:backgroundTint="@color/black"
+                android:contentDescription="admin event"
+                android:drawableTop="@drawable/ic_small_event"
+                android:drawableTint="@color/purpleText"
+                android:padding="6dp" />
+
+            <Button
+                android:id="@+id/btn_admin_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:backgroundTint="@color/black"
+                android:contentDescription="admin avatar"
+                android:drawableTop="@drawable/ic_small_image"
+                android:drawableTint="@color/purpleText"
+                android:padding="3dp" />
+
+            <Button
+                android:id="@+id/btn_admin_facility"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:backgroundTint="@color/black"
+                android:contentDescription="admin facility"
+                android:drawableTop="@drawable/profile"
+                android:drawableTint="@color/purpleText" />
+
+            <Button
+                android:id="@+id/btn_admin_scan"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="3dp"
+                android:backgroundTint="@color/black"
+                android:contentDescription="admin scan"
+                android:drawableTop="@drawable/ic_small_scan"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/purpleText"
+                android:padding="3dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/bottom_buttons_layout"

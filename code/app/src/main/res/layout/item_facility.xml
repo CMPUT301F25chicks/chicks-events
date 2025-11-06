@@ -38,24 +38,12 @@
             android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="USER"
+            android:text="FACILITY"
             android:textColor="@color/purpleText"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="155dp"
             tools:layout_editor_absoluteY="12dp" />
-
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="STATUS: SIGNED UP"
-            android:textColor="@color/purpleText"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="86dp"
-            tools:layout_editor_absoluteY="11dp" />
-
 
     </LinearLayout>
 
