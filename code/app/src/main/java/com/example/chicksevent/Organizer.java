@@ -16,6 +16,10 @@ public class Organizer extends User {
     private String organizerId;
     private String eventId;
 
+    public void setOrganizerId(String organizerId) {
+        this.organizerId = organizerId;
+    }
+
     Organizer(String id, String eventId) {
         super(id);
         organizerId = id;
