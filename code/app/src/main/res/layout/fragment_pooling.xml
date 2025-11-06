@@ -111,7 +111,7 @@
                 android:layout_marginBottom="8dp"/>
 
             <!-- RecyclerView for selected entrants -->
-            <androidx.recyclerview.widget.RecyclerView
+            <ListView
                 android:id="@+id/rv_selected_entrants"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

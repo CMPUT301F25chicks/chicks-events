@@ -51,7 +51,7 @@ public class EventDetailFragment extends Fragment {
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
-
+        Button joinButton = view.findViewById(R.id.btn_waiting_list);
 
         notificationButton.setOnClickListener(v -> {
                     NavHostFragment.findNavController(EventDetailFragment.this)
@@ -68,6 +68,15 @@ public class EventDetailFragment extends Fragment {
 //            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
 
             NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
+        });
+
+        joinButton.setOnClickListener(v -> {
+            Entrant e = new Entrant(Settings.Secure.getString(
+                    getContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            ), args.getString("eventName"));
+
+            e.joinWaitingList();
         });
 //        eventName
     }
