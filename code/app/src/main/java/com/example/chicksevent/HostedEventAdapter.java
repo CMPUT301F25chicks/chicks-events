@@ -45,6 +45,10 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
         ImageButton btn_arrow = view.findViewById(R.id.btn_arrow);
 
         Button update_button = view.findViewById(R.id.update_button);
+
+        event_name.setText(event.getName());
+
+
         btn_arrow.setOnClickListener(l -> {
             if (listener != null) listener.onItemButtonClick(event, 0);
         });

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
@@ -52,6 +53,19 @@ public class EventDetailOrgFragment extends Fragment {
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
 
+        Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
+
+        viewWaitingListButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("eventName", args.getString("eventName"));
+
+            navController.navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment, bundle);
+
+//            NavHostFragment.findNavController(EventDetailOrgFragment.this)
+//                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
+        });
 
         notificationButton.setOnClickListener(v -> {
                     NavHostFragment.findNavController(EventDetailOrgFragment.this)

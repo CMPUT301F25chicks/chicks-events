@@ -25,6 +25,8 @@ public class NotificationFragment extends Fragment {
     ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
     NotificationAdapter notificationAdapter;
 
+    private String androidId;
+
     private final String TAG = "RTD8";
 
     @Override
@@ -43,7 +45,7 @@ public class NotificationFragment extends Fragment {
         service = new FirebaseService("bruhmoment");
         HashMap<String, Object> data = new HashMap<>();
 
-        String androidId = Settings.Secure.getString(
+        androidId = Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
@@ -103,6 +105,8 @@ public class NotificationFragment extends Fragment {
             NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_CreateEventFragment);
         });
 
+        createMockEvent();
+
 
 
 //        NotificationAdapter adapter = new NotificationAdapter();
@@ -133,26 +137,12 @@ public class NotificationFragment extends Fragment {
         //        });
         //
         //
-                Event event = new Event(
-                        userToUpdate.getUserId(),
-                        "abc123",                           // id
-                        "Swimming Lessons",                 // name
-                        "Kids learn freestyle and backstroke", // eventDetails
-                        "2026-01-01",                       // eventStartDate
-                        "2026-02-01",                       // eventEndDate
-                        "2025-11-13",                       // registrationStartDate
-                        "2025-12-30",                       // registrationEndDate
-                        30,                                 // entrantLimit
-                        null,                               // poster
-                        "sports kids swimming"              // tag
-                );
 
-                event.createEvent();
         //
         //        Log.d("RTD8", "even id: " + event.getId());
         //
-                Entrant e = new Entrant(androidId, event.getId());
-                e.joinWaitingList();
+//                Entrant e = new Entrant(androidId, event.getId());
+//                e.joinWaitingList();
         //
         //
         //        e.swapStatus(EntrantStatus.INVITED);
@@ -188,6 +178,25 @@ public class NotificationFragment extends Fragment {
         //                NavHostFragment.findNavController(NotificationFragment.this)
         //                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
         //        );
+    }
+
+    private void createMockEvent() {
+        User userToUpdate = new User(androidId);
+        Event event = new Event(
+                userToUpdate.getUserId(),
+                "abc123",                           // id
+                "Swimming Lessons",                 // name
+                "Kids learn freestyle and backstroke", // eventDetails
+                "2026-01-01",                       // eventStartDate
+                "2026-02-01",                       // eventEndDate
+                "2025-11-13",                       // registrationStartDate
+                "2025-12-30",                       // registrationEndDate
+                30,                                 // entrantLimit
+                null,                               // poster
+                "sports kids swimming"              // tag
+        );
+
+        event.createEvent();
     }
 
     @Override
