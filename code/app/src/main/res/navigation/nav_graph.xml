@@ -3,24 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/NotificationFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.chicksevent.FirstFragment"
+        android:id="@+id/NotificationFragment"
+        android:name="com.example.chicksevent.NotificationFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_notification">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_NotificationFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
 
         <action
-            android:id="@+id/action_FirstFragment_to_CreateEventFragment"
+            android:id="@+id/action_NotificationFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
 
         <action
-            android:id="@+id/action_FirstFragment_to_EventDetailFragment"
+            android:id="@+id/action_NotificationFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
     </fragment>
 
@@ -40,11 +40,11 @@
             android:id="@+id/action_EventDetailFragment_to_ChosenListFragment"
             app:destination="@id/ChosenListFragment" />
         <action
-            android:id="@+id/action_EventDetailFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_EventDetailFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
-            android:id="@+id/action_EventDetailFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_EventDetailFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_EventDetailFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
@@ -57,41 +57,41 @@
         tools:layout="@layout/fragment_create_event">
 
         <action
-            android:id="@+id/action_CreateEventFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_CreateEventFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
 
         <action
-        android:id="@+id/action_CreateEventFragment_to_FirstFragment"
-        app:destination="@id/FirstFragment" />
+        android:id="@+id/action_CreateEventFragment_to_NotificationFragment"
+        app:destination="@id/NotificationFragment" />
 
 
         </fragment>
 
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.chicksevent.SecondFragment"
+        android:id="@+id/EventFragment"
+        android:name="com.example.chicksevent.EventFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        tools:layout="@layout/fragment_event">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_EventFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
 
         <action
-            android:id="@+id/action_SecondFragment_to_EventDetailFragment"
+            android:id="@+id/action_EventFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
 
         <action
-            android:id="@+id/action_SecondFragment_to_CreateEventFragment"
+            android:id="@+id/action_EventFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
         <action
-            android:id="@+id/action_SecondFragment_to_SearchEventFragment"
+            android:id="@+id/action_EventFragment_to_SearchEventFragment"
             app:destination="@id/SearchEventFragment" />
         <action
-            android:id="@+id/action_SecondFragment_to_HostedEventFragment"
+            android:id="@+id/action_EventFragment_to_HostedEventFragment"
             app:destination="@id/HostedEventFragment" />
         <action
-            android:id="@+id/action_SecondFragment_to_ProfileFragment"
+            android:id="@+id/action_EventFragment_to_ProfileFragment"
             app:destination="@id/ProfileFragment" />
     </fragment>
 
@@ -102,13 +102,13 @@
         tools:layout="@layout/fragment_profile_entrant">
 
         <action
-            android:id="@+id/action_ProfileFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_ProfileFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
             android:id="@+id/action_ProfileFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
         <action
-            android:id="@+id/action_ProfileFragment_to_SecondFragment"
+            android:id="@+id/action_ProfileFragment_to_EventFragment"
             app:destination="@id/SearchEventFragment" />
 
     </fragment>
@@ -123,11 +123,11 @@
             android:id="@+id/action_SearchEventFragment_to_HostedEventFragment"
             app:destination="@id/HostedEventFragment" />
         <action
-            android:id="@+id/action_SearchEventFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_SearchEventFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
-            android:id="@+id/action_SearchEventFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_SearchEventFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
             android:id="@+id/action_SearchEventFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
@@ -143,8 +143,8 @@
             android:id="@+id/action_HostedEventFragment_to_SearchEventFragment"
             app:destination="@id/SearchEventFragment" />
         <action
-            android:id="@+id/action_HostedEventFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_HostedEventFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_HostedEventFragment_to_UpdateEventFragment"
             app:destination="@id/UpdateEventFragment" />
@@ -152,8 +152,8 @@
             android:id="@+id/action_HostedEventFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
         <action
-            android:id="@+id/action_HostedEventFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_HostedEventFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
             android:id="@+id/action_HostedEventFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
@@ -169,11 +169,11 @@
             android:id="@+id/action_UpdateEventFragment_to_HostedEventFragment"
             app:destination="@id/HostedEventFragment" />
         <action
-            android:id="@+id/action_UpdateEventFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_UpdateEventFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
-            android:id="@+id/action_UpdateEventFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_UpdateEventFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_UpdateEventFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
@@ -192,11 +192,11 @@
             android:id="@+id/action_WaitingListFragment_to_PoolingFragment"
             app:destination="@id/PoolingFragment" />
         <action
-            android:id="@+id/action_WaitingListFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_WaitingListFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
-            android:id="@+id/action_WaitingListFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_WaitingListFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_PoolingFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
@@ -212,11 +212,11 @@
             android:id="@+id/action_ChosenListFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
         <action
-            android:id="@+id/action_ChosenListFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_ChosenListFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
-            android:id="@+id/action_ChosenListFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_ChosenListFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_ChosenListFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
@@ -232,11 +232,11 @@
             android:id="@+id/action_PoolingFragment_to_WaitingListFragment"
             app:destination="@id/WaitingListFragment" />
         <action
-            android:id="@+id/action_PoolingFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_PoolingFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
         <action
-            android:id="@+id/action_PoolingFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_PoolingFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_PoolingFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />

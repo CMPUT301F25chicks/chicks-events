@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.chicksevent.databinding.FragmentSecondBinding;
+import com.example.chicksevent.databinding.FragmentEventBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SecondFragment extends Fragment {
+public class EventFragment extends Fragment {
 
-    private FragmentSecondBinding binding;
+    private FragmentEventBinding binding;
     private ArrayList<Event> eventDataList = new ArrayList<>();
 
     private FirebaseService eventService;
@@ -45,7 +45,7 @@ public class SecondFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
+        binding = FragmentEventBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -64,13 +64,13 @@ public class SecondFragment extends Fragment {
 
 
         notificationButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
+                NavHostFragment.findNavController(EventFragment.this)
+                        .navigate(R.id.action_EventFragment_to_NotificationFragment)
         );
 
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(SecondFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
+            NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_CreateEventFragment);
         });
 
         eventView =  view.findViewById(R.id.recycler_notifications);;
@@ -170,12 +170,12 @@ public class SecondFragment extends Fragment {
                     Log.d(TAG, "---");
                 }
                 EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
-                    NavController navController = NavHostFragment.findNavController(SecondFragment.this);
+                    NavController navController = NavHostFragment.findNavController(EventFragment.this);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("eventName", item.getId());
 
-                    navController.navigate(R.id.action_SecondFragment_to_EventDetailFragment, bundle);
+                    navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
 
                 });
 

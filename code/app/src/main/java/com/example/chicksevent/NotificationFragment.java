@@ -1,8 +1,6 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,18 +12,15 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.chicksevent.databinding.FragmentFirstBinding;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.chicksevent.databinding.FragmentNotificationBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FirstFragment extends Fragment {
+public class NotificationFragment extends Fragment {
 
-    private FragmentFirstBinding binding;
+    private FragmentNotificationBinding binding;
     private FirebaseService service;
     ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
     NotificationAdapter notificationAdapter;
@@ -38,7 +33,7 @@ public class FirstFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentNotificationBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -101,11 +96,11 @@ public class FirstFragment extends Fragment {
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
 
         eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_SecondFragment);
+            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_EventFragment);
         });
 
         createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_CreateEventFragment);
+            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_CreateEventFragment);
         });
 
 
@@ -190,7 +185,7 @@ public class FirstFragment extends Fragment {
         //        service.deleteEntry(id);
         //
         //        binding.buttonFirst.setOnClickListener(v ->
-        //                NavHostFragment.findNavController(FirstFragment.this)
+        //                NavHostFragment.findNavController(NotificationFragment.this)
         //                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
         //        );
     }

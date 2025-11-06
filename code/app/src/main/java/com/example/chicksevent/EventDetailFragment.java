@@ -54,13 +54,13 @@ public class EventDetailFragment extends Fragment {
 
         notificationButton.setOnClickListener(v -> {
                     NavHostFragment.findNavController(EventDetailFragment.this)
-                        .navigate(R.id.action_EventDetailFragment_to_FirstFragment);
+                        .navigate(R.id.action_EventDetailFragment_to_NotificationFragment);
                 }
 //
         );
 
         eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_EventDetailFragment_to_SecondFragment);
+            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_EventDetailFragment_to_EventFragment);
         });
 
         createEventButton.setOnClickListener(v -> {

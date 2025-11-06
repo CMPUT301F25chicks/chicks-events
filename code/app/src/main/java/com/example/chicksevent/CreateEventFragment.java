@@ -41,11 +41,11 @@ public class CreateEventFragment extends Fragment {
 
 
         notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_FirstFragment);
+            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_NotificationFragment);
         });
 
         eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_SecondFragment);
+            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_EventFragment);
         });
 
         // Show/hide "max entrants" field when checkbox changes
@@ -93,7 +93,7 @@ public class CreateEventFragment extends Fragment {
         }
         // You can also enforce regStart/regEnd if required
 
-        // Organizer/entrant id — using device id like you did in FirstFragment
+        // Organizer/entrant id — using device id like you did in NotificationFragment
         String entrantId = Settings.Secure.getString(
                 requireContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
