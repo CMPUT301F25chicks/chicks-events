@@ -63,6 +63,11 @@ public class FirstFragment extends Fragment {
         userToUpdate.updateProfile(testName, testEmail, testPhone);
 
         Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
+
+        binding.btnAddEvent.setOnClickListener(v ->
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_FirstFragment_to_CreateEventFragment)
+        );
         // ===================================================================
 
 //        RecyclerView notificationView = view.findViewById(R.id.recycler_notifications);
