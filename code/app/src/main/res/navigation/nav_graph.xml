@@ -22,6 +22,10 @@
         <action
             android:id="@+id/action_NotificationFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
+
+        <action
+            android:id="@+id/action_NotificationFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
     </fragment>
 
     <fragment
