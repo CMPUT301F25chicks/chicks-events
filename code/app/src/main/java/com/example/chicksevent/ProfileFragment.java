@@ -41,7 +41,10 @@ public class ProfileFragment extends Fragment {
     EditText editEmail;
     String eventId;
     Button saveInfoButton;
+    Button deleteProfileButton;
     String userId;
+    User user;
+    androidx.appcompat.widget.SwitchCompat notificationSwitch;
     public ProfileFragment() {
         // You can keep the constructor-empty and inflate via binding below
     }
@@ -75,11 +78,15 @@ public class ProfileFragment extends Fragment {
 
         editName = view.findViewById(R.id.edit_name);
         editPhone = view.findViewById(R.id.edit_phone);
-
         editEmail = view.findViewById(R.id.edit_email);
+        notificationSwitch = view.findViewById(R.id.switch_notifications);
+
         saveInfoButton = view.findViewById(R.id.btn_save_info);
+        deleteProfileButton = view.findViewById(R.id.btn_delete_account);
 
-
+        editName.setText("LOADING...");
+        editEmail.setText("LOADING...");
+        editPhone.setText("LOADING...");
         notificationButton.setOnClickListener(v -> {
                     NavHostFragment.findNavController(ProfileFragment.this)
                             .navigate(R.id.action_ProfileFragment_to_NotificationFragment);
@@ -95,6 +102,9 @@ public class ProfileFragment extends Fragment {
 //            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
 
             NavHostFragment.findNavController(ProfileFragment.this).navigate(R.id.action_ProfileFragment_to_CreateEventFragment);
+        });
+        deleteProfileButton.setOnClickListener(v -> {
+            deleteProfile();
         });
 
         saveInfoButton.setOnClickListener(v -> updateProfile());
@@ -112,11 +122,12 @@ public class ProfileFragment extends Fragment {
             for (DataSnapshot d : ds.getResult().getChildren()) {
                 Log.i("TAGwerw", d.getKey());
                 try {
-                    HashMap<String, String> userHash = (HashMap<String, String> ) d.getValue();
+                    HashMap<String, Object> userHash = (HashMap<String, Object>) d.getValue();
                     if (userId.equals(d.getKey())) {
-                        editName.setText(userHash.get("name"));
-                        editEmail.setText(userHash.get("email"));
-                        editPhone.setText(userHash.get("phoneNumber"));
+                        editName.setText(userHash.get("name").toString());
+                        editEmail.setText(userHash.get("email").toString());
+                        editPhone.setText(userHash.get("phoneNumber").toString());
+                        notificationSwitch.setChecked((boolean) userHash.get("notificationsEnabled"));
                     }
                 } catch(Exception e) {
                     Log.e("ERROR", "weird error " + e);
@@ -132,13 +143,29 @@ public class ProfileFragment extends Fragment {
 
         HashMap<String, Object> data = new HashMap<>();
 
-        data.put("name", editName.getText().toString());
-        data.put("email", editEmail.getText().toString());
-        data.put("phone",editPhone.getText().toString());
+        user = new User(userId);
+        if (user.updateProfile(editName.getText().toString(), editEmail.getText().toString(), editPhone.getText().toString(), notificationSwitch.isChecked())) {
+            Toast.makeText(requireContext(), "Updated Profile", Toast.LENGTH_SHORT).show();
 
-        userService.editEntry(userId, data);
-        Toast.makeText(requireContext(), "Updated Profile", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(), "Failed to Update Profile", Toast.LENGTH_SHORT).show();
 
+        }
+
+
+    }
+
+    public void deleteProfile() {
+        if (userId == null || userId.isEmpty()) {
+            Log.e(TAG, "Cannot delete profile: User ID is not set.");
+            return;
+        }
+        userService.deleteEntry(userId);
+        Log.i(TAG, "Deletion requested for user: " + userId);
+        editName.setText("");
+        editEmail.setText("");
+        editPhone.setText("");
+        Toast.makeText(requireContext(), "You are Deleted RIP :(", Toast.LENGTH_SHORT).show();
 
     }
 
