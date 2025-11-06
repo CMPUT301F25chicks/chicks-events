@@ -6,7 +6,8 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="create_event_fragment_label">Create Event Fragment</string>
     <string name="waiting_list_fragment_label">Waiting List Fragment</string>
-    <string name="event_detail_fragment_label">Event Detail ORG Fragment</string>
+    <string name="event_detail_org_fragment_label">Event Detail ORG Fragment</string>
+    <string name="event_detail_fragment_label">Event Detail Fragment</string>
     <string name="hosted_event_fragment_label">Hosted Events Fragment</string>
     <string name="pooling_fragment_label">Pooling Fragment</string>
     <string name="search_event_fragment_label">Search Events Fragment</string>

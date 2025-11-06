@@ -68,6 +68,10 @@ public class User {
         return userId;
     }
 
+    public String getUserName() {
+        return username;
+    }
+
     public void listEvents() {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);

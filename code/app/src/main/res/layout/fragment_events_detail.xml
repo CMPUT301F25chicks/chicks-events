@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".HostedEventFragment">
+    tools:context=".EventDetailFragment">
 
     <!-- Scrollable content -->
     <androidx.core.widget.NestedScrollView
@@ -231,7 +231,6 @@
                         android:id="@+id/tv_waiting_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_constraintBottom_toTopOf="@+id/tv_waiting_count"
                         android:layout_marginBottom="4dp"
                         android:text="Status: Joined Waiting List"
                         android:textColor="@color/purpleText"
@@ -243,11 +242,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Number of People: 40"
-                        android:layout_constraintTop_toBottomOf="@+id/tv_waiting_status"
-                        android:layout_constraintBottom_toTopOf="@+id/btn_leave_waiting_list"
                         android:textColor="@color/dateBox"
                         android:textSize="14sp"
-                        android:layout_marginBottom="8dp"/>
+                        android:layout_marginBottom="8dp" />
 
                     <Button
                         android:id="@+id/btn_leave_waiting_list"
@@ -258,6 +255,7 @@
                         android:textColor="#FFFFFF" />
 
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
