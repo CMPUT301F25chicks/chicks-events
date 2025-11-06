@@ -68,6 +68,11 @@ public class SecondFragment extends Fragment {
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
 
+        Button createEventButton = view.findViewById(R.id.btn_addEvent);
+        createEventButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(SecondFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
+        });
+
         eventView =  view.findViewById(R.id.recycler_notifications);;
 //
         eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});

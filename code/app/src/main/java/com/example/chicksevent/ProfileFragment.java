@@ -2,5 +2,7 @@ package com.example.chicksevent;
 
 import android.app.Activity;
 
-public class ProfileFragment extends Activity {
+import androidx.fragment.app.Fragment;
+
+public class ProfileFragment extends Fragment {
 }

@@ -18,17 +18,36 @@
         <action
             android:id="@+id/action_FirstFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+
+        <action
+            android:id="@+id/action_FirstFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/EventDetailFragment"
         android:name="com.example.chicksevent.EventDetailFragment"
-        android:label="Event Detail Event"
+        android:label="@string/event_detail_fragment_label"
         tools:layout="@layout/fragment_event_detail_org">
+
+        <action
+            android:id="@+id/action_EventDetailFragment_to_HostedEventFragment"
+            app:destination="@id/HostedEventFragment" />
+        <action
+            android:id="@+id/action_EventDetailFragment_to_WaitingListFragment"
+            app:destination="@id/WaitingListFragment" />
+        <action
+            android:id="@+id/action_EventDetailFragment_to_ChosenListFragment"
+            app:destination="@id/ChosenListFragment" />
+        <action
+            android:id="@+id/action_EventDetailFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
         <action
             android:id="@+id/action_EventDetailFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment">
-        </action>
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_EventDetailFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
     </fragment>
 
     <fragment
@@ -38,8 +57,14 @@
         tools:layout="@layout/fragment_create_event">
 
         <action
+            android:id="@+id/action_CreateEventFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+
+        <action
         android:id="@+id/action_CreateEventFragment_to_FirstFragment"
         app:destination="@id/FirstFragment" />
+
+
         </fragment>
 
     <fragment
@@ -55,17 +80,167 @@
         <action
             android:id="@+id/action_SecondFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_SearchEventFragment"
+            app:destination="@id/SearchEventFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_HostedEventFragment"
+            app:destination="@id/HostedEventFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
     </fragment>
 
-    <!--
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.chicksevent.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/ProfileFragment"
+        android:name="com.example.chicksevent.ProfileFragment"
+        android:label="@string/profile_fragment_label"
+        tools:layout="@layout/fragment_profile_entrant">
+
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            android:id="@+id/action_ProfileFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_ProfileFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_ProfileFragment_to_SecondFragment"
+            app:destination="@id/SearchEventFragment" />
+
     </fragment>
-    -->
+
+    <fragment
+        android:id="@+id/SearchEventFragment"
+        android:name="com.example.chicksevent.SearchEventFragment"
+        android:label="@string/search_event_fragment_label"
+        tools:layout="@layout/fragment_search_event">
+
+        <action
+            android:id="@+id/action_SearchEventFragment_to_HostedEventFragment"
+            app:destination="@id/HostedEventFragment" />
+        <action
+            android:id="@+id/action_SearchEventFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_SearchEventFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_SearchEventFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/HostedEventFragment"
+        android:name="com.example.chicksevent.HostedEventFragment"
+        android:label="@string/hosted_event_fragment_label"
+        tools:layout="@layout/fragment_hosted_event">
+
+        <action
+            android:id="@+id/action_HostedEventFragment_to_SearchEventFragment"
+            app:destination="@id/SearchEventFragment" />
+        <action
+            android:id="@+id/action_HostedEventFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_HostedEventFragment_to_UpdateEventFragment"
+            app:destination="@id/UpdateEventFragment" />
+        <action
+            android:id="@+id/action_HostedEventFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+        <action
+            android:id="@+id/action_HostedEventFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_HostedEventFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/UpdateEventFragment"
+        android:name="com.example.chicksevent.UpdateEventFragment"
+        android:label="@string/update_event_fragment_label"
+        tools:layout="@layout/fragment_update_event_detail">
+
+        <action
+            android:id="@+id/action_UpdateEventFragment_to_HostedEventFragment"
+            app:destination="@id/HostedEventFragment" />
+        <action
+            android:id="@+id/action_UpdateEventFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_UpdateEventFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_UpdateEventFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/WaitingListFragment"
+        android:name="com.example.chicksevent.WaitingListFragment"
+        android:label="@string/waiting_list_fragment_label"
+        tools:layout="@layout/fragment_waiting_list">
+
+        <action
+            android:id="@+id/action_WaitingListFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+        <action
+            android:id="@+id/action_WaitingListFragment_to_PoolingFragment"
+            app:destination="@id/PoolingFragment" />
+        <action
+            android:id="@+id/action_WaitingListFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_WaitingListFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_PoolingFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ChosenListFragment"
+        android:name="com.example.chicksevent.ChosenListFragment"
+        android:label="@string/chosen_list_fragment_label"
+        tools:layout="@layout/fragment_chosen_list">
+
+        <action
+            android:id="@+id/action_ChosenListFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+        <action
+            android:id="@+id/action_ChosenListFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_ChosenListFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_ChosenListFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PoolingFragment"
+        android:name="com.example.chicksevent.PoolingFragment"
+        android:label="@string/pooling_fragment_label"
+        tools:layout="@layout/fragment_pooling">
+
+        <action
+            android:id="@+id/action_PoolingFragment_to_WaitingListFragment"
+            app:destination="@id/WaitingListFragment" />
+        <action
+            android:id="@+id/action_PoolingFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_PoolingFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_PoolingFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+
+    </fragment>
+
 </navigation>

@@ -37,8 +37,15 @@ public class CreateEventFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Button notificationButton = view.findViewById(R.id.btn_notification);
+        Button eventButton = view.findViewById(R.id.btn_events);
+
+
         notificationButton.setOnClickListener(v -> {
             NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_FirstFragment);
+        });
+
+        eventButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_SecondFragment);
         });
 
         // Show/hide "max entrants" field when checkbox changes
@@ -53,6 +60,8 @@ public class CreateEventFragment extends Fragment {
 
         // Optional: Cancel just pops back
         binding.btnCancel.setOnClickListener(v -> requireActivity().onBackPressed());
+
+
     }
 
     private void createEventFromForm() {

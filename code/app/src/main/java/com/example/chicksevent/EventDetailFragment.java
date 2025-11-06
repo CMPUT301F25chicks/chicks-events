@@ -46,6 +46,28 @@ public class EventDetailFragment extends Fragment {
             eventName.setText(args.getString("eventName"));
             // Use it to populate UI
         }
+
+        Button eventButton = view.findViewById(R.id.btn_events);
+        Button createEventButton = view.findViewById(R.id.btn_addEvent);
+        Button notificationButton = view.findViewById(R.id.btn_notification);
+
+
+        notificationButton.setOnClickListener(v -> {
+                    NavHostFragment.findNavController(EventDetailFragment.this)
+                        .navigate(R.id.action_EventDetailFragment_to_FirstFragment);
+                }
+//
+        );
+
+        eventButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_EventDetailFragment_to_SecondFragment);
+        });
+
+        createEventButton.setOnClickListener(v -> {
+//            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
+
+            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
+        });
 //        eventName
     }
 
