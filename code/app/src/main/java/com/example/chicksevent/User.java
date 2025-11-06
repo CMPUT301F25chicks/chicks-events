@@ -22,11 +22,13 @@ public class User {
     private FirebaseService userService;
     private FirebaseService eventService;
     private FirebaseService notificationService;
+    private FirebaseService adminService;
     private String userId;
     private String username;
     private String phoneNumber;
     private String email;
     private boolean notificationsEnabled;
+
     String TAG = "RTD8";
 
     User(String userId) {
@@ -197,6 +199,8 @@ public class User {
 
     public Boolean isAdmin() {
         return false;
+//        return adminService.getReference().get().continueWith(task -> {
+
     }
 
     public Boolean isOrganizer() {

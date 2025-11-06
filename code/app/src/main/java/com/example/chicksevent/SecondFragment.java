@@ -1,6 +1,7 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SecondFragment extends Fragment {
 
@@ -27,9 +29,13 @@ public class SecondFragment extends Fragment {
     private ArrayList<Event> eventDataList = new ArrayList<>();
 
     private FirebaseService eventService;
+    private FirebaseService waitingListService;
 
     private String TAG = "RTD8";
     ListView eventView;
+    EventAdapter eventAdapter;
+
+    private String androidId;
 
 
 
@@ -47,6 +53,12 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventService = new FirebaseService("Event");
+        waitingListService = new FirebaseService("WaitingList");
+
+        androidId = Settings.Secure.getString(
+                getContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID
+        );
 
         Button notificationButton = view.findViewById(R.id.btn_notification);
 
@@ -58,10 +70,76 @@ public class SecondFragment extends Fragment {
 
         eventView =  view.findViewById(R.id.recycler_notifications);;
 //
-        EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
+        eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
         eventView.setAdapter(eventAdapter);
+
+
+        Button joinedEvents = view.findViewById(R.id.btn_joined_events);
+        Button hostedEvents = view.findViewById(R.id.btn_hosted_events);
+
+        joinedEvents.setOnClickListener(l -> {
+            showJoinedEvents();
+        });
+
+        hostedEvents.setOnClickListener(l -> {
+            showHostedEvents();
+        });
+
+
+//            eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
+//            eventView.setAdapter(eventAdapter);
+//        });
 //
         listEvents();
+    }
+
+    public void showJoinedEvents() {
+        ArrayList<String> arr = new ArrayList<>();
+        waitingListService.getReference().get().continueWith(task -> {
+            for (DataSnapshot ds : task.getResult().getChildren()) {
+                HashMap<String, HashMap<String, Object>> waitingList = (HashMap<String, HashMap<String, Object>>) ds.getValue();
+                for (Map.Entry<String, HashMap<String, Object>> entry : waitingList.entrySet()) {
+//                        Log.i(TAG, "key " + entry.getKey() + " " + "value" + entry.getValue());
+                    for (Map.Entry<String, Object> entry2 : ((HashMap<String, Object>) entry.getValue()).entrySet()) {
+//                            Log.i(TAG, "what is );
+                        String uid = entry2.getKey();
+                        if (androidId.compareTo(uid) == 0) {
+
+                            arr.add(ds.getKey());
+//                                eventDataList
+                            Log.i(TAG, "found event " + ds.getKey());
+//                                arr.add();
+                        }
+
+
+                    }
+
+
+                }
+            }
+
+            ArrayList<Event> newEventDataList = new ArrayList<>();
+            for (Event e : eventDataList) {
+                boolean keepEvent = false;
+                for (String eventIdFilter : arr) {
+                    if (eventIdFilter.equals(e.getId())) {
+                        keepEvent = true;
+                    }
+                }
+                if (keepEvent) {
+                    newEventDataList.add(e);
+                }
+
+            }
+            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
+            eventView.setAdapter(eventAdapter);
+
+            return null;
+        });
+    }
+
+    public void showHostedEvents() {
+        
     }
 
     public void listEvents() {
@@ -95,6 +173,7 @@ public class SecondFragment extends Fragment {
                     navController.navigate(R.id.action_SecondFragment_to_EventDetailFragment, bundle);
 
                 });
+
                 eventView.setAdapter(eventAdapter);
 
 

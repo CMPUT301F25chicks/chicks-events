@@ -60,6 +60,10 @@ public class FirstFragment extends Fragment {
 
         // Create User object identified by device ID
         User userToUpdate = new User(androidId);
+
+//        if (userToUpdate.isAdmin()) {
+//
+//        }
 //        userToUpdate.getNotificationList();
 
         // Define personal information to be saved
@@ -134,26 +138,26 @@ public class FirstFragment extends Fragment {
         //        });
         //
         //
-        //        Event event = new Event(
-        //                u.getUserId(),
-        //                "abc123",                           // id
-        //                "Swimming Lessons",                 // name
-        //                "Kids learn freestyle and backstroke", // eventDetails
-        //                "2026-01-01",                       // eventStartDate
-        //                "2026-02-01",                       // eventEndDate
-        //                "2025-11-13",                       // registrationStartDate
-        //                "2025-12-30",                       // registrationEndDate
-        //                30,                                 // entrantLimit
-        //                null,                               // poster
-        //                "sports kids swimming"              // tag
-        //        );
-        //
-        //        event.createEvent();
+                Event event = new Event(
+                        userToUpdate.getUserId(),
+                        "abc123",                           // id
+                        "Swimming Lessons",                 // name
+                        "Kids learn freestyle and backstroke", // eventDetails
+                        "2026-01-01",                       // eventStartDate
+                        "2026-02-01",                       // eventEndDate
+                        "2025-11-13",                       // registrationStartDate
+                        "2025-12-30",                       // registrationEndDate
+                        30,                                 // entrantLimit
+                        null,                               // poster
+                        "sports kids swimming"              // tag
+                );
+
+                event.createEvent();
         //
         //        Log.d("RTD8", "even id: " + event.getId());
         //
-        //        Entrant e = new Entrant(androidId, event.getId());
-        //        e.joinWaitingList();
+                Entrant e = new Entrant(androidId, event.getId());
+                e.joinWaitingList();
         //
         //
         //        e.swapStatus(EntrantStatus.INVITED);
