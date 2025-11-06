@@ -34,7 +34,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- RecyclerView for notifications -->
-        <androidx.recyclerview.widget.RecyclerView
+        <ListView
             android:id="@+id/recycler_notifications"
             android:layout_width="match_parent"
             android:layout_height="0dp"

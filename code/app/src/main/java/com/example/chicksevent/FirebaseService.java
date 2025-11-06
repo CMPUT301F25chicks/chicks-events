@@ -25,6 +25,13 @@ public class FirebaseService {
         return id;
     }
 
+    public String addEntry(HashMap<String, Object> data, String id){
+        reference.child(id).setValue(data)
+                .addOnSuccessListener(a -> Log.d("FirestoreTest", "Success"))
+                .addOnFailureListener(e -> Log.e("FirestoreTest", "Failed", e));;
+        return id;
+    }
+
     public void deleteEntry(String id){
         HashMap<String, String> data = new HashMap<>();
         reference.child(id).removeValue()
@@ -37,6 +44,19 @@ public class FirebaseService {
                 .addOnSuccessListener(a -> Log.d("FirestoreTest", "Success"))
                 .addOnFailureListener(e -> Log.e("FirestoreTest", "Failed", e));
         return id;
+    }
+
+    public void updateSubCollectionEntry(String parentId, String subCollectionName, String subId, HashMap<String, Object> updates) {
+        reference.child(parentId).child(subCollectionName).child(subId)
+                .updateChildren(updates)
+                .addOnSuccessListener(a -> Log.d("FirestoreTest", "SubCollection Update Success"))
+                .addOnFailureListener(e -> Log.e("FirestoreTest", "SubCollection Update Failed", e));
+    }
+
+    public void deleteSubCollectionEntry(String parentId, String subCollectionName, String subId) {
+        reference.child(parentId).child(subCollectionName).child(subId).removeValue()
+                .addOnSuccessListener(a -> Log.d("FirestoreTest", "SubCollection Delete Success"))
+                .addOnFailureListener(e -> Log.e("FirestoreTest", "SubCollection Delete Failed", e));
     }
 
 
