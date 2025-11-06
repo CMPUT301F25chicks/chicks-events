@@ -37,27 +37,14 @@ public class FirstFragment extends Fragment {
 
         Admin admin = new Admin();
 
-        admin.browseProfiles()
-                .addOnSuccessListener(users -> {
-                    StringBuilder sb = new StringBuilder();
-                    if (users.isEmpty()) {
-                        sb.append("No profiles found.\n");
-                    } else {
-                        for (User user : users) {
-                            sb.append("Uid: ").append(user.getUid())
-                                    .append(" | Name: ").append(user.getName())
-                                    .append(" | Email: ").append(user.getEmail())
-                                    .append(" | Phone: ").append(user.getPhoneNumber())
-                                    .append("\n");
-                        }
-                    }
-                        // log to logcat to see
-                    android.util.Log.d("BrowseProfiles", sb.toString());
+        String uid = "0a737f3e79862b9f";
 
-                })
-                .addOnFailureListener(err -> {
-                    android.util.Log.e("BrowseProfiles", "Failed to fetch profiles", err);
-                });
+        admin.deleteProfile(uid).addOnSuccessListener(aVoid -> {
+            android.util.Log.d("DeleteProfile", "User profile deleted successfully");
+        }).addOnFailureListener(err -> {
+            android.util.Log.e("DeleteProfile", "Failed to delete user profile", err);
+        });
+
     }
 
     @Override

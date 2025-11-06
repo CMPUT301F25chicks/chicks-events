@@ -1,5 +1,7 @@
 package com.example.chicksevent;
 
+import android.util.Log;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.Firebase;
@@ -21,9 +23,33 @@ public class Admin extends User {
 
     }
 
-    public void deleteProfile() {
+    public Task<Void> deleteProfile(String uid) {
 
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        if (uid == null || uid.isEmpty()) {
+            tcs.setException(new IllegalArgumentException("Uid is empty"));
+            return tcs.getTask();
+        }
+
+        // Delete user from Firebase
+        userService.getReference().child(uid).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    tcs.setResult(null);
+                    Log.d("DeleteProfile", "User profile deleted successfully");
+                })
+                .addOnFailureListener(e -> {
+                    tcs.setException(e);  // If deletion failed, return the exception
+                    Log.e("DeleteProfile", "Failed to delete user profile", e);
+                });
+
+        return tcs.getTask();
     }
+
+
+
+
+
 
     // US 03.05.01
     public Task<List<User>> browseProfiles() {
