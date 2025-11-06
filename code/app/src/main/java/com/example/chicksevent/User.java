@@ -24,12 +24,13 @@ public class User {
     private FirebaseService notificationService;
     private FirebaseService adminService;
     private String userId;
-    private String username;
     private String phoneNumber;
     private String email;
+    private String name;
     private boolean notificationsEnabled;
 
     String TAG = "RTD8";
+
 
     User(String userId) {
         this.userId = userId;
@@ -161,6 +162,39 @@ public class User {
             return notificationList;
         });
     }
+
+    public boolean updateProfile(String name, String email, String phone, boolean notification) {
+        // Basic validation
+        if (userId == null || userId.isEmpty()) {
+            System.err.println("Error: User ID is not set. Cannot update profile.");
+            return false;
+        }
+
+        if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
+            System.err.println("Error: Name and Email cannot be empty.");
+            return false;
+        }
+
+        // Update the local object's properties
+        this.name = name.trim();
+        this.email = email.trim();
+        this.phoneNumber = (phone != null) ? phone.trim() : "";
+        this.notificationsEnabled = notification;
+
+        // Create a map to send only the updated fields to Firebase
+        HashMap<String, Object> updates = new HashMap<>();
+        updates.put("name", this.name);
+        updates.put("email", this.email);
+        updates.put("phoneNumber", this.phoneNumber);
+        updates.put("uid", this.userId); // Store UID in the record itself
+        updates.put("notificationsEnabled", this.notificationsEnabled);
+
+        // Call the editEntry method from existing FirebaseService
+        userService.editEntry(userId, updates);
+        return true;
+    }
+
+
 
 //    public void listEvents() {
 //        Log.i("RTD8", "hi");

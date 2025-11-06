@@ -74,6 +74,7 @@ public class NotificationFragment extends Fragment {
 
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
+        Button profileButton = view.findViewById(R.id.btn_profile);
 
         eventButton.setOnClickListener(v -> {
             NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_EventFragment);
@@ -83,6 +84,9 @@ public class NotificationFragment extends Fragment {
             NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_CreateEventFragment);
         });
 
+        profileButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_ProfileFragment);
+        });
     }
 
     private void createMockEvent() {
