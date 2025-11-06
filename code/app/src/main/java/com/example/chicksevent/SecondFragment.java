@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.databinding.FragmentSecondBinding;
@@ -57,7 +58,7 @@ public class SecondFragment extends Fragment {
 
         eventView =  view.findViewById(R.id.recycler_notifications);;
 //
-        EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList);
+        EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
         eventView.setAdapter(eventAdapter);
 //
         listEvents();
@@ -85,7 +86,15 @@ public class SecondFragment extends Fragment {
 
                     Log.d(TAG, "---");
                 }
-                EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList);
+                EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
+                    NavController navController = NavHostFragment.findNavController(SecondFragment.this);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventName", item.getId());
+
+                    navController.navigate(R.id.action_SecondFragment_to_EventDetailFragment, bundle);
+
+                });
                 eventView.setAdapter(eventAdapter);
 
 
