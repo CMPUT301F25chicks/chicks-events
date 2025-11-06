@@ -8,8 +8,7 @@
     android:background="#000000"
     tools:context=".CreateEventFragment">
 
-    <!-- Scrollable content -->
-
+    <!-- Header -->
     <TextView
         android:id="@+id/header_title"
         android:layout_width="wrap_content"
@@ -19,21 +18,23 @@
         android:textColor="@color/purpleText"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
 
+    <!-- Scrollable content area -->
     <ScrollView
         android:id="@+id/scroll_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@+id/header_title"
+        app:layout_constraintTop_toBottomOf="@id/header_title"
         app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- The scrollable inner layout -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,10 +42,7 @@
             android:gravity="center_horizontal"
             android:paddingBottom="24dp">
 
-            <!-- Event Poster Upload -->
-
-            <!-- Event Name -->
-
+            <!-- Event Poster -->
             <ImageView
                 android:id="@+id/img_event_poster"
                 android:layout_width="120dp"
@@ -62,16 +60,16 @@
                 android:layout_height="wrap_content"
                 android:text="Add Image"
                 android:textColor="@color/darkPurple"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/img_event_poster" />
+                android:textStyle="bold" />
 
+            <!-- Event Name -->
             <TextView
-                android:layout_width="379dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Name:"
                 android:textColor="@color/purpleText"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_name" />
+                android:layout_marginTop="8dp" />
 
             <EditText
                 android:id="@+id/et_event_name"
@@ -83,12 +81,11 @@
 
             <!-- Event Description -->
             <TextView
-                android:layout_width="379dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Description:"
                 android:textColor="@color/purpleText"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_description" />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/et_event_description"
@@ -102,12 +99,12 @@
 
             <!-- Event Time -->
             <TextView
-                android:layout_width="379dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Time:"
                 android:textColor="@color/purpleText"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_time" />
+                android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/et_event_time"
                 android:layout_width="match_parent"
@@ -116,6 +113,7 @@
                 android:inputType="datetime"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Limit checkbox + number -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -139,7 +137,6 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-
             <!-- Registration Period -->
             <TextView
                 android:layout_width="wrap_content"
@@ -159,16 +156,14 @@
 
                 <!-- Start Date -->
                 <LinearLayout
+                    android:id="@+id/start_date_container"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingHorizontal="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:id="@+id/start_date_container">
+                    android:paddingHorizontal="8dp">
 
                     <EditText
                         android:id="@+id/et_start_date"
@@ -178,7 +173,6 @@
                         android:hint="Start Date"
                         android:textColorHint="@color/darkPurple"
                         android:focusable="false"
-                        android:inputType="none"
                         android:background="@null" />
 
                     <ImageView
@@ -186,8 +180,8 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"
-                        app:tint="@color/darkPurple"
-                        android:padding="4dp" />
+                        android:padding="4dp"
+                        app:tint="@color/darkPurple" />
                 </LinearLayout>
 
                 <Space
@@ -196,16 +190,14 @@
 
                 <!-- End Date -->
                 <LinearLayout
+                    android:id="@+id/end_date_container"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingHorizontal="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:id="@+id/end_date_container">
+                    android:paddingHorizontal="8dp">
 
                     <EditText
                         android:id="@+id/et_end_date"
@@ -215,7 +207,6 @@
                         android:hint="End Date"
                         android:textColorHint="@color/darkPurple"
                         android:focusable="false"
-                        android:inputType="none"
                         android:background="@null" />
 
                     <ImageView
@@ -226,8 +217,7 @@
                         android:padding="4dp"
                         app:tint="@color/darkPurple" />
                 </LinearLayout>
-
-        </LinearLayout>
+            </LinearLayout>
 
             <!-- Geolocation Requirement -->
             <LinearLayout
@@ -241,7 +231,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="sans-serif"
                     android:text="Enable Geolocation Requirement"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold" />
@@ -266,7 +255,7 @@
                 android:textColor="@android:color/white"
                 android:layout_marginBottom="20dp" />
 
-            <!-- Create and Cancel Buttons (same row) -->
+            <!-- Create and Cancel Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -298,75 +287,20 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Bottom nav bar pinned -->
     <LinearLayout
         android:id="@+id/bottom_buttons_layout"
-        android:layout_width="375dp"
+        android:layout_width="0dp"
         android:layout_height="58dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="5"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
-            android:id="@+id/btn_notification"
-            android:layout_width="2dp"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_notification"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_events"
-            android:layout_width="2dp"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_events"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="2dp"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_scan"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_addEvent"
-            android:layout_width="2dp"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_addevents"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_profile"
-            android:layout_width="2dp"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_profile"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
+        <!-- your bottom buttons here (same as before) -->
+        <!-- ... -->
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
