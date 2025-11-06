@@ -25,23 +25,18 @@ public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
     private ArrayList<Event> eventDataList = new ArrayList<>();
-
     private FirebaseService eventService;
 
     private String TAG = "RTD8";
     ListView eventView;
-
-
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentSecondBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -49,18 +44,22 @@ public class SecondFragment extends Fragment {
         eventService = new FirebaseService("Event");
 
         Button notificationButton = view.findViewById(R.id.btn_notification);
-
-
         notificationButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
 
-        eventView =  view.findViewById(R.id.recycler_notifications);;
-//
+        // ✅ NEW: wire the Search Events button to navigate to SearchEventFragment
+        Button searchEventsButton = view.findViewById(R.id.btn_search_events);                 // [1]
+        searchEventsButton.setOnClickListener(v ->                                             // [2]
+                NavHostFragment.findNavController(SecondFragment.this)
+                        .navigate(R.id.action_SecondFragment_to_SearchEventFragment)           // [3]
+        );
+
+        eventView = view.findViewById(R.id.recycler_notifications);
         EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
         eventView.setAdapter(eventAdapter);
-//
+
         listEvents();
     }
 
@@ -73,32 +72,37 @@ public class SecondFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "=== SHOW the event ===");
 
-                // Iterate through all children
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String key = childSnapshot.getKey();
                     HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
-//                    new Event();
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", "tag");
+                    Event e = new Event(
+                            "e",
+                            value.get("id"),
+                            value.get("name"),
+                            value.get("eventDetails"),
+                            "N/A",
+                            "N/A",
+                            value.get("registrationEndDate"),
+                            value.get("registrationStartDate"),
+                            32,
+                            "N/A",
+                            "tag"
+                    );
                     eventDataList.add(e);
 
                     Log.d(TAG, "---");
                 }
+
                 EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
                     NavController navController = NavHostFragment.findNavController(SecondFragment.this);
-
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
-
+                    bundle.putString("eventName", item.getId()); // passing ID; adjust key if needed on the dest
                     navController.navigate(R.id.action_SecondFragment_to_EventDetailFragment, bundle);
-
                 });
                 eventView.setAdapter(eventAdapter);
-
-
-//                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());
             }
 
             @Override
@@ -113,5 +117,4 @@ public class SecondFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 }

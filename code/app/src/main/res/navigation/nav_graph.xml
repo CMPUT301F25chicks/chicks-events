@@ -27,8 +27,7 @@
         tools:layout="@layout/fragment_event_detail_org">
         <action
             android:id="@+id/action_EventDetailFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment">
-        </action>
+            app:destination="@id/SecondFragment" />
     </fragment>
 
     <fragment
@@ -36,11 +35,10 @@
         android:name="com.example.chicksevent.CreateEventFragment"
         android:label="Create Event"
         tools:layout="@layout/fragment_create_event">
-
         <action
-        android:id="@+id/action_CreateEventFragment_to_FirstFragment"
-        app:destination="@id/FirstFragment" />
-        </fragment>
+            android:id="@+id/action_CreateEventFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/SecondFragment"
@@ -55,7 +53,19 @@
         <action
             android:id="@+id/action_SecondFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
+
+        <!-- NEW: navigate to SearchEventFragment -->
+        <action
+            android:id="@+id/action_SecondFragment_to_SearchEventFragment"
+            app:destination="@id/SearchEventFragment" />
     </fragment>
+
+    <!-- NEW destination: SearchEventFragment -->
+    <fragment
+        android:id="@+id/SearchEventFragment"
+        android:name="com.example.chicksevent.SearchEventFragment"
+        android:label="Search Events"
+        tools:layout="@layout/fragment_search_event" />
 
     <!--
     <fragment
