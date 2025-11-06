@@ -19,6 +19,7 @@ public class User {
     private ArrayList<Event> eventList;
     private FirebaseService userService;
     private FirebaseService eventService;
+    private FirebaseService notificationService;
     private String userId;
     private String name;
     private String phoneNumber;
@@ -31,6 +32,7 @@ public class User {
         // The service now correctly points to "User" based on your Firebase structure image
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
+        notificationService = new FirebaseService("Notification");
     }
 
     /**
@@ -120,6 +122,53 @@ public class User {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(TAG, "Error reading data: " + databaseError.getMessage());
             }
+        });
+    }
+
+    public Task<ArrayList<Notification>> getNotificationList() {
+        Log.i(TAG, "in notif list");
+        return notificationService.getReference().child(userId).get().continueWith(task -> {
+            ArrayList<Notification> notificationList = new ArrayList<Notification>();
+
+            Log.d(TAG, "=== All Children at Root filter ===");
+
+            for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
+                String eventId = childSnapshot.getKey();
+                HashMap<String, HashMap<String, String>> value = (HashMap<String, HashMap<String,String>>) childSnapshot.getValue();
+//                value.get("WAITING").
+
+                Log.d(TAG, "Key: " + eventId);
+                for (Map.Entry<String, HashMap<String, String>> entry : value.entrySet()) {
+//                    Log.i(TAG, "Key: " + entry.getKey() + ", Value: " + entry.getValue());
+//                    Log.d(TAG, "KKK: " + entry.getKey());
+
+                    for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
+//                        Log.i(TAG, "kkk2: " + entry.getKey() + ", Value: " + entry.getValue().get("message"));
+                        NotificationType notificationType;
+                        switch (entry.getKey()) {
+                            case "WAITING":
+                                notificationType = NotificationType.WAITING;
+                                break;
+                            case "INVITED":
+                                notificationType = NotificationType.INVITED;
+                                break;
+                            case "UNINVITED":
+                                notificationType = NotificationType.UNINVITED;
+                                break;
+                            default:
+                                notificationType = NotificationType.WAITING;
+                                break;
+                        }
+
+                        notificationList.add(new Notification(userId, eventId, notificationType, entry.getValue().get("message")));
+                    }
+
+                }
+
+//
+
+            }
+            return notificationList;
         });
     }
 

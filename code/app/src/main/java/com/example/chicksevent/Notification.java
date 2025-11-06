@@ -24,4 +24,11 @@ public class Notification {
         notificationService.updateSubCollectionEntry(userId, eventId, notificationType.toString(), data);
     }
 
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
 }

@@ -87,11 +87,17 @@ public class Organizer extends User {
             });
     }
 
-    public void sendSelectedNotification() {
-
+    public void sendSelectedNotification(String message) {
+        sendWaitingListNotification(EntrantStatus.INVITED, message);
     }
 
-    // us 02.07.01
+    public void sendWaitingListNotification(String message) {
+        sendWaitingListNotification(EntrantStatus.WAITING, message);
+    }
+
+
+
+        // us 02.07.01
     public void sendWaitingListNotification(EntrantStatus status, String message) {
         waitingListService.getReference().child(eventId).child(status.toString())
                 .addValueEventListener(new ValueEventListener() {
