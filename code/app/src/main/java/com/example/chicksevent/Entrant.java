@@ -36,6 +36,18 @@ public class Entrant extends User {
     public String getEntrantId() { return entrantId; }
     public EntrantStatus getStatus() { return status; }
 
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public void setEntrantId(String entrantId) {
+        this.entrantId = entrantId;
+    }
+
+    public void setStatus(EntrantStatus status) {
+        this.status = status;
+    }
+
     public void joinWaitingList() {
         joinWaitingList(EntrantStatus.WAITING);
     }
@@ -84,6 +96,7 @@ public class Entrant extends User {
     public void declineInvitation() {
 
     }
+
 
     public Boolean isOrganizer() {
         return false;
