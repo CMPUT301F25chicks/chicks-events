@@ -135,6 +135,11 @@ public class FirstFragment extends Fragment {
 //                NavHostFragment.findNavController(FirstFragment.this)
 //                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
 //        );
+        // VVV TEST CODE TO OPT-OUT OF NOTIFICATIONS VVV
+        Log.d("NotificationTest", "User " + androidId + " is opting out of notifications.");
+        User userToUpdate = new User(androidId);
+        userToUpdate.updateNotificationPreference(false); // Set notifications to false
+// ^^^ END OF TEST CODE ^^^
     }
 
     @Override

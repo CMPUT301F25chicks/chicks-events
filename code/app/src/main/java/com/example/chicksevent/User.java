@@ -24,12 +24,14 @@ public class User {
     private String username;
     private String phoneNumber;
     private String email;
+    private boolean notificationsEnabled;
     String TAG = "RTD8";
 
     User(String userId) {
         this.userId = userId;
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
+        this.notificationsEnabled = true;
     }
 
     public Task<Boolean> filterEvents(ArrayList<String> filterList) {
@@ -89,6 +91,21 @@ public class User {
                 Log.e(TAG, "Error reading data: " + databaseError.getMessage());
             }
         });
+    }
+
+    public boolean areNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
+    }
+    // update value in firebase
+    public void updateNotificationPreference(boolean isEnabled) {
+        this.setNotificationsEnabled(isEnabled);
+
+        java.util.HashMap<String, Object> update = new java.util.HashMap<>();
+        update.put("notificationsEnabled", isEnabled);
+        userService.editEntry(userId, update);
     }
 
 //    public void listEvents() {
