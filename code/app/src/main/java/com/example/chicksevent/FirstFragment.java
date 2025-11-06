@@ -8,10 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.databinding.FragmentFirstBinding;
@@ -24,6 +27,10 @@ public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
     private FirebaseService service;
+    ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
+    NotificationAdapter notificationAdapter;
+
+    private final String TAG = "RTD8";
 
     @Override
     public View onCreateView(
@@ -45,7 +52,7 @@ public class FirstFragment extends Fragment {
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
-        Log.i("FirestoreTest", "Android ID used for test: " + androidId);
+        Log.i(TAG, "Android ID used for test: " + androidId);
 
         // ======================= TEST FOR 01.02.O1 =======================
         // As an entrant, I want to provide my personal information such as
@@ -53,28 +60,51 @@ public class FirstFragment extends Fragment {
 
         // Create User object identified by device ID
         User userToUpdate = new User(androidId);
+//        userToUpdate.getNotificationList();
 
         // Define personal information to be saved
-        String testName = "Jinn Gay";
-        String testEmail = "jinn.gay@example.com";
-        String testPhone = "555-867-5309";
-
-        // update firebase
-//        userToUpdate.updateProfile(testName, testEmail, testPhone);
-
-        Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
-
-        binding.btnAddEvent.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_CreateEventFragment)
-        );
-        // ===================================================================
-
-//        RecyclerView notificationView = view.findViewById(R.id.recycler_notifications);
-//        ArrayList<Notification> dataList = new ArrayList<Notification>();
-//        dataList.add(new Notification(androidId, ));
+//        String testName = "Jinn Gay";
+//        String testEmail = "jinn.gay@example.com";
+//        String testPhone = "555-867-5309";
 //
-//        notificationAdapter = new NotificationAdapter(this, dataList);
+//        // update firebase
+//        userToUpdate.updateProfile(testName, testEmail, testPhone);
+//
+//        Log.d("RTD8", "Test initiated: updateProfile for user " + androidId);
+//        // ===================================================================
+        ListView notificationView = view.findViewById(R.id.recycler_notifications);
+
+
+
+//        dataList.add(new Notification(androidId, "jinn-event", NotificationType.WAITING, "test message"));
+        notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
+//        NotificationAdapter notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
+//        notificationView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        notificationView.setAdapter(notificationAdapter);
+        userToUpdate.getNotificationList().addOnCompleteListener(task -> {
+            Log.i(TAG, "should i change");
+
+            notificationDataList = task.getResult();
+            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
+
+            Log.i(TAG, String.valueOf(notificationDataList.size()));
+//            notificationAdapter.notifyDataSetChanged();
+            notificationView.setAdapter(notificationAdapter);
+
+        });
+
+        Button eventButton = view.findViewById(R.id.btn_events);
+        Button createEventButton = view.findViewById(R.id.btn_addEvent);
+
+        eventButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_SecondFragment);
+        });
+
+        createEventButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_CreateEventFragment);
+        });
+
+
 
 //        NotificationAdapter adapter = new NotificationAdapter();
 //        recyclerView.adapter = adapter;

@@ -12,15 +12,50 @@
         tools:layout="@layout/fragment_first">
 
         <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+
+        <action
             android:id="@+id/action_FirstFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/EventDetailFragment"
+        android:name="com.example.chicksevent.EventDetailFragment"
+        android:label="Event Detail Event"
+        tools:layout="@layout/fragment_event_detail_org">
+        <action
+            android:id="@+id/action_EventDetailFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment">
+        </action>
     </fragment>
 
     <fragment
         android:id="@+id/CreateEventFragment"
         android:name="com.example.chicksevent.CreateEventFragment"
         android:label="Create Event"
-        tools:layout="@layout/fragment_create_event" />
+        tools:layout="@layout/fragment_create_event">
+
+        <action
+        android:id="@+id/action_CreateEventFragment_to_FirstFragment"
+        app:destination="@id/FirstFragment" />
+        </fragment>
+
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.example.chicksevent.SecondFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+    </fragment>
 
     <!--
     <fragment
