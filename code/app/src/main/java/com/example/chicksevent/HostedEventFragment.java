@@ -145,7 +145,7 @@ public class HostedEventFragment extends Fragment {
                     bundle.putString("eventName", item.getId());
 
                     if (type == 0) {
-                        navController.navigate(R.id.action_HostedEventFragment_to_EventDetailFragment, bundle);
+                        navController.navigate(R.id.action_HostedEventFragment_to_EventDetailOrgFragment, bundle);
                     } else {
                         navController.navigate(R.id.action_HostedEventFragment_to_UpdateEventFragment, bundle);
 

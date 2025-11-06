@@ -149,13 +149,40 @@
             android:id="@+id/action_HostedEventFragment_to_UpdateEventFragment"
             app:destination="@id/UpdateEventFragment" />
         <action
-            android:id="@+id/action_HostedEventFragment_to_EventDetailFragment"
-            app:destination="@id/EventDetailFragment" />
+            android:id="@+id/action_HostedEventFragment_to_EventDetailOrgFragment"
+            app:destination="@id/EventDetailOrgFragment" />
         <action
             android:id="@+id/action_HostedEventFragment_to_NotificationFragment"
             app:destination="@id/NotificationFragment" />
         <action
             android:id="@+id/action_HostedEventFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/EventDetailOrgFragment"
+        android:name="com.example.chicksevent.EventDetailOrgFragment"
+        android:label="@string/event_detail_org_fragment_label"
+        tools:layout="@layout/fragment_update_event_detail">
+
+    <action
+        android:id="@+id/action_HostedEventFragment_to_EventDetailOrgFragment"
+        app:destination="@id/EventDetailOrgFragment" />
+
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_WaitingListFragment"
+            app:destination="@id/WaitingListFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_ChosenListFragment"
+            app:destination="@id/ChosenListFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
     </fragment>
 

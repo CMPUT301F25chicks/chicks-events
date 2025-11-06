@@ -17,11 +17,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
+import com.example.chicksevent.databinding.FragmentEventDetailBinding;
 import com.example.chicksevent.databinding.FragmentEventDetailOrgBinding;
 
 public class EventDetailFragment extends Fragment {
 
-    private FragmentEventDetailOrgBinding binding;
+    private FragmentEventDetailBinding binding;
 
     public EventDetailFragment() {
         // You can keep the constructor-empty and inflate via binding below
@@ -31,7 +32,7 @@ public class EventDetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentEventDetailOrgBinding.inflate(inflater, container, false);
+        binding = FragmentEventDetailBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
