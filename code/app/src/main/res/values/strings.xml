@@ -12,6 +12,10 @@
     <string name="search_event_fragment_label">Search Events Fragment</string>
     <string name="update_event_fragment_label">Update Events Fragment</string>
     <string name="chosen_list_fragment_label">Chosen Entrants List Fragment</string>
+    <string name="profile_fragment_label">Profile Fragment</string>
+    <string name="profile_admin_fragment_label">Admin Profile Fragment</string>
+    <string name="org_admin_fragment_label">Admin Organizer Fragment</string>
+    <string name="event_admin_fragment_label">Admin Event Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 

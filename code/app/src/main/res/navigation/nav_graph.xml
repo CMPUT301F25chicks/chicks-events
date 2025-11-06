@@ -18,7 +18,11 @@
         <action
             android:id="@+id/action_FirstFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.example.chicksevent.SecondFragment"
@@ -37,6 +41,28 @@
         <action
             android:id="@+id/action_SecondFragment_to_HostedEventFragment"
             app:destination="@id/HostedEventFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.example.chicksevent.ProfileFragment"
+        android:label="@string/profile_fragment_label"
+        tools:layout="@layout/fragment_profile_entrant">
+
+        <action
+            android:id="@+id/action_ProfileFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_ProfileFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_ProfileFragment_to_SecondFragment"
+            app:destination="@id/SearchEventFragment" />
+
     </fragment>
 
     <fragment
