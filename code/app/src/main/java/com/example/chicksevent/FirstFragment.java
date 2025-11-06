@@ -80,17 +80,17 @@ public class FirstFragment extends Fragment {
 //        NotificationAdapter notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
 //        notificationView.setLayoutManager(new LinearLayoutManager(requireContext()));
         notificationView.setAdapter(notificationAdapter);
-        userToUpdate.getNotificationList().addOnCompleteListener(task -> {
-            Log.i(TAG, "should i change");
-
-            notificationDataList = task.getResult();
-            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
-
-            Log.i(TAG, String.valueOf(notificationDataList.size()));
-//            notificationAdapter.notifyDataSetChanged();
-            notificationView.setAdapter(notificationAdapter);
-
-        });
+//        userToUpdate.getNotificationList().addOnCompleteListener(task -> {
+//            Log.i(TAG, "should i change");
+//
+//            notificationDataList = task.getResult();
+//            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
+//
+//            Log.i(TAG, String.valueOf(notificationDataList.size()));
+////            notificationAdapter.notifyDataSetChanged();
+//            notificationView.setAdapter(notificationAdapter);
+//
+//        });
 
 
 
