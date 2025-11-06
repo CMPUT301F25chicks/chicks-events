@@ -87,7 +87,8 @@ public class EventFragment extends Fragment {
         });
 
         hostedEvents.setOnClickListener(l -> {
-            showHostedEvents();
+            NavHostFragment.findNavController(EventFragment.this)
+                    .navigate(R.id.action_EventFragment_to_HostedEventFragment);
         });
 
 

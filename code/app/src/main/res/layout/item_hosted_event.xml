@@ -97,10 +97,10 @@
         android:backgroundTint="@color/purpleText"
         android:text="Update Event Details"
         android:textColor="@color/darkPurple"
-        tools:layout_editor_absoluteX="145dp"
-        tools:layout_editor_absoluteY="241dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
 
-    <!-- Delete (X) button -->
+
+        tools:layout_editor_absoluteX="145dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

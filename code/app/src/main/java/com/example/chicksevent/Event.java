@@ -51,6 +51,7 @@ public class Event {
         this.poster = poster;
         this.tag = tag;
 
+        this.organizer = new Organizer(entrantId, id);
 
     } // Required by Firebase
     public void createEvent(){
@@ -67,7 +68,7 @@ public class Event {
         map.put("registrationStartDate", getRegistrationStartDate());
         map.put("registrationEndDate", getRegistrationEndDate());
         map.put("entrantLimit", getEntrantLimit());
-        map.put("organizer", getOrganizer());
+        map.put("organizer", getOrganizer().getOrganizerId());
         map.put("poster", getPoster());              // null is fine; it will simply be omitted
         map.put("tag", getTag());
         id = eventService.addEntry(map, id);
