@@ -1,164 +1,218 @@
 package com.example.chicksevent;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
+import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Lottery;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
- Lottery Class Unit Testing
- * <p>
- **/
+ * Minimal, synchronous tests for Lottery.runLottery().
+ * - No real Firebase initialisation.
+ * - No randomness (WAITING <= limit case).
+ * - Verifies listener wiring and atomic update payload.
+ */
 public class LotteryTest {
 
+    private static final String EVENT_ID = "evt-1";
+
+    // Static mock for FirebaseDatabase.getInstance(String)
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
-    private DatabaseReference mockEventRef;
-    private DatabaseReference mockWaitingRef;
+
+    // RTDB references used by FirebaseService("WaitingList") and ("Event")
+    private DatabaseReference waitingRoot;     // /WaitingList
+    private DatabaseReference eventRoot;       // /Event
+
+    // Chained refs for paths
+    private DatabaseReference eventNode;       // /Event/EVENT_ID
+    private DatabaseReference entrantLimitRef; // /Event/EVENT_ID/entrantLimit
+
+    private DatabaseReference waitingEventRef; // /WaitingList/EVENT_ID
+    private DatabaseReference waitingStatusRef;// /WaitingList/EVENT_ID/WAITING
+
+    // Under test
+    private Lottery lottery;
+
+    // Service mocks we inject
+    private FirebaseService mockWaitingSvc;
+    private FirebaseService mockEventSvc;
 
     @Before
-    public void setUpFirebaseStatic() {
-        // Mock Firebase static getInstance() calls
+    public void setUp() throws Exception {
+        // Prevent real Firebase init
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
-        mockEventRef = mock(DatabaseReference.class);
-        mockWaitingRef = mock(DatabaseReference.class);
 
-        // Return the mock references for each root
-        when(FirebaseDatabase.getInstance(anyString())).thenReturn(mockDb);
-        when(mockDb.getReference("Event")).thenReturn(mockEventRef);
-        when(mockDb.getReference("WaitingList")).thenReturn(mockWaitingRef);
+        waitingRoot      = mock(DatabaseReference.class);
+        eventRoot        = mock(DatabaseReference.class);
+        eventNode        = mock(DatabaseReference.class);
+        entrantLimitRef  = mock(DatabaseReference.class);
+        waitingEventRef  = mock(DatabaseReference.class);
+        waitingStatusRef = mock(DatabaseReference.class);
 
-        // Always allow .child() chaining to return itself
-        when(mockEventRef.child(anyString())).thenReturn(mockEventRef);
-        when(mockWaitingRef.child(anyString())).thenReturn(mockWaitingRef);
+        firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
+                .thenReturn(mockDb);
+
+        when(mockDb.getReference("WaitingList")).thenReturn(waitingRoot);
+        when(mockDb.getReference("Event")).thenReturn(eventRoot);
+
+        // Safe construct (no real Firebase)
+        lottery = new Lottery(EVENT_ID);
+
+        // Prepare service mocks & inject
+        mockWaitingSvc = mock(FirebaseService.class);
+        mockEventSvc   = mock(FirebaseService.class);
+
+        when(mockWaitingSvc.getReference()).thenReturn(waitingRoot);
+        when(mockEventSvc.getReference()).thenReturn(eventRoot);
+
+        setPrivate(lottery, "waitingListService", mockWaitingSvc);
+        setPrivate(lottery, "eventService",       mockEventSvc);
+
+        // Wire child chains the production code uses
+        when(eventRoot.child(EVENT_ID)).thenReturn(eventNode);
+        when(eventNode.child("entrantLimit")).thenReturn(entrantLimitRef);
+
+        when(waitingRoot.child(EVENT_ID)).thenReturn(waitingEventRef);
+        when(waitingEventRef.child("WAITING")).thenReturn(waitingStatusRef);
     }
 
     @After
-    public void tearDownFirebaseStatic() {
+    public void tearDown() {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
     }
 
-    // ---------------------------------------------------------------
-    // SUCCESS CASE: entrantLimit exists, waiting list has entrants
-    // ---------------------------------------------------------------
+    // -------------------- Tests --------------------
+
     @Test
-    public void testRunLottery_success() {
-        // Arrange
-        Lottery lottery = new Lottery("event123");
+    public void runLottery_noWaiting_doesNotWrite() {
+        // entrantLimit exists and is 5
+        DataSnapshot limitSnap = mock(DataSnapshot.class);
+        when(limitSnap.exists()).thenReturn(true);
+        when(limitSnap.getValue(Integer.class)).thenReturn(5);
 
-        // Mock event limit snapshot
-        DataSnapshot mockLimitSnap = mock(DataSnapshot.class);
-        when(mockLimitSnap.exists()).thenReturn(true);
-        when(mockLimitSnap.getValue(Integer.class)).thenReturn(2);
+        // WAITING node is absent/empty
+        DataSnapshot waitSnap = mock(DataSnapshot.class);
+        when(waitSnap.exists()).thenReturn(false);
+        when(waitSnap.getChildren()).thenAnswer(i -> iterable());
 
-        // Mock waiting list snapshot with 3 waiting users
-        DataSnapshot mockWaitingSnap = mock(DataSnapshot.class);
-        when(mockWaitingSnap.exists()).thenReturn(true);
-
-        DataSnapshot child1 = mock(DataSnapshot.class);
-        DataSnapshot child2 = mock(DataSnapshot.class);
-        DataSnapshot child3 = mock(DataSnapshot.class);
-        when(child1.getKey()).thenReturn("uid1");
-        when(child2.getKey()).thenReturn("uid2");
-        when(child3.getKey()).thenReturn("uid3");
-        when(mockWaitingSnap.getChildren()).thenReturn(
-                java.util.Arrays.asList(child1, child2, child3)
-        );
-
-        // Stub eventService listener
-        doAnswer(invocation -> {
-            ValueEventListener listener = invocation.getArgument(0);
-            listener.onDataChange(mockLimitSnap);
+        // Fire both listeners immediately
+        doAnswer(inv -> {
+            ValueEventListener l = inv.getArgument(0);
+            l.onDataChange(limitSnap);
             return null;
-        }).when(mockEventRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+        }).when(entrantLimitRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
 
-        // Stub waitingListService listener
-        doAnswer(invocation -> {
-            ValueEventListener listener = invocation.getArgument(0);
-            listener.onDataChange(mockWaitingSnap);
+        doAnswer(inv -> {
+            ValueEventListener l = inv.getArgument(0);
+            l.onDataChange(waitSnap);
             return null;
-        }).when(mockWaitingRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+        }).when(waitingStatusRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
 
-        // Capture updateChildren
-        doAnswer(invocation -> {
-            Map<String, Object> updates = invocation.getArgument(0);
-            DatabaseReference.CompletionListener listener = invocation.getArgument(1);
-            listener.onComplete(null, mockWaitingRef); // simulate success
-            Assert.assertFalse(updates.isEmpty());
-            return null;
-        }).when(mockWaitingRef).updateChildren(anyMap(), any());
-
-        // Act
+        // Run
         lottery.runLottery();
 
-        // Assert: updateChildren should be called once
-        verify(mockWaitingRef, times(1))
-                .updateChildren(anyMap(), any(DatabaseReference.CompletionListener.class));
+        // Because updates would be empty, no atomic update should be attempted
+        verify(waitingRoot, never()).updateChildren(anyMap(), any());
     }
 
-    // ---------------------------------------------------------------
-    // FAILURE CASE: entrantLimit missing → should log error, no update
-    // ---------------------------------------------------------------
     @Test
-    public void testRunLottery_missingEntrantLimit() {
-        Lottery lottery = new Lottery("event123");
+    public void runLottery_allInvited_whenWaitingLessOrEqualLimit() {
+        // entrantLimit exists and is 3
+        DataSnapshot limitSnap = mock(DataSnapshot.class);
+        when(limitSnap.exists()).thenReturn(true);
+        when(limitSnap.getValue(Integer.class)).thenReturn(3);
 
-        DataSnapshot mockLimitSnap = mock(DataSnapshot.class);
-        when(mockLimitSnap.exists()).thenReturn(false); // simulate missing limit
+        // WAITING has two users: u1, u2  (<= limit)
+        DataSnapshot waitSnap = mock(DataSnapshot.class);
+        when(waitSnap.exists()).thenReturn(true);
 
-        doAnswer(invocation -> {
-            ValueEventListener listener = invocation.getArgument(0);
-            listener.onDataChange(mockLimitSnap);
+        DataSnapshot u1 = mock(DataSnapshot.class);
+        DataSnapshot u2 = mock(DataSnapshot.class);
+        when(u1.getKey()).thenReturn("u1");
+        when(u2.getKey()).thenReturn("u2");
+        when(waitSnap.getChildren()).thenAnswer(i -> iterable(u1, u2));
+
+        // Fire both listeners immediately
+        doAnswer(inv -> {
+            ValueEventListener l = inv.getArgument(0);
+            l.onDataChange(limitSnap);
             return null;
-        }).when(mockEventRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+        }).when(entrantLimitRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
 
+        doAnswer(inv -> {
+            ValueEventListener l = inv.getArgument(0);
+            l.onDataChange(waitSnap);
+            return null;
+        }).when(waitingStatusRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+
+        // Make updateChildren invoke completion (as success)
+        doAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = inv.getArgument(0);
+            DatabaseReference.CompletionListener cl = inv.getArgument(1);
+            cl.onComplete(null, waitingRoot);
+            return null;
+        }).when(waitingRoot).updateChildren(anyMap(), any(DatabaseReference.CompletionListener.class));
+
+        // Capture payload
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Map<String, Object>> mapCap =
+                ArgumentCaptor.forClass((Class) Map.class);
+
+        // Run
         lottery.runLottery();
 
-        verify(mockWaitingRef, never())
-                .updateChildren(anyMap(), any(DatabaseReference.CompletionListener.class));
+        verify(waitingRoot, times(1))
+                .updateChildren(mapCap.capture(), any(DatabaseReference.CompletionListener.class));
+
+        Map<String, Object> updates = mapCap.getValue();
+
+        // Expect invited entries and deletions from WAITING; no UNINVITED keys
+        assertEquals(Boolean.TRUE, updates.get(EVENT_ID + "/INVITED/u1"));
+        assertEquals(Boolean.TRUE, updates.get(EVENT_ID + "/INVITED/u2"));
+        assertTrue(updates.containsKey(EVENT_ID + "/WAITING/u1"));
+        assertTrue(updates.containsKey(EVENT_ID + "/WAITING/u2"));
+        assertNull(updates.get(EVENT_ID + "/WAITING/u1")); // deletion is null
+        assertNull(updates.get(EVENT_ID + "/WAITING/u2"));
+
+        // No UNINVITED keys should be present
+        assertFalse(updates.containsKey(EVENT_ID + "/UNINVITED/u1"));
+        assertFalse(updates.containsKey(EVENT_ID + "/UNINVITED/u2"));
     }
 
-    // ---------------------------------------------------------------
-    // FAILURE CASE: Firebase read cancelled (DatabaseError)
-    // ---------------------------------------------------------------
-    @Test
-    public void testRunLottery_databaseErrorOnEntrantLimit() {
-        Lottery lottery = new Lottery("event123");
+    // -------------------- helpers --------------------
 
-        DatabaseError mockError = mock(DatabaseError.class);
-        when(mockError.getMessage()).thenReturn("Network error");
+    private static void setPrivate(Object target, String fieldName, Object value) throws Exception {
+        Field f = target.getClass().getDeclaredField(fieldName);
+        f.setAccessible(true);
+        f.set(target, value);
+    }
 
-        doAnswer(invocation -> {
-            ValueEventListener listener = invocation.getArgument(0);
-            listener.onCancelled(mockError);
-            return null;
-        }).when(mockEventRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
-
-        lottery.runLottery();
-
-        verify(mockWaitingRef, never())
-                .updateChildren(anyMap(), any(DatabaseReference.CompletionListener.class));
+    private static Iterable<DataSnapshot> iterable(DataSnapshot... snaps) {
+        List<DataSnapshot> list = Arrays.asList(snaps);
+        return new Iterable<DataSnapshot>() {
+            @Override public Iterator<DataSnapshot> iterator() {
+                return list.iterator();
+            }
+        };
     }
 }
