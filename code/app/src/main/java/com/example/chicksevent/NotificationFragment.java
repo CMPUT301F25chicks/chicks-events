@@ -25,6 +25,7 @@ public class NotificationFragment extends Fragment {
     ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
     NotificationAdapter notificationAdapter;
 
+
     private String androidId;
 
     private final String TAG = "RTD8";
