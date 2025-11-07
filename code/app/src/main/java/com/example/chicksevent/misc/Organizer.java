@@ -95,6 +95,16 @@ public class Organizer extends User {
     }
 
     /**
+     * Sends a notification to all entrants currently INVITED for this event.
+     *
+     * @param message the notification message body
+     */
+    public void sendSelectedNotification(String message) {
+        sendWaitingListNotification(EntrantStatus.INVITED, message);
+    }
+
+
+    /**
      * Returns the organizer's user id.
      *
      * @return the organizer id

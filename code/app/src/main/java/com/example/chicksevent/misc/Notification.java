@@ -47,7 +47,7 @@ public class Notification {
      * @param notificationType the type of notification to send
      * @param message the message content of the notification
      */
-    Notification(String userId, String eventId, NotificationType notificationType, String message) {
+    public Notification(String userId, String eventId, NotificationType notificationType, String message) {
         notificationService = new FirebaseService("Notification");
         eventService = new FirebaseService("Event");
         this.userId = userId;
