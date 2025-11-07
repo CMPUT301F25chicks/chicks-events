@@ -49,8 +49,14 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.1")
     androidTestImplementation("com.google.firebase:firebase-database:20.3.1")
 
+
+
     // Mockito core library
-    testImplementation("org.mockito:mockito-core:5.13.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
+    testImplementation("org.mockito:mockito-android:5.13.0")
+
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 
     // Optional: if you use Kotlin-specific Mockito support
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
