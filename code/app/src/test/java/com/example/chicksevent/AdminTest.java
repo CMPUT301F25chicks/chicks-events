@@ -1,5 +1,29 @@
 package com.example.chicksevent;
 
+/**
+ * Unit tests for the {@link Admin} class.
+ *
+ * <p>This test suite validates the functionality of Admin methods such as
+ * {@code deleteEvent()} and {@code browseEvents()}, ensuring they behave correctly
+ * under various conditions without interacting with the real Firebase Realtime Database.</p>
+ *
+ * <p>Firebase dependencies are fully mocked using {@code Mockito}:
+ * <ul>
+ *   <li>{@link FirebaseDatabase} is statically mocked to prevent network access.</li>
+ *   <li>{@link DatabaseReference} instances are replaced with mock objects.</li>
+ *   <li>All tests are executed in isolation, ensuring no persistent side effects.</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Purpose:</b> To verify Admin logic (event deletion, event browsing, etc.)
+ * behaves as expected using simulated Firebase behavior in a controlled environment.</p>
+ *
+ * <p><b>Note:</b> These tests are designed for local execution only and
+ * will not modify or connect to a live Firebase instance.</p>
+ *
+ * @author Jinn Kasai
+ */
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
