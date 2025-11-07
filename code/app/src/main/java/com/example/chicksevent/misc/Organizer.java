@@ -149,6 +149,7 @@ public class Organizer extends User {
                 DataSnapshot usersSnapshot = userTask.getResult();
 
                 for (Notification notif : notifications) {
+                    Log.i("Notification", "what is this " + notif.getUserId());
                     DataSnapshot userSnap = usersSnapshot.child(notif.getUserId());
                     if (userSnap.exists()) {
                         Object enabled = userSnap.child("notificationsEnabled").getValue();

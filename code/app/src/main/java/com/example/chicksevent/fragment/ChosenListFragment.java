@@ -144,6 +144,7 @@ public class ChosenListFragment extends Fragment {
         listEntrants(EntrantStatus.INVITED);
 
         sendNotificationButton.setOnClickListener(v -> {
+            Log.i("notification", "sending notif");
             Organizer organizer = new Organizer(Settings.Secure.getString(
                     getContext().getContentResolver(),
                     Settings.Secure.ANDROID_ID
