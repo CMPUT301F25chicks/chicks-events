@@ -26,8 +26,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 /**
- * Unit tests for the Event POJO.
- */
+ Event Class Unit Testing
+ * <p>
+ **/
 public class EventTest {
 
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;

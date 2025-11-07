@@ -13,7 +13,10 @@ import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.R;
 
 import java.util.ArrayList;
-
+/**
+ * Custom {@link EventAdapter} subclass for displaying events
+ * <p>
+ */
 public class EventAdapter extends ArrayAdapter<Event> {
     /** Listener interface for responding to item button clicks. */
     OnItemButtonClickListener listener;

@@ -26,6 +26,10 @@ import org.mockito.MockedStatic;
 
 import java.util.Map;
 
+/**
+ Lottery Class Unit Testing
+ * <p>
+ **/
 public class LotteryTest {
 
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
