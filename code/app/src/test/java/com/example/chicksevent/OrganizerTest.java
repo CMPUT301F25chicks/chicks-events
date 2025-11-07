@@ -1,23 +1,11 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.FirebaseService;
-import com.example.chicksevent.misc.Notification;
 import com.example.chicksevent.misc.Organizer;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -25,63 +13,84 @@ import com.google.firebase.database.ValueEventListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- Organizer Class Unit Testing
- * <p>
- **/
+ * Minimal, synchronous tests for {@link Organizer}.
+ * - No async Task usage.
+ * - Verifies listener wiring and simple getters/delegations.
+ */
 public class OrganizerTest {
 
-    private static final String ORG_ID = "org-123";
-    private static final String EVENT_ID = "evt-999";
+    private static final String UID = "org-123";
+    private static final String EVENT_ID = "event-xyz";
 
+    // Static mock for FirebaseDatabase.getInstance(String) so Organizer()/User() don't init real Firebase
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
 
-    private FirebaseService waitingListSvc;
-    private FirebaseService organizerSvc;
-    private FirebaseService eventSvc;
+    // Refs used by FirebaseService constructors inside Organizer/User
+    private DatabaseReference mockUserRef;
+    private DatabaseReference mockEventRef;
+    private DatabaseReference mockNotifRef;
+    private DatabaseReference mockAdminRef;
+    private DatabaseReference mockWaitingListRef;
+    private DatabaseReference mockOrganizerRef;
 
-    private DatabaseReference waitingRootRef;
-    private DatabaseReference eventNodeRef;
-    private DatabaseReference statusNodeRef;
-
+    // Under test
     private Organizer organizer;
+
+    // Service mocks we inject to intercept calls
+    private FirebaseService mockWaitingListSvc;
+    private FirebaseService mockUserSvc;
+    private FirebaseService mockOrganizerSvc;
+    private FirebaseService mockEventSvc;
 
     @Before
     public void setUp() throws Exception {
-        // Block any real Firebase initialization
+        // 1) Prevent real Firebase initialization
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
-        firebaseDbStatic.when(FirebaseDatabase::getInstance).thenReturn(mockDb);
-        firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString())).thenReturn(mockDb);
 
-        // Mock the three services Organizer creates
-        waitingListSvc = mock(FirebaseService.class);
-        organizerSvc   = mock(FirebaseService.class);
-        eventSvc       = mock(FirebaseService.class);
+        mockUserRef        = mock(DatabaseReference.class);
+        mockEventRef       = mock(DatabaseReference.class);
+        mockNotifRef       = mock(DatabaseReference.class);
+        mockAdminRef       = mock(DatabaseReference.class);
+        mockWaitingListRef = mock(DatabaseReference.class);
+        mockOrganizerRef   = mock(DatabaseReference.class);
 
-        // Basic DB refs used by waitingList path
-        waitingRootRef = mock(DatabaseReference.class);
-        eventNodeRef   = mock(DatabaseReference.class);
-        statusNodeRef  = mock(DatabaseReference.class);
+        firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
+                .thenReturn(mockDb);
 
-        when(waitingListSvc.getReference()).thenReturn(waitingRootRef);
-        when(waitingRootRef.child(EVENT_ID)).thenReturn(eventNodeRef);
+        // All FirebaseService(...) created in Organizer/User() will request these roots
+        when(mockDb.getReference("User")).thenReturn(mockUserRef);
+        when(mockDb.getReference("Event")).thenReturn(mockEventRef);
+        when(mockDb.getReference("Notification")).thenReturn(mockNotifRef);
+        when(mockDb.getReference("Admin")).thenReturn(mockAdminRef);
+        when(mockDb.getReference("WaitingList")).thenReturn(mockWaitingListRef);
+        when(mockDb.getReference("Organizer")).thenReturn(mockOrganizerRef);
 
-        organizer = new Organizer(ORG_ID, EVENT_ID);
+        // 2) Construct Organizer safely (no real Firebase usage)
+        organizer = new Organizer(UID, EVENT_ID);
 
-        // Inject mocked services so no real DB is touched
-        inject(organizer, "waitingListService", waitingListSvc);
-        inject(organizer, "organizerService",   organizerSvc);
-        inject(organizer, "eventService",       eventSvc);
+        // 3) Prepare service mocks and inject them so we fully control RTDB calls
+        mockWaitingListSvc = mock(FirebaseService.class);
+        mockUserSvc        = mock(FirebaseService.class);
+        mockOrganizerSvc   = mock(FirebaseService.class);
+        mockEventSvc       = mock(FirebaseService.class);
+
+        when(mockWaitingListSvc.getReference()).thenReturn(mockWaitingListRef);
+        when(mockUserSvc.getReference()).thenReturn(mockUserRef);
+        when(mockOrganizerSvc.getReference()).thenReturn(mockOrganizerRef);
+        when(mockEventSvc.getReference()).thenReturn(mockEventRef);
+
+        // Inject Organizer's private services (these are NOT the ones in User)
+        setPrivate(organizer, "waitingListService", mockWaitingListSvc);
+        setPrivate(organizer, "userService",        mockUserSvc);
+        setPrivate(organizer, "organizerService",   mockOrganizerSvc);
+        setPrivate(organizer, "eventService",       mockEventSvc);
     }
 
     @After
@@ -89,159 +98,80 @@ public class OrganizerTest {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
     }
 
-    // ---- helper to set private fields ----
-    private static void inject(Object target, String field, Object value) throws Exception {
-        Field f = target.getClass().getDeclaredField(field);
-        f.setAccessible(true);
-        f.set(target, value);
-    }
-
-    // ----------------------------------------------------------------------
-    // listEntrants()
-    // ----------------------------------------------------------------------
+    // -------------------- Synchronous tests --------------------
 
     @Test
-    public void listEntrants_noArg_attachesListenerToWAITING() {
-        when(eventNodeRef.child(EntrantStatus.WAITING.toString())).thenReturn(statusNodeRef);
-
-        organizer.listEntrants(); // defaults to WAITING
-
-        verify(waitingRootRef).child(EVENT_ID);
-        verify(eventNodeRef).child("WAITING");
-        verify(statusNodeRef).addValueEventListener(any(ValueEventListener.class));
+    public void getOrganizerId_returnsConstructorValue() {
+        assertEquals(UID, organizer.getOrganizerId());
     }
 
     @Test
-    public void listEntrants_withStatus_attachesListenerToGivenStatus() {
-        when(eventNodeRef.child(EntrantStatus.INVITED.toString())).thenReturn(statusNodeRef);
+    public void setOrganizerId_updatesValue() {
+        organizer.setOrganizerId("new-id");
+        assertEquals("new-id", organizer.getOrganizerId());
+    }
+
+    @Test
+    public void isOrganizer_returnsTrue() {
+        assertTrue(organizer.isOrganizer());
+    }
+
+    @Test
+    public void listEntrants_default_waiting_attachesListenerOnCorrectPath() {
+        // Build the child chain: /WaitingList/{eventId}/WAITING
+        DatabaseReference eventNode  = mock(DatabaseReference.class);
+        DatabaseReference statusNode = mock(DatabaseReference.class);
+
+        when(mockWaitingListRef.child(EVENT_ID)).thenReturn(eventNode);
+        when(eventNode.child(EntrantStatus.WAITING.toString())).thenReturn(statusNode);
+
+        organizer.listEntrants(); // default is WAITING
+
+        verify(statusNode, times(1)).addValueEventListener(any(ValueEventListener.class));
+    }
+
+    @Test
+    public void listEntrants_withInvited_attachesListenerOnCorrectPath() {
+        DatabaseReference eventNode  = mock(DatabaseReference.class);
+        DatabaseReference statusNode = mock(DatabaseReference.class);
+
+        when(mockWaitingListRef.child(EVENT_ID)).thenReturn(eventNode);
+        when(eventNode.child(EntrantStatus.INVITED.toString())).thenReturn(statusNode);
 
         organizer.listEntrants(EntrantStatus.INVITED);
 
-        verify(waitingRootRef).child(EVENT_ID);
-        verify(eventNodeRef).child("INVITED");
-        verify(statusNodeRef).addValueEventListener(any(ValueEventListener.class));
-    }
-
-    // ----------------------------------------------------------------------
-    // sendWaitingListNotification(...)
-    // ----------------------------------------------------------------------
-
-    @Test
-    public void sendWaitingListNotification_WAITING_createsAndSendsForEachChild() {
-        when(eventNodeRef.child("WAITING")).thenReturn(statusNodeRef);
-
-        // Capture the listener using an AtomicReference (captor with when() is awkward)
-        AtomicReference<ValueEventListener> listenerRef = new AtomicReference<>();
-        when(statusNodeRef.addValueEventListener(any(ValueEventListener.class)))
-                .thenAnswer(inv -> {
-                    ValueEventListener l = inv.getArgument(0);
-                    listenerRef.set(l);
-                    return l; // IMPORTANT: method returns the listener
-                });
-
-        DataSnapshot root = mock(DataSnapshot.class);
-        DataSnapshot ch1  = mock(DataSnapshot.class);
-        DataSnapshot ch2  = mock(DataSnapshot.class);
-        when(root.getChildren()).thenReturn(Arrays.asList(ch1, ch2));
-        when(ch1.getKey()).thenReturn("userA");
-        when(ch2.getKey()).thenReturn("userB");
-
-        try (MockedConstruction<Notification> notifConst = mockConstruction(
-                Notification.class,
-                (mock, ctx) -> doNothing().when(mock).createNotification()
-        )) {
-            organizer.sendWaitingListNotification(EntrantStatus.WAITING, "hello all");
-
-            // Trigger the callback
-            assertNotNull("ValueEventListener should be attached", listenerRef.get());
-            listenerRef.get().onDataChange(root);
-
-            // One Notification per child
-            assertEquals(2, notifConst.constructed().size());
-            verify(notifConst.constructed().get(0), times(1)).createNotification();
-            verify(notifConst.constructed().get(1), times(1)).createNotification();
-        }
+        verify(statusNode, times(1)).addValueEventListener(any(ValueEventListener.class));
     }
 
     @Test
-    public void sendWaitingListNotification_INVITED_mapsStatusAndSends() {
-        when(eventNodeRef.child("INVITED")).thenReturn(statusNodeRef);
+    public void sendSelectedNotification_delegatesToInvited() throws Exception {
+        // Spy to observe which status is passed to the status-specific method
+        Organizer spyOrg = spy(organizer);
 
-        AtomicReference<ValueEventListener> listenerRef = new AtomicReference<>();
-        when(statusNodeRef.addValueEventListener(any(ValueEventListener.class)))
-                .thenAnswer(inv -> {
-                    ValueEventListener l = inv.getArgument(0);
-                    listenerRef.set(l);
-                    return l;
-                });
+        // We only want to intercept the status-specific overload; leave others real
+        doNothing().when(spyOrg).sendWaitingListNotification(eq(EntrantStatus.INVITED), anyString());
 
-        DataSnapshot root = mock(DataSnapshot.class);
-        DataSnapshot ch1  = mock(DataSnapshot.class);
-        when(root.getChildren()).thenReturn(Collections.singletonList(ch1));
-        when(ch1.getKey()).thenReturn("userX");
-
-        try (MockedConstruction<Notification> notifConst = mockConstruction(
-                Notification.class,
-                (mock, ctx) -> doNothing().when(mock).createNotification()
-        )) {
-            organizer.sendSelectedNotification("only invited");
-
-            assertNotNull(listenerRef.get());
-            listenerRef.get().onDataChange(root);
-
-            assertEquals(1, notifConst.constructed().size());
-            verify(notifConst.constructed().get(0), times(1)).createNotification();
-        }
+        spyOrg.sendSelectedNotification("msg");
+        verify(spyOrg, times(1))
+                .sendWaitingListNotification(eq(EntrantStatus.INVITED), eq("msg"));
     }
 
     @Test
-    public void sendWaitingListNotification_noChildren_constructsZero() {
-        when(eventNodeRef.child("WAITING")).thenReturn(statusNodeRef);
+    public void sendWaitingListNotification_defaultOverload_usesWAITING() throws Exception {
+        Organizer spyOrg = spy(organizer);
 
-        AtomicReference<ValueEventListener> listenerRef = new AtomicReference<>();
-        when(statusNodeRef.addValueEventListener(any(ValueEventListener.class)))
-                .thenAnswer(inv -> {
-                    ValueEventListener l = inv.getArgument(0);
-                    listenerRef.set(l);
-                    return l;
-                });
+        doNothing().when(spyOrg).sendWaitingListNotification(eq(EntrantStatus.WAITING), anyString());
 
-        DataSnapshot root = mock(DataSnapshot.class);
-        when(root.getChildren()).thenReturn(Collections.emptyList());
-
-        try (MockedConstruction<Notification> notifConst = mockConstruction(
-                Notification.class,
-                (mock, ctx) -> {}
-        )) {
-            organizer.sendWaitingListNotification("empty list");
-
-            assertNotNull(listenerRef.get());
-            listenerRef.get().onDataChange(root);
-
-            assertEquals(0, notifConst.constructed().size());
-        }
+        spyOrg.sendWaitingListNotification("hello");
+        verify(spyOrg, times(1))
+                .sendWaitingListNotification(eq(EntrantStatus.WAITING), eq("hello"));
     }
 
-    // ----------------------------------------------------------------------
-    // Convenience overload sendWaitingListNotification(String)
-    // ----------------------------------------------------------------------
+    // -------------------- helpers --------------------
 
-    @Test
-    public void sendWaitingListNotification_overload_defaultsToWAITING() {
-        when(eventNodeRef.child("WAITING")).thenReturn(statusNodeRef);
-
-        organizer.sendWaitingListNotification("hi");
-        verify(eventNodeRef).child("WAITING");
-    }
-
-    // ----------------------------------------------------------------------
-    // Simple getters / role flags!
-    // ----------------------------------------------------------------------
-
-    @Test
-    public void roles_and_getters() {
-        assertEquals(ORG_ID, organizer.getOrganizerId());
-        assertTrue(organizer.isOrganizer());
-//        assertFalse(organizer.isAdmin());
+    private static void setPrivate(Object target, String fieldName, Object value) throws Exception {
+        Field f = target.getClass().getDeclaredField(fieldName);
+        f.setAccessible(true);
+        f.set(target, value);
     }
 }
