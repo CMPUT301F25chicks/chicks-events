@@ -55,10 +55,25 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.firebase:firebase-database:20.3.1")
-    androidTestImplementation("com.google.firebase:firebase-database:20.3.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
+    androidTestImplementation("org.mockito:mockito-android:5.10.0")
+    // AndroidX Test Core library
+    androidTestImplementation ("androidx.test:core:1.5.0") // Use the latest stable version
+
+    // AndroidX Test Runner and Rules (JUnit 4)
+    androidTestImplementation ("androidx.test:runner:1.5.2") // Use the latest stable version
+    androidTestImplementation ("androidx.test:rules:1.5.0") // Use the latest stable version
+
+    // Espresso for UI interaction testing
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1") // Use the latest stable version
+
+
+
+
 
 // mock final classes like DataSnapshot
 }
