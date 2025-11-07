@@ -108,4 +108,8 @@ public class Notification {
     public String getMessage() {
         return message;
     }
+
+    public String getUserId() {
+        return userId;
+    }
 }

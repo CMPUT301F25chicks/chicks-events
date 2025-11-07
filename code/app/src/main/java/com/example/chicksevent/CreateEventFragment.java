@@ -73,7 +73,7 @@ public class CreateEventFragment extends Fragment {
         String regEnd   = s(binding.etEndDate.getText());   // Registration End (from your UI)
 
         // Optional max entrants
-        int entrantLimit = 0;
+        int entrantLimit = 999;
         if (binding.cbLimitWaitingList.isChecked()) {
             String max = s(binding.etMaxEntrants.getText());
             if (!TextUtils.isEmpty(max)) {

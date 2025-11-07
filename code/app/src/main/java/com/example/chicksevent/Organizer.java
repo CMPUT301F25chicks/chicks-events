@@ -7,6 +7,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Represents an organizer user who manages events and their waiting lists.
  * <p>
@@ -41,6 +44,7 @@ public class Organizer extends User {
 
     /** Firebase service for waiting list operations (root: "WaitingList"). */
     private FirebaseService waitingListService;
+    private FirebaseService userService;
 
     /** The organizer's user id. */
     private String organizerId;
@@ -61,6 +65,7 @@ public class Organizer extends User {
         waitingListService = new FirebaseService("WaitingList");
         organizerService = new FirebaseService("Organizer");
         eventService = new FirebaseService("Event");
+        userService = new FirebaseService("User");
     }
 
     /**
@@ -109,15 +114,7 @@ public class Organizer extends User {
      *
      * @param message the notification message body
      */
-    public void sendSelectedNotification(String message) {
-        sendWaitingListNotification(EntrantStatus.INVITED, message);
-    }
 
-    /**
-     * Sends a notification to all entrants currently WAITING for this event.
-     *
-     * @param message the notification message body
-     */
     public void sendWaitingListNotification(String message) {
         sendWaitingListNotification(EntrantStatus.WAITING, message);
     }
@@ -129,35 +126,58 @@ public class Organizer extends User {
      * @param message the notification message body
      */
     public void sendWaitingListNotification(EntrantStatus status, String message) {
-        waitingListService.getReference().child(eventId).child(status.toString())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            NotificationType notifType;
-                            switch (status) {
-                                case WAITING:
-                                    notifType = NotificationType.WAITING;
-                                    break;
-                                case INVITED:
-                                    notifType = NotificationType.INVITED;
-                                    break;
-                                default:
-                                    notifType = NotificationType.UNINVITED;
-                            }
-                            Notification n = new Notification(childSnap.getKey(), eventId, notifType, message);
-                            n.createNotification();
+        sendWaitingListNotificationHelper(status, message).addOnCompleteListener(task -> {
+            ArrayList<Notification> notifications = task.getResult();
+
+            userService.getReference().get().addOnCompleteListener(userTask -> {
+                if (!userTask.isSuccessful() || userTask.getResult() == null) {
+                    Log.e("Notification", "Failed to get user data", userTask.getException());
+                    return;
+                }
+
+                DataSnapshot usersSnapshot = userTask.getResult();
+
+                for (Notification notif : notifications) {
+                    DataSnapshot userSnap = usersSnapshot.child(notif.getUserId());
+                    if (userSnap.exists()) {
+                        Object enabled = userSnap.child("notificationsEnabled").getValue();
+                        if (enabled instanceof Boolean && (Boolean) enabled) {
+                            notif.createNotification();
                         }
                     }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e(TAG, "Error reading data: " + databaseError.getMessage());
-                    }
-                });
+                }
+            });
+        });
     }
 
-    /** Placeholder for future cancellation logic for no-shows. */
+    public Task<ArrayList<Notification>> sendWaitingListNotificationHelper(EntrantStatus status, String message) {
+        return waitingListService.getReference().child(eventId).child(status.toString()).get().continueWith(t -> {
+            ArrayList<Notification> notifList = new ArrayList<>();
+            for (DataSnapshot childSnap : t.getResult().getChildren()) {
+                NotificationType notifType;
+                switch (status) {
+                    case WAITING:
+                        notifType = NotificationType.WAITING;
+                        break;
+                    case INVITED:
+                        notifType = NotificationType.INVITED;
+                        break;
+                    default:
+                        notifType = NotificationType.UNINVITED;
+                }
+
+                Notification n = new Notification(childSnap.getKey(), eventId, notifType, message);
+                notifList.add(n);
+
+
+            }
+
+            return notifList;
+        });
+    }
+
+
+        /** Placeholder for future cancellation logic for no-shows. */
     public void cancelDidNotSignUp() { }
 
     /** Placeholder for future event-creation logic. */
