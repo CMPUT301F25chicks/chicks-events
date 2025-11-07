@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:padding="16dp"
-    tools:context=".EventFragment">
+    tools:context=".fragment.EventFragment">
 
     <TextView
         android:id="@+id/header_title"

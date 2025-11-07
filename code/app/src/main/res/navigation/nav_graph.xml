@@ -6,10 +6,55 @@
     app:startDestination="@id/NotificationFragment">
 
     <fragment
+        android:id="@+id/AdminHomeFragment"
+        android:name="com.example.chicksevent.fragment_admin.AdminHomeFragment"
+        android:label="Admin Home" >
+        <action
+            android:id="@+id/action_adminHome_to_eventAdminFragment"
+            app:destination="@id/EventAdminFragment"/>
+        <action
+            android:id="@+id/action_adminHome_to_orgAdminFragment"
+            app:destination="@id/OrgAdminFragment"/>
+        <action
+            android:id="@+id/action_adminHome_to_profileAdminFragment"
+            app:destination="@id/ProfileAdminFragment"/>
+
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_EventFragment"
+            app:destination="@id/EventFragment"/>
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment"/>
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/EventAdminFragment"
+        android:name="com.example.chicksevent.fragment.EventAdminFragment"
+        android:label="Events Admin"/>
+    <fragment
+        android:id="@+id/OrgAdminFragment"
+        android:name="com.example.chicksevent.fragment_admin.OrgAdminFragment"
+        android:label="Organizers Admin"/>
+    <fragment
+        android:id="@+id/ProfileAdminFragment"
+        android:name="com.example.chicksevent.fragment_admin.ProfileAdminFragment"
+        android:label="Profiles Admin"/>
+
+    <fragment
         android:id="@+id/NotificationFragment"
-        android:name="com.example.chicksevent.NotificationFragment"
+        android:name="com.example.chicksevent.fragment.NotificationFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_notification">
+        <action
+            android:id="@+id/action_NotificationFragment_to_AdminHomeFragment"
+            app:destination="@id/AdminHomeFragment" />
 
         <action
             android:id="@+id/action_NotificationFragment_to_EventFragment"
@@ -30,7 +75,7 @@
 
     <fragment
         android:id="@+id/EventDetailFragment"
-        android:name="com.example.chicksevent.EventDetailFragment"
+        android:name="com.example.chicksevent.fragment.EventDetailFragment"
         android:label="@string/event_detail_fragment_label"
         tools:layout="@layout/fragment_event_detail_org">
 
@@ -56,7 +101,7 @@
 
     <fragment
         android:id="@+id/CreateEventFragment"
-        android:name="com.example.chicksevent.CreateEventFragment"
+        android:name="com.example.chicksevent.fragment.CreateEventFragment"
         android:label="Create Event"
         tools:layout="@layout/fragment_create_event">
 
@@ -73,7 +118,7 @@
 
     <fragment
         android:id="@+id/EventFragment"
-        android:name="com.example.chicksevent.EventFragment"
+        android:name="com.example.chicksevent.fragment.EventFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_event">
 
@@ -101,7 +146,7 @@
 
     <fragment
         android:id="@+id/ProfileFragment"
-        android:name="com.example.chicksevent.ProfileFragment"
+        android:name="com.example.chicksevent.fragment.ProfileFragment"
         android:label="@string/profile_fragment_label"
         tools:layout="@layout/fragment_profile_entrant">
 
@@ -119,7 +164,7 @@
 
     <fragment
         android:id="@+id/SearchEventFragment"
-        android:name="com.example.chicksevent.SearchEventFragment"
+        android:name="com.example.chicksevent.fragment.SearchEventFragment"
         android:label="@string/search_event_fragment_label"
         tools:layout="@layout/fragment_search_event">
 
@@ -139,7 +184,7 @@
 
     <fragment
         android:id="@+id/HostedEventFragment"
-        android:name="com.example.chicksevent.HostedEventFragment"
+        android:name="com.example.chicksevent.fragment_org.HostedEventFragment"
         android:label="@string/hosted_event_fragment_label"
         tools:layout="@layout/fragment_hosted_event">
 
@@ -165,7 +210,7 @@
 
     <fragment
         android:id="@+id/EventDetailOrgFragment"
-        android:name="com.example.chicksevent.EventDetailOrgFragment"
+        android:name="com.example.chicksevent.fragment_org.EventDetailOrgFragment"
         android:label="@string/event_detail_org_fragment_label"
         tools:layout="@layout/fragment_update_event_detail">
 
@@ -192,7 +237,7 @@
 
     <fragment
         android:id="@+id/UpdateEventFragment"
-        android:name="com.example.chicksevent.UpdateEventFragment"
+        android:name="com.example.chicksevent.fragment.UpdateEventFragment"
         android:label="@string/update_event_fragment_label"
         tools:layout="@layout/fragment_update_event_detail">
 
@@ -212,7 +257,7 @@
 
     <fragment
         android:id="@+id/WaitingListFragment"
-        android:name="com.example.chicksevent.WaitingListFragment"
+        android:name="com.example.chicksevent.fragment.WaitingListFragment"
         android:label="@string/waiting_list_fragment_label"
         tools:layout="@layout/fragment_waiting_list">
 
@@ -235,7 +280,7 @@
 
     <fragment
         android:id="@+id/ChosenListFragment"
-        android:name="com.example.chicksevent.ChosenListFragment"
+        android:name="com.example.chicksevent.fragment.ChosenListFragment"
         android:label="@string/chosen_list_fragment_label"
         tools:layout="@layout/fragment_chosen_list">
 
@@ -255,7 +300,7 @@
 
     <fragment
         android:id="@+id/PoolingFragment"
-        android:name="com.example.chicksevent.PoolingFragment"
+        android:name="com.example.chicksevent.fragment.PoolingFragment"
         android:label="@string/pooling_fragment_label"
         tools:layout="@layout/fragment_pooling">
 

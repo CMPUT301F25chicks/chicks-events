@@ -39,7 +39,7 @@
             android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NOT CHOSEN"
+            android:text="LOADING..."
             android:textStyle="bold"
             android:textColor="#E78282"
             android:textSize="20sp" />
@@ -48,7 +48,7 @@
             android:id="@+id/tv_event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Halloween Party"
+            android:text="LOADING..."
             android:textSize="10sp"
             android:textStyle="bold"
             android:textColor="@color/purpleText"
@@ -59,7 +59,7 @@
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="6:00 PM - 9:00 PM"
+            android:text="LOADING..."
             android:textSize="10sp"
             android:textColor="@color/purpleText"/>
 
