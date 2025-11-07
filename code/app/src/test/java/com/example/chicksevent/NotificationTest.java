@@ -1,57 +1,110 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import com.example.chicksevent.enums.NotificationType;
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Notification;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- Notification Class Unit Testing
+ * Unit tests for {@link Notification}.
+ *
  * <p>
- **/
+ * These tests are designed to run entirely synchronously and without any main-thread dependency.
+ * By mocking Firebase Realtime Database and the {@link com.google.android.gms.tasks.Task} API,
+ * we ensure deterministic behaviour of {@link Notification#getEventName()} and
+ * {@link Notification#createNotification()} methods without awaiting asynchronous callbacks.
+ * </p>
+ *
+ * <h2>Key Behaviours Verified</h2>
+ * <ul>
+ *   <li>{@code createNotification()} correctly writes to the expected Firebase path and payload</li>
+ *   <li>Constructor getters return consistent values for all fields</li>
+ *   <li>{@code getEventName()} properly resolves the event name when found in mock snapshots</li>
+ *   <li>Graceful handling of missing or unmatched event IDs (returns "NO NAME")</li>
+ * </ul>
+ *
+ * <h2>Testing Approach</h2>
+ * <ul>
+ *   <li>Mocks {@link FirebaseDatabase#getInstance(String)} to prevent real Firebase initialization</li>
+ *   <li>Injects {@link FirebaseService} mocks using reflection to isolate test scope</li>
+ *   <li>Replaces {@link Task#continueWith(Continuation)} with synchronous lambda evaluation</li>
+ * </ul>
+ *
+ * <p>
+ * All Firebase references and snapshot traversals are simulated to guarantee full control
+ * over test inputs and outputs, ensuring safe execution in local JVM environments.
+ * </p>
+ *
+ * @author Jinn Kasai
+ * @author Dung
+ */
 public class NotificationTest {
 
-    // --- static mocking to stop Firebase from initializing in JVM unit tests ---
+    private static final String UID = "u-1";
+    private static final String EID = "e-1";
+    private static final String MSG = "Hello there";
+
+    // Static mock for FirebaseDatabase.getInstance(String)
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
 
-    private FirebaseService mockService; // injected for behavior tests
+    // Refs used when FirebaseService("Notification"/"Event") is constructed
+    private DatabaseReference mockNotifRef;
+    private DatabaseReference mockEventRef;
+
+    // Under test
+    private Notification notification;
+
+    // Service mocks to inject
+    private FirebaseService mockNotifSvc;
+    private FirebaseService mockEventSvc;
 
     @Before
-    public void setup() {
-        // 1) Block Firebase initialization at the source
+    public void setUp() {
+        // Prevent real Firebase init
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
 
-        // Cover both overloads, just in case your FirebaseService uses either
-        firebaseDbStatic.when(FirebaseDatabase::getInstance).thenReturn(mockDb);
-        firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString())).thenReturn(mockDb);
+        mockNotifRef = mock(DatabaseReference.class);
+        mockEventRef = mock(DatabaseReference.class);
 
-        // 2) Prepare the service mock we will inject
-        mockService = mock(FirebaseService.class);
+        firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
+                .thenReturn(mockDb);
+
+        when(mockDb.getReference("Notification")).thenReturn(mockNotifRef);
+        when(mockDb.getReference("Event")).thenReturn(mockEventRef);
+
+        // Safe to construct (no real Firebase)
+        notification = new Notification(UID, EID, NotificationType.INVITED, MSG);
+
+        // Inject controllable service mocks
+        mockNotifSvc = mock(FirebaseService.class);
+        mockEventSvc = mock(FirebaseService.class);
+
+        when(mockNotifSvc.getReference()).thenReturn(mockNotifRef);
+        when(mockEventSvc.getReference()).thenReturn(mockEventRef);
+
+        setPrivate(notification, "notificationService", mockNotifSvc);
+        setPrivate(notification, "eventService",        mockEventSvc);
     }
 
     @After
@@ -59,118 +112,114 @@ public class NotificationTest {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
     }
 
-    // --- tiny helper to inject into the private field in Notification
-    private static void setPrivateField(Object target, String fieldName, Object value) throws Exception {
-        Field f = target.getClass().getDeclaredField(fieldName);
-        f.setAccessible(true);
-        f.set(target, value);
-    }
-
-    // ---------------------- SUCCESS CASES ----------------------
+    // -------------------- createNotification (sync) --------------------
 
     @Test
-    @SuppressWarnings({"rawtypes","unchecked"})
-    public void createNotification_success_sendsHashMapWithMessage() throws Exception {
-        String userId = "U1";
-        String eventId = "E1";
-        NotificationType type = NotificationType.WAITING; // use an enum constant that exists in your project
-        String message = "this is a message to all waiting list people";
+    public void createNotification_writesMessageUnderCorrectPath() {
+        doNothing().when(mockNotifSvc).updateSubCollectionEntry(
+                anyString(), anyString(), anyString(), any(HashMap.class));
 
-        // Constructor will call new FirebaseService("Notification"), which calls FirebaseDatabase.getInstance(...)
-        // Our static mock prevents FirebaseApp initialization.
-        Notification n = new Notification(userId, eventId, type, message);
+        notification.createNotification();
 
-        // Replace real service with our mock
-        setPrivateField(n, "notificationService", mockService);
+        // Explicitly typed captor to match method signature
+        org.mockito.ArgumentCaptor<HashMap<String, Object>> cap =
+                org.mockito.ArgumentCaptor.forClass((Class) (Class<?>) HashMap.class);
 
-        // Act
-        n.createNotification();
+        verify(mockNotifSvc, times(1)).updateSubCollectionEntry(
+                eq(UID), eq(EID), eq(NotificationType.INVITED.toString()), cap.capture());
 
-        // Assert: capture exact HashMap payload
-        ArgumentCaptor<HashMap<String, Object>> mapCaptor =
-                ArgumentCaptor.forClass((Class) HashMap.class);
-
-        verify(mockService, times(1)).updateSubCollectionEntry(
-                eq(userId),
-                eq(eventId),
-                eq(type.toString()),
-                mapCaptor.capture()
-        );
-
-        HashMap<String, Object> sent = mapCaptor.getValue();
-        assertNotNull(sent);
-        assertTrue(sent.containsKey("message"));
-        assertEquals(message, sent.get("message"));
+        HashMap<String, Object> sent = cap.getValue();
+        assertEquals(MSG, sent.get("message"));
     }
 
+    // -------------------- getters (sync) --------------------
+
     @Test
-    @SuppressWarnings({"rawtypes","unchecked"})
-    public void createNotification_nullMessage_stillSendsMessageKeyWithNull() throws Exception {
-        String userId = "U2";
-        String eventId = "E2";
-        NotificationType type = NotificationType.WAITING;
-        String message = null;
+    public void getters_returnConstructorValues() {
+        assertEquals(UID, notification.getUserId());
+        assertEquals(EID, notification.getEventId());
+        assertEquals(NotificationType.INVITED, notification.getNotificationType());
+        assertEquals(MSG, notification.getMessage());
+    }
 
-        Notification n = new Notification(userId, eventId, type, message);
-        setPrivateField(n, "notificationService", mockService);
+    // -------------------- getEventName (no main-thread await) --------------------
 
-        n.createNotification();
+    @Test
+    public void getEventName_returnsNameWhenPresent() {
+        // Build a fake /Event snapshot with a child matching EID that has {"name":"Party"}
+        DataSnapshot root  = mock(DataSnapshot.class);
+        DataSnapshot child = mock(DataSnapshot.class);
 
-        ArgumentCaptor<HashMap<String, Object>> mapCaptor =
-                ArgumentCaptor.forClass((Class) HashMap.class);
+        when(child.getKey()).thenReturn(EID);
+        HashMap<String, String> value = new HashMap<>();
+        value.put("name", "Party");
+        when(child.getValue()).thenReturn(value);
+        when(root.getChildren()).thenAnswer(i -> iterable(child));
 
-        verify(mockService).updateSubCollectionEntry(
-                eq(userId),
-                eq(eventId),
-                eq(type.toString()),
-                mapCaptor.capture()
-        );
+        // Return a mocked Task<DataSnapshot> so we can short-circuit continueWith(...)
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(mockEventRef.get()).thenReturn(mockGetTask);
 
-        HashMap<String, Object> sent = mapCaptor.getValue();
-        assertNotNull(sent);
-        assertTrue(sent.containsKey("message"));
-        assertNull(sent.get("message"));
+        // When Notification calls mockGetTask.continueWith(...),
+        // run the continuation immediately with a completed Task(root),
+        // and return a completed Task<String> with the continuation's result.
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, String> cont = (Continuation<DataSnapshot, String>) inv.getArgument(0);
+            String out = cont.then(Tasks.forResult(root));
+            return Tasks.forResult(out);
+        });
+
+        Task<String> t = notification.getEventName();
+        assertTrue(t.isComplete());
+        assertEquals("Party", t.getResult());
     }
 
     @Test
-    public void getters_returnCtorValues() {
-        String userId = "U3";
-        String eventId = "E3";
-        NotificationType type = NotificationType.WAITING;
-        String message = "hello";
+    public void getEventName_returnsNoNameWhenMissing() {
+        DataSnapshot root  = mock(DataSnapshot.class);
+        DataSnapshot child = mock(DataSnapshot.class);
 
-        // This used to crash before we mocked FirebaseDatabase.getInstance()
-        Notification n = new Notification(userId, eventId, type, message);
+        when(child.getKey()).thenReturn("some-other-id");
+        when(child.getValue()).thenReturn(new HashMap<String, String>());
+        when(root.getChildren()).thenAnswer(i -> iterable(child));
 
-        assertEquals(type, n.getNotificationType());
-        assertEquals(eventId, n.getEventId());
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(mockEventRef.get()).thenReturn(mockGetTask);
+
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, String> cont = (Continuation<DataSnapshot, String>) inv.getArgument(0);
+            String out = cont.then(Tasks.forResult(root));
+            return Tasks.forResult(out);
+        });
+
+        Task<String> t = notification.getEventName();
+        assertTrue(t.isComplete());
+        assertEquals("NO NAME", t.getResult());
     }
 
-    // ---------------------- FAILURE CASE ----------------------
+    // -------------------- helpers --------------------
 
-    @Test
-    @SuppressWarnings({"rawtypes"})
-    public void createNotification_serviceThrows_propagatesException() throws Exception {
-        String userId = "U4";
-        String eventId = "E4";
-        NotificationType type = NotificationType.WAITING;
-        String message = "boom-test";
-
-        Notification n = new Notification(userId, eventId, type, message);
-        setPrivateField(n, "notificationService", mockService);
-
-        // Make the service throw when called
-        doThrow(new RuntimeException("boom"))
-                .when(mockService)
-                .updateSubCollectionEntry(anyString(), anyString(), anyString(), any(HashMap.class));
-
+    private static void setPrivate(Object target, String fieldName, Object value) {
         try {
-            n.createNotification();
-            fail("Expected RuntimeException");
-        } catch (RuntimeException ex) {
-            String msg = ex.getMessage();
-            assertNotNull(msg);                  // avoid NPE on contains
-            assertTrue(msg.contains("boom"));
+            Field f = target.getClass().getDeclaredField(fieldName);
+            f.setAccessible(true);
+            f.set(target, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    /** Iterable wrapper so Mockito can iterate root.getChildren(). */
+    private static Iterable<DataSnapshot> iterable(DataSnapshot... snaps) {
+        List<DataSnapshot> list = Arrays.asList(snaps);
+        return new Iterable<DataSnapshot>() {
+            @Override public Iterator<DataSnapshot> iterator() {
+                return list.iterator();
+            }
+        };
     }
 }

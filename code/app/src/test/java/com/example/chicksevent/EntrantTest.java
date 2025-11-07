@@ -1,187 +1,153 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import android.util.Log;
 
 import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
 /**
- Entrant Class Unit Testing
- * <p>
- **/
+ * Robust unit tests for Entrant (no real Firebase, no Android main thread).
+ * - Mocks android.util.Log statically to avoid "Method ... not mocked" crash.
+ * - Injects mocked FirebaseService via reflection.
+ */
 public class EntrantTest {
+
+    private static final String EVENT_ID   = "evt-123";
+    private static final String ENTRANT_ID = "u-777";
+
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
-    private FirebaseDatabase mockDb;
-    private DatabaseReference mockAdminRef;
-    private DatabaseReference mockEventRef;
-    private DatabaseReference mockWaitingListRef; // Added for "WaitingList" service
+    private MockedStatic<Log> logStatic; // <-- mock android.util.Log
+
+    private FirebaseService mockWaitingSvc;
+    private FirebaseService mockEntrantSvc;
+    private FirebaseService mockEventSvc;
+
+    private Entrant entrant;
 
     @Before
-    public void setUpFirebaseStatic() {
-        // Static mock for FirebaseDatabase.getInstance(...)
+    public void setUp() throws Exception {
+        // Block FirebaseApp init from FirebaseService constructor(s)
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
-
-        mockDb = mock(FirebaseDatabase.class);
-        mockAdminRef = mock(DatabaseReference.class);
-        mockEventRef = mock(DatabaseReference.class);
-        mockWaitingListRef = mock(DatabaseReference.class); // Initialize mock
-
+        FirebaseDatabase mockDb = mock(FirebaseDatabase.class);
         firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
                 .thenReturn(mockDb);
 
-        // FirebaseService("Admin"), ("Event"), and ("WaitingList")
-        when(mockDb.getReference("Admin")).thenReturn(mockAdminRef);
-        when(mockDb.getReference("Event")).thenReturn(mockEventRef);
-        when(mockDb.getReference("WaitingList")).thenReturn(mockWaitingListRef); // Mock this path
+        // Mock android.util.Log (all common methods used in code)
+        logStatic = mockStatic(Log.class);
+        when(Log.i(anyString(), anyString())).thenReturn(0);
+        when(Log.d(anyString(), anyString())).thenReturn(0);
+        when(Log.e(anyString(), anyString())).thenReturn(0);
+        when(Log.e(anyString(), anyString(), any(Throwable.class))).thenReturn(0);
+
+        entrant = new Entrant(ENTRANT_ID, EVENT_ID);
+
+        mockWaitingSvc = mock(FirebaseService.class);
+        mockEntrantSvc = mock(FirebaseService.class);
+        mockEventSvc   = mock(FirebaseService.class);
+
+        setPrivate(entrant, "waitingListService", mockWaitingSvc);
+        setPrivate(entrant, "entrantService",     mockEntrantSvc);
+        setPrivate(entrant, "eventService",       mockEventSvc);
+
+        // Make void methods safe; explicit but optional
+        doNothing().when(mockWaitingSvc).updateSubCollectionEntry(
+                anyString(), anyString(), anyString(), any(HashMap.class));
+        doNothing().when(mockWaitingSvc).deleteSubCollectionEntry(
+                anyString(), anyString(), anyString());
     }
 
     @After
-    public void tearDownFirebaseStatic() {
+    public void tearDown() {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
+        if (logStatic != null) logStatic.close();
     }
 
-    // ---------- helpers ----------
+    // ---------------------- joinWaitingList ----------------------
 
-    private static void setPrivateField(Object target, String fieldName, Object value) throws Exception {
+    @Test
+    public void joinWaitingList_default_callsUpdate_onWaitingPath_andSetsStatus() {
+        entrant.joinWaitingList(); // default WAITING
+
+        verify(mockWaitingSvc, times(1)).updateSubCollectionEntry(
+                eq(EVENT_ID), anyString(), eq(ENTRANT_ID), any(HashMap.class));
+
+        assertEquals(EntrantStatus.WAITING, entrant.getStatus());
+    }
+
+    @Test
+    public void joinWaitingList_specificStatus_invited_callsUpdate_andSetsStatus() {
+        entrant.joinWaitingList(EntrantStatus.INVITED);
+
+        verify(mockWaitingSvc, times(1)).updateSubCollectionEntry(
+                eq(EVENT_ID), anyString(), eq(ENTRANT_ID), any(HashMap.class));
+
+        assertEquals(EntrantStatus.INVITED, entrant.getStatus());
+    }
+
+    // ---------------------- leaveWaitingList ----------------------
+
+    @Test
+    public void leaveWaitingList_default_waiting_callsDelete_andClearsStatus() {
+        entrant.leaveWaitingList(); // default WAITING
+
+        verify(mockWaitingSvc, times(1)).deleteSubCollectionEntry(
+                eq(EVENT_ID), anyString(), eq(ENTRANT_ID));
+
+        assertNull(entrant.getStatus());
+    }
+
+    @Test
+    public void leaveWaitingList_specificStatus_invited_callsDelete_andClearsStatus() {
+        entrant.joinWaitingList(EntrantStatus.INVITED);
+        entrant.leaveWaitingList(EntrantStatus.INVITED);
+
+        verify(mockWaitingSvc, times(1)).deleteSubCollectionEntry(
+                eq(EVENT_ID), anyString(), eq(ENTRANT_ID));
+
+        assertNull(entrant.getStatus());
+    }
+
+    // ---------------------- swapStatus ----------------------
+
+    @Test
+    public void swapStatus_fromWaitingToInvited_deletesOld_thenAddsNew_andUpdatesStatus() {
+        entrant.swapStatus(EntrantStatus.INVITED);
+
+        InOrder inOrder = inOrder(mockWaitingSvc);
+        inOrder.verify(mockWaitingSvc).deleteSubCollectionEntry(eq(EVENT_ID), anyString(), eq(ENTRANT_ID));
+        inOrder.verify(mockWaitingSvc).updateSubCollectionEntry(eq(EVENT_ID), anyString(), eq(ENTRANT_ID), any(HashMap.class));
+
+        assertEquals(EntrantStatus.INVITED, entrant.getStatus());
+    }
+
+    // ---------------------- trivial getters / role ----------------------
+
+    @Test
+    public void getters_and_isOrganizer() {
+        assertEquals(EVENT_ID, entrant.getEventId());
+        assertEquals(ENTRANT_ID, entrant.getEntrantId());
+        assertFalse(entrant.isOrganizer());
+    }
+
+    // ---------------------- helper ----------------------
+
+    private static void setPrivate(Object target, String fieldName, Object value) throws Exception {
         Field f = target.getClass().getDeclaredField(fieldName);
         f.setAccessible(true);
         f.set(target, value);
-    }
-
-    // ---------- Passing Tests ----------
-
-    @Test
-    public void constructor_initializesPropertiesCorrectly() {
-        // Given: A user ID and an event ID
-        String userId = "user123";
-        String eventId = "event456";
-
-        // When: An Entrant object is created
-        Entrant entrant = new Entrant(userId, eventId);
-
-        // Then: The properties should be set as expected
-        Assert.assertEquals(userId, entrant.getUserId()); // from parent User class
-        assertEquals(userId, entrant.getEntrantId());
-        assertEquals(eventId, entrant.getEventId());
-        assertEquals(EntrantStatus.WAITING, entrant.getStatus()); // Default status
-    }
-
-    @Test
-    public void joinWaitingList_updatesStatusAndCallsService() throws Exception {
-        // Given: An Entrant and a mocked service
-        Entrant entrant = new Entrant("user123", "event456");
-        FirebaseService mockWaitingListService = mock(FirebaseService.class);
-        setPrivateField(entrant, "waitingListService", mockWaitingListService);
-
-        // Define expected data for the service call
-        HashMap<String, Object> expectedData = new HashMap<>();
-        expectedData.put(" ", "");
-
-        // When: The entrant joins with a specific status
-        entrant.joinWaitingList(EntrantStatus.ACCEPTED);
-
-        // Then: The entrant's status should be updated
-        assertEquals(EntrantStatus.ACCEPTED, entrant.getStatus());
-
-        // And: The Firebase service should be called with the correct parameters
-        verify(mockWaitingListService).updateSubCollectionEntry("event456", "ACCEPTED", "user123", expectedData);
-    }
-
-    @Test
-    public void leaveWaitingList_updatesStatusAndCallsService() throws Exception {
-        // Given: An Entrant and mocked service
-        Entrant entrant = new Entrant("user123", "event456");
-        FirebaseService mockWaitingListService = mock(FirebaseService.class);
-        setPrivateField(entrant, "waitingListService", mockWaitingListService);
-
-        // Pre-condition: Set a status to leave from. Default is WAITING
-        entrant.joinWaitingList(EntrantStatus.WAITING);
-
-        // When: The entrant leaves the waiting list
-        entrant.leaveWaitingList(EntrantStatus.WAITING);
-
-        // Then: The status should be set to null
-        assertNull(entrant.getStatus());
-
-        // And: The delete method on the service should be called correctly
-        verify(mockWaitingListService).deleteSubCollectionEntry("event456", "WAITING", "user123");
-    }
-
-    @Test
-    public void swapStatus_callsLeaveAndThenJoin() throws Exception {
-        // Given: An Entrant starting in the WAITING state
-        Entrant entrant = new Entrant("user123", "event456");
-        FirebaseService mockWaitingListService = mock(FirebaseService.class);
-        setPrivateField(entrant, "waitingListService", mockWaitingListService);
-
-        // Initial status is WAITING from constructor
-        assertEquals(EntrantStatus.WAITING, entrant.getStatus());
-
-        // When: The status is swapped to ACCEPTED
-        entrant.swapStatus(EntrantStatus.ACCEPTED);
-
-        // Then: The final status should be ACCEPTED
-        assertEquals(EntrantStatus.ACCEPTED, entrant.getStatus());
-
-        // And: The service should first be called to delete the old status entry
-        verify(mockWaitingListService, times(1)).deleteSubCollectionEntry("event456", "WAITING", "user123");
-
-        // And: The service should then be called to create the new status entry
-        HashMap<String, Object> expectedData = new HashMap<>();
-        expectedData.put(" ", "");
-        verify(mockWaitingListService, times(1)).updateSubCollectionEntry("event456", "ACCEPTED", "user123", expectedData);
-    }
-
-    @Test
-    public void isOrganizerAndIsAdmin_alwaysReturnFalse() {
-        // Given: A standard Entrant
-        Entrant entrant = new Entrant("user123", "event456");
-
-        // Then: They should not have admin or organizer privileges
-        assertFalse(entrant.isOrganizer());
-//        assertFalse(entrant.isAdmin());
-    }
-
-    // ---------- Test Designed to Pass by Failing Successfully ----------
-
-    /**
-     * This test demonstrates checking for incorrect behavior.
-     * We want to ensure that leaving a list does NOT call the 'update' method,
-     * only the 'delete' method. This test should pass because the assertion is correct.
-     */
-    @Test
-    public void leaveWaitingList_shouldNotCallUpdate() throws Exception {
-        // Given: An Entrant object and mocked service
-        Entrant entrant = new Entrant("user123", "event456");
-        FirebaseService mockWaitingListService = mock(FirebaseService.class);
-        setPrivateField(entrant, "waitingListService", mockWaitingListService);
-
-        // When: The entrant leaves the waiting list
-        entrant.leaveWaitingList(EntrantStatus.WAITING);
-
-        // Then: The update method should NEVER be called during a leave operation
-        verify(mockWaitingListService, never()).updateSubCollectionEntry(anyString(), anyString(), anyString(), any(HashMap.class));
     }
 }

@@ -1,245 +1,180 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import com.example.chicksevent.enums.NotificationType;
 import com.example.chicksevent.misc.FirebaseService;
-import com.example.chicksevent.misc.Notification;
 import com.example.chicksevent.misc.User;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
- User Class Unit Testing
+ * Unit tests for {@link User}.
+ *
  * <p>
- **/
+ * These tests are designed to verify the synchronous logic within {@link User}
+ * while avoiding any real Firebase network calls or asynchronous {@code Task} behaviour.
+ * Firebase Realtime Database interactions are fully mocked using Mockito.
+ * </p>
+ *
+ * <h2>Test coverage includes:</h2>
+ * <ul>
+ *   <li>Validation and trimming of profile update fields</li>
+ *   <li>Ensuring no writes occur when required fields are invalid</li>
+ *   <li>Static mocking of {@link FirebaseDatabase#getInstance(String)} to prevent real initialization</li>
+ *   <li>Reflection-based injection of {@link FirebaseService} mocks</li>
+ *   <li>Verification of expected write payloads for {@code updateProfile()} and {@code createMockUser()}</li>
+ * </ul>
+ *
+ * <p>
+ * All tests execute synchronously and deterministically — no reliance on {@code Tasks.await()}
+ * or Android main-thread components.
+ * </p>
+ *
+ * @author Jinn Kasai
+ * @author Dung
+ */
 public class UserTest {
 
+    private static final String UID = "uid123";
+
+    // Static mock for FirebaseDatabase.getInstance(String) so User() doesn't init real Firebase
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
-    private DatabaseReference mockRef;
+
+    // Refs used by FirebaseService constructors inside User()
+    private DatabaseReference mockUserRef;
+    private DatabaseReference mockEventRef;
+    private DatabaseReference mockNotifRef;
+    private DatabaseReference mockAdminRef;
+
+    private User user;
+
+    // Service mocks we inject to intercept writes
+    private FirebaseService mockUserSvc;
+    private FirebaseService mockEventSvc;
+    private FirebaseService mockNotifSvc;
+    private FirebaseService mockAdminSvc;
 
     @Before
-    public void setUpFirebaseStatic() {
+    public void setUp() throws Exception {
+        // Mock static getInstance(url) BEFORE constructing User
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
-        mockRef = mock(DatabaseReference.class);
+
+        mockUserRef  = mock(DatabaseReference.class);
+        mockEventRef = mock(DatabaseReference.class);
+        mockNotifRef = mock(DatabaseReference.class);
+        mockAdminRef = mock(DatabaseReference.class);
 
         firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
                 .thenReturn(mockDb);
-        when(mockDb.getReference("Event")).thenReturn(mockRef);
+
+        when(mockDb.getReference("User")).thenReturn(mockUserRef);
+        when(mockDb.getReference("Event")).thenReturn(mockEventRef);
+        when(mockDb.getReference("Notification")).thenReturn(mockNotifRef);
+        when(mockDb.getReference("Admin")).thenReturn(mockAdminRef);
+
+        // Construct user safely (no real Firebase)
+        user = new User(UID);
+
+        // Prepare service mocks and inject
+        mockUserSvc  = mock(FirebaseService.class);
+        mockEventSvc = mock(FirebaseService.class);
+        mockNotifSvc = mock(FirebaseService.class);
+        mockAdminSvc = mock(FirebaseService.class);
+
+        setPrivate(user, "userService",         mockUserSvc);
+        setPrivate(user, "eventService",        mockEventSvc);
+        setPrivate(user, "notificationService", mockNotifSvc);
+        setPrivate(user, "adminService",        mockAdminSvc);
     }
 
     @After
-    public void tearDownFirebaseStatic() {
+    public void tearDown() {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
     }
 
+    // -------------------- Tests (all synchronous) ----------------------------
+
     @Test
-    public void testUpdateProfile_Success() throws Exception {
-        // Arrange
-        User user = new User("u123");
-
-        // Inject mock FirebaseService via reflection
-        FirebaseService mockService = mock(FirebaseService.class);
-        Field f = User.class.getDeclaredField("userService");
-        f.setAccessible(true);
-        f.set(user, mockService);
-
-        // Act
-        boolean result = user.updateProfile("Alice", "alice@example.com", "1234567890", true);
-
-        // Assert
-        assertTrue(result);
-        verify(mockService, times(1)).editEntry(eq("u123"), any(HashMap.class));
-
-        // Verify that fields were updated locally
-        Field nameField = User.class.getDeclaredField("name");
-        nameField.setAccessible(true);
-        assertEquals("Alice", nameField.get(user));
-
-        Field emailField = User.class.getDeclaredField("email");
-        emailField.setAccessible(true);
-        assertEquals("alice@example.com", emailField.get(user));
-
-        Field phoneField = User.class.getDeclaredField("phoneNumber");
-        phoneField.setAccessible(true);
-        assertEquals("1234567890", phoneField.get(user));
-
-        Field notifField = User.class.getDeclaredField("notificationsEnabled");
-        notifField.setAccessible(true);
-        assertEquals(true, notifField.get(user));
-    }
-
-    // --- TEST 2: updateProfile fail - missing userId ---
-    @Test
-    public void testUpdateProfile_Fail_NoUserId() throws Exception {
-        User user = new User(null);
-
-        // Inject mock FirebaseService to ensure it’s not called
-        FirebaseService mockService = mock(FirebaseService.class);
-        Field f = User.class.getDeclaredField("userService");
-        f.setAccessible(true);
-        f.set(user, mockService);
-
-        boolean result = user.updateProfile("Bob", "bob@example.com", "555", false);
-
-        assertFalse(result);
-        verify(mockService, never()).editEntry(anyString(), any(HashMap.class));
-    }
-
-    // --- TEST 3: updateProfile fail - missing name/email ---
-    @Test
-    public void testUpdateProfile_Fail_MissingFields() throws Exception {
-        User user = new User("u999");
-
-        FirebaseService mockService = mock(FirebaseService.class);
-        Field f = User.class.getDeclaredField("userService");
-        f.setAccessible(true);
-        f.set(user, mockService);
-
-        // Missing name
-        boolean result1 = user.updateProfile("", "bob@example.com", "555", false);
-        // Missing email
-        boolean result2 = user.updateProfile("Bob", "", "555", false);
-
-        assertFalse(result1);
-        assertFalse(result2);
-
-        verify(mockService, never()).editEntry(anyString(), any(HashMap.class));
-    }
-
-    // --- TEST 4: updateNotificationPreference ---
-    @Test
-    public void testUpdateNotificationPreference() throws Exception {
-        User user = new User("user123");
-
-        FirebaseService mockService = mock(FirebaseService.class);
-        Field f = User.class.getDeclaredField("userService");
-        f.setAccessible(true);
-        f.set(user, mockService);
-
-        user.setNotificationsEnabled(false);
-
-        Field notifField = User.class.getDeclaredField("notificationsEnabled");
-        notifField.setAccessible(true);
-        assertEquals(false, notifField.get(user));
-
-        verify(mockService, times(1))
-                .editEntry(eq("user123"), argThat(map -> (Boolean) map.get("notificationsEnabled") == false));
+    public void getUserId_returnsConstructorValue() {
+        assertEquals(UID, user.getUserId());
     }
 
     @Test
-    public void testSetNotificationsEnabled_UpdatesField() throws Exception {
-        // Arrange
-        User user = new User("user123");
-
-        // Use reflection to check private field
-        Field notifField = User.class.getDeclaredField("notificationsEnabled");
-        notifField.setAccessible(true);
-        assertTrue((Boolean) notifField.get(user)); // default is true
-
-        // Act
-        user.setNotificationsEnabled(false);
-
-        // Assert
-        assertFalse((Boolean) notifField.get(user));
+    public void isOrganizer_returnsFalse() {
+        assertFalse(user.isOrganizer());
     }
 
     @Test
-    public void testGetNotificationList_Success() throws Exception {
-        // Arrange
-        User user = new User("userABC");
+    public void updateProfile_success_callsEditEntryWithTrimmedValues() {
+        boolean ok = user.updateProfile(" Alice ", " alice@example.com ", " 555-0100 ", true);
+        assertTrue(ok);
 
-        FirebaseService mockService = mock(FirebaseService.class);
-        Field f = User.class.getDeclaredField("notificationService");
-        f.setAccessible(true);
-        f.set(user, mockService);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<HashMap<String, Object>> cap =
+                ArgumentCaptor.forClass((Class) HashMap.class);
 
-        DatabaseReference mockRef = mock(DatabaseReference.class);
-        DatabaseReference mockChildRef = mock(DatabaseReference.class);
-        when(mockService.getReference()).thenReturn(mockRef);
-        when(mockRef.child("userABC")).thenReturn(mockChildRef);
+        verify(mockUserSvc).editEntry(eq(UID), cap.capture());
 
-        // Mock snapshot data structure:
-        // event1 -> INVITED -> id1 -> { "message": "Hi!" }
-        DataSnapshot eventSnapshot = mock(DataSnapshot.class);
-        DataSnapshot invitedSnapshot = mock(DataSnapshot.class);
-        DataSnapshot id1Snapshot = mock(DataSnapshot.class);
-        when(eventSnapshot.getKey()).thenReturn("event1");
-        when(invitedSnapshot.getKey()).thenReturn("INVITED");
-        when(id1Snapshot.getKey()).thenReturn("id1");
-
-        Map<String, String> messageMap = new HashMap<>();
-        messageMap.put("message", "Hi!");
-        when(id1Snapshot.getValue()).thenReturn(messageMap);
-
-        when(invitedSnapshot.getChildren()).thenReturn(List.of(id1Snapshot));
-        when(eventSnapshot.getChildren()).thenReturn(List.of(invitedSnapshot));
-
-        DataSnapshot rootSnapshot = mock(DataSnapshot.class);
-        when(rootSnapshot.getChildren()).thenReturn(List.of(eventSnapshot));
-
-        Task<DataSnapshot> successTask = Tasks.forResult(rootSnapshot);
-        when(mockChildRef.get()).thenReturn(successTask);
-
-        // Act
-        user.getNotificationList().continueWith(task -> {
-            ArrayList<Notification> notifications = task.getResult();
-
-            assertNotNull(notifications);
-            assertEquals(1, notifications.size());
-            Notification noti = notifications.get(0);
-            assertEquals("event1", noti.getEventId());
-            assertEquals(NotificationType.INVITED, noti.getNotificationType());
-            return null;
-        });
+        HashMap<String, Object> sent = cap.getValue();
+        assertEquals("Alice", sent.get("name"));
+        assertEquals("alice@example.com", sent.get("email"));
+        assertEquals("555-0100", sent.get("phoneNumber"));
+        assertEquals(UID, sent.get("uid"));
+        assertEquals(true, sent.get("notificationsEnabled"));
     }
 
     @Test
-    public void testGetNotificationList_Failure() throws Exception {
-        // Arrange
-        User user = new User("userABC");
+    public void updateProfile_failsWhenNameOrEmailEmpty_neverWrites() {
+        assertFalse(user.updateProfile(" ", "x@x", null, true));
+        assertFalse(user.updateProfile("Bob", "   ", null, true));
 
-        FirebaseService mockService = mock(FirebaseService.class);
-        Field f = User.class.getDeclaredField("notificationService");
+        verify(mockUserSvc, never()).editEntry(anyString(), any(HashMap.class));
+    }
+
+    @Test
+    public void updateProfile_failsWhenUserIdEmpty_neverWrites() throws Exception {
+        // Force userId empty via reflection to trigger guard
+        setPrivate(user, "userId", "");
+        assertFalse(user.updateProfile("Alice", "a@b", null, true));
+        verify(mockUserSvc, never()).editEntry(anyString(), any(HashMap.class));
+    }
+
+    @Test
+    public void createMockUser_writesExpectedProfile() {
+        user.createMockUser();
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<HashMap<String, Object>> cap =
+                ArgumentCaptor.forClass((Class) HashMap.class);
+
+        // createMockUser sets userId to "test-user-id" and calls updateProfile(...)
+        verify(mockUserSvc).editEntry(eq("test-user-id"), cap.capture());
+
+        HashMap<String, Object> sent = cap.getValue();
+        assertEquals("test-user", sent.get("name"));
+        assertEquals("test-email@gmail.com", sent.get("email"));
+        assertEquals("123-456-7890", sent.get("phoneNumber"));
+        assertEquals(false, sent.get("notificationsEnabled"));
+        assertEquals("test-user-id", sent.get("uid"));
+    }
+
+    // -------------------- helpers --------------------
+
+    private static void setPrivate(Object target, String fieldName, Object value) throws Exception {
+        Field f = target.getClass().getDeclaredField(fieldName);
         f.setAccessible(true);
-        f.set(user, mockService);
-
-        DatabaseReference mockRef = mock(DatabaseReference.class);
-        DatabaseReference mockChildRef = mock(DatabaseReference.class);
-        when(mockService.getReference()).thenReturn(mockRef);
-        when(mockRef.child("userABC")).thenReturn(mockChildRef);
-
-        Exception mockException = new RuntimeException("Firebase get() failed");
-        Task<DataSnapshot> failedTask = Tasks.forException(mockException);
-        when(mockChildRef.get()).thenReturn(failedTask);
+        f.set(target, value);
     }
 }

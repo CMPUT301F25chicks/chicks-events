@@ -1,193 +1,244 @@
 package com.example.chicksevent;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
+import com.example.chicksevent.misc.Admin;
+import com.example.chicksevent.misc.User;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.MockedStatic;
 
-import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
+/**
+ * Unit tests for {@link Admin}.
+ *
+ * <p>
+ * These tests run fully on the JVM and synchronously. They prevent real Firebase
+ * initialization by statically mocking {@link FirebaseDatabase#getInstance(String)},
+ * stub RTDB references, and short-circuit {@link Task} continuations to avoid any
+ * main-thread or network dependencies.
+ * </p>
+ *
+ * <h2>Behaviours verified</h2>
+ * <ul>
+ *   <li>{@code deleteEvent} and {@code deleteEntrantProfile} issue deletes only for non-empty IDs</li>
+ *   <li>{@code deleteOrganizerProfile} returns an exception task for empty IDs and completes on success</li>
+ *   <li>{@code browseEntrants} builds lightweight {@link User} objects from snapshot keys</li>
+ *   <li>{@code browseEvents} returns a list whose size matches snapshot children</li>
+ * </ul>
+ *
+ * <h2>Technique</h2>
+ * <ul>
+ *   <li>Static mock of {@link FirebaseDatabase} to block SDK initialization</li>
+ *   <li>Manual triggering of continuation lambdas for {@code continueWithTask}</li>
+ *   <li>Mockito stubs for {@link DatabaseReference} chains and completion listeners</li>
+ * </ul>
+ *
+ * <p>All assertions are synchronous and deterministic.</p>
+ *
+ * @author Jinn Kasai
+ */
 public class AdminTest {
 
-    // Optional static mocking scaffold (not strictly needed for these tests,
-    // but kept here in case Admin ever calls FirebaseDatabase.getInstance()).
+    private static final String UID = "admin-1";
+
+    // Static mock for FirebaseDatabase.getInstance(String)
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
-    private DatabaseReference eventsRootRef;
+
+    // Root references returned by getReference(...)
+    private DatabaseReference adminRoot;
+    private DatabaseReference userRoot;
+    private DatabaseReference eventRoot;
+    private DatabaseReference organizerRoot;
+
+    private Admin admin;
 
     @Before
-    public void setUpFirebaseStatic() {
+    public void setUp() {
+        // Block real Firebase init
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
-        eventsRootRef = mock(DatabaseReference.class);
+
+        adminRoot     = mock(DatabaseReference.class); // "Admin"
+        userRoot      = mock(DatabaseReference.class); // "User"
+        eventRoot     = mock(DatabaseReference.class); // "Event"
+        organizerRoot = mock(DatabaseReference.class); // "Organizer"
 
         firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
                 .thenReturn(mockDb);
-        when(mockDb.getReference("Event")).thenReturn(eventsRootRef);
+
+        when(mockDb.getReference("Admin")).thenReturn(adminRoot);
+        when(mockDb.getReference("User")).thenReturn(userRoot);
+        when(mockDb.getReference("Event")).thenReturn(eventRoot);
+        when(mockDb.getReference("Organizer")).thenReturn(organizerRoot);
+
+        // Safe to construct Admin (its FirebaseService members will bind to the mocked refs)
+        admin = new Admin(UID);
     }
 
     @After
-    public void tearDownFirebaseStatic() {
+    public void tearDown() {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
     }
 
-    // ---------- helpers ----------
+    // -------------------- deleteEvent --------------------
 
-    private static void setPrivateField(Object target, String fieldName, Object value) throws Exception {
-        Field f = target.getClass().getDeclaredField(fieldName);
-        f.setAccessible(true);
-        f.set(target, value);
+    @Test
+    public void deleteEvent_nonEmpty_callsRemoveOnEventPath() {
+        DatabaseReference eventIdRef = mock(DatabaseReference.class);
+        when(eventRoot.child("E123")).thenReturn(eventIdRef);
+
+        // return a completed Task from removeValue() so the success-listener chain doesn't NPE
+        when(eventIdRef.removeValue()).thenReturn(Tasks.forResult(null));
+
+        admin.deleteEvent("E123");
+
+        verify(eventIdRef, times(1)).removeValue();
     }
 
-    private static DatabaseError mockDbError(String msg) {
-        DatabaseError err = mock(DatabaseError.class);
-        when(err.getMessage()).thenReturn(msg);
-        when(err.toException()).thenReturn(new DatabaseException(msg));
-        return err;
+    @Test
+    public void deleteEvent_empty_isNoop() {
+        admin.deleteEvent(null);
+        admin.deleteEvent("");
+        verify(eventRoot, never()).child(anyString());
     }
 
-    // ---------- deleteEvent tests ----------
+    // -------------------- deleteEntrantProfile --------------------
 
-//    @Test
-//    public void deleteEvent_emptyId_completesExceptionally() {
-//        Admin admin = new Admin("u1");
-//
-//        admin.deleteEvent("");
-//    }
-//
-//    @Test
-//    public void deleteEvent_success_callsCompletion_noError_completesSuccessfully() throws Exception {
-//        FirebaseService eventsService = mock(FirebaseService.class);
-//        DatabaseReference eventsRef   = mock(DatabaseReference.class);
-//        DatabaseReference eventRef    = mock(DatabaseReference.class);
-//
-//        when(eventsService.getReference()).thenReturn(eventsRef);
-//        when(eventsRef.child("E123")).thenReturn(eventRef);
-//
-//        // Simulate success callback
-//        doAnswer(inv -> {
-//            DatabaseReference.CompletionListener listener = inv.getArgument(0);
-//            listener.onComplete(null, eventRef);
-//            return null;
-//        }).when(eventRef).removeValue(any(DatabaseReference.CompletionListener.class));
-//
-//        Admin admin = new Admin("u1");
-//        setPrivateField(admin, "eventsService", eventsService);
-//
-//        admin.deleteEvent("E123");
-//    }
-//
-//    @Test
-//    public void deleteEvent_failure_callsCompletion_withError_completesExceptionally() throws Exception {
-//        FirebaseService eventsService = mock(FirebaseService.class);
-//        DatabaseReference eventsRef   = mock(DatabaseReference.class);
-//        DatabaseReference eventRef    = mock(DatabaseReference.class);
-//
-//        when(eventsService.getReference()).thenReturn(eventsRef);
-//        when(eventsRef.child("E123")).thenReturn(eventRef);
-//
-//        DatabaseError err = mockDbError("boom");
-//        // Simulate failure callback
-//        doAnswer(inv -> {
-//            DatabaseReference.CompletionListener listener = inv.getArgument(0);
-//            listener.onComplete(err, eventRef);
-//            return null;
-//        }).when(eventRef).removeValue(any(DatabaseReference.CompletionListener.class));
-//
-//        Admin admin = new Admin("u1");
-//        setPrivateField(admin, "eventsService", eventsService);
-//
-//        admin.deleteEvent("E123");
-//    }
-//
-//    // ---------- browseEvents tests ----------
-//
-//    @Test
-//    @SuppressWarnings({"rawtypes","unchecked"})
-//    public void browseEvents_success_materializesEvents_andSetsIdFromKey() throws Exception {
-//        FirebaseService eventsService = mock(FirebaseService.class);
-//        DatabaseReference eventsRef   = mock(DatabaseReference.class);
-//        Task<DataSnapshot> getTask    = mock(Task.class);
-//        DataSnapshot rootSnapshot     = mock(DataSnapshot.class);
-//
-//        when(eventsService.getReference()).thenReturn(eventsRef);
-//        when(eventsRef.get()).thenReturn(getTask);
-//
-//        // Immediately invoke success listener with a fake root snapshot
-//        when(getTask.addOnSuccessListener(any(OnSuccessListener.class))).thenAnswer(inv -> {
-//            OnSuccessListener<DataSnapshot> l = (OnSuccessListener<DataSnapshot>) inv.getArgument(0);
-//            l.onSuccess(rootSnapshot);
-//            return getTask; // fluent chain
-//        });
-//        // Make addOnFailureListener a no-op chain
-//        when(getTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(getTask);
-//
-//        // children
-//        DataSnapshot ch1 = mock(DataSnapshot.class);
-//        DataSnapshot ch2 = mock(DataSnapshot.class);
-//        when(rootSnapshot.getChildren()).thenReturn(Arrays.asList(ch1, ch2));
-//        when(ch1.getKey()).thenReturn("E1");
-//        when(ch2.getKey()).thenReturn("E2");
-//
-//        Event e1 = mock(Event.class);
-//        Event e2 = mock(Event.class);
-//        when(ch1.getValue(Event.class)).thenReturn(e1);
-//        when(ch2.getValue(Event.class)).thenReturn(e2);
-//
-//        Admin admin = new Admin("u1");
-//        setPrivateField(admin, "eventsService", eventsService);
-//
-//        Task<?> task = admin.browseEvents();
-//
-//        assertTrue(task.isComplete());
-//        assertTrue(task.isSuccessful());
-//
-//        @SuppressWarnings("unchecked")
-//        List<Event> result = (List<Event>) task.getResult();
-//        assertNotNull(result);
-//        assertEquals(2, result.size());
-//        verify(e1).setId("E1");
-//        verify(e2).setId("E2");
-//    }
-//
-//    @Test
-//    @SuppressWarnings({"rawtypes","unchecked"})
-//    public void browseEvents_failure_propagatesException() throws Exception {
-//        FirebaseService eventsService = mock(FirebaseService.class);
-//        DatabaseReference eventsRef   = mock(DatabaseReference.class);
-//        Task<DataSnapshot> getTask    = mock(Task.class);
-//
-//        when(eventsService.getReference()).thenReturn(eventsRef);
-//        when(eventsRef.get()).thenReturn(getTask);
-//
-//        // Success listener: return chain unchanged
-//        when(getTask.addOnSuccessListener(any(OnSuccessListener.class))).thenReturn(getTask);
-//
-//        // Failure listener: immediately invoke with an exception
-//        when(getTask.addOnFailureListener(any(OnFailureListener.class))).thenAnswer(inv -> {
-//            OnFailureListener l = (OnFailureListener) inv.getArgument(0);
-//            l.onFailure(new RuntimeException("read failed"));
-//            return getTask;
-//        });
-//
-//        Admin admin = new Admin("u1");
-//        setPrivateField(admin, "eventsService", eventsService);
-//
-//        Task<?> task = admin.browseEvents();
-//
-//        assertTrue(task.isComplete());
-//        assertFalse(task.isSuccessful());
-//        Throwable ex = task.getException();
-//        assertNotNull(ex);
-//        assertTrue(String.valueOf(ex.getMessage()).contains("read failed"));
-//    }
+    @Test
+    public void deleteEntrantProfile_nonEmpty_callsRemoveOnUserPath() {
+        DatabaseReference userIdRef = mock(DatabaseReference.class);
+        when(userRoot.child("U42")).thenReturn(userIdRef);
+
+        // ensure removeValue() returns a completed Task
+        when(userIdRef.removeValue()).thenReturn(Tasks.forResult(null));
+
+        admin.deleteEntrantProfile("U42");
+
+        verify(userIdRef, times(1)).removeValue();
+    }
+
+    @Test
+    public void deleteEntrantProfile_empty_isNoop() {
+        admin.deleteEntrantProfile(null);
+        admin.deleteEntrantProfile("");
+        verify(userRoot, never()).child(anyString());
+    }
+
+    // -------------------- deleteOrganizerProfile --------------------
+
+    @Test
+    public void deleteOrganizerProfile_empty_returnsExceptionTask() {
+        Task<Void> t = admin.deleteOrganizerProfile("");
+        assertTrue(t.isComplete());
+        assertFalse(t.isSuccessful());
+        assertNotNull(t.getException());
+    }
+
+    @Test
+    public void deleteOrganizerProfile_valid_callsRemove_andCompletes() {
+        DatabaseReference orgIdRef = mock(DatabaseReference.class);
+        when(organizerRoot.child("ORG7")).thenReturn(orgIdRef);
+
+        // Admin.deleteOrganizerProfile uses removeValue(CompletionListener) overload
+        doAnswer(inv -> {
+            DatabaseReference.CompletionListener cl = inv.getArgument(0);
+            cl.onComplete(null, organizerRoot); // simulate success
+            return null;
+        }).when(orgIdRef).removeValue(any(DatabaseReference.CompletionListener.class));
+
+        Task<Void> t = admin.deleteOrganizerProfile("ORG7");
+        assertTrue(t.isComplete());
+        assertTrue(t.isSuccessful());
+        assertNull(t.getException());
+    }
+
+    // -------------------- browseEntrants --------------------
+
+    @Test
+    public void browseEntrants_returnsUsersFromSnapshot() {
+        // Fake /User snapshot: children with keys U1, U2
+        DataSnapshot root = mock(DataSnapshot.class);
+        DataSnapshot u1   = mock(DataSnapshot.class);
+        DataSnapshot u2   = mock(DataSnapshot.class);
+        when(u1.getKey()).thenReturn("U1");
+        when(u2.getKey()).thenReturn("U2");
+        when(root.getChildren()).thenAnswer(i -> iterable(u1, u2));
+
+        // Return a mocked Task<DataSnapshot> so we can short-circuit continueWithTask(...)
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(userRoot.get()).thenReturn(mockGetTask);
+
+        // Admin.browseEntrants() uses continueWithTask(...)
+        when(mockGetTask.continueWithTask(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Task<List<User>>> cont =
+                    (Continuation<DataSnapshot, Task<List<User>>>) inv.getArgument(0);
+            return cont.then(Tasks.forResult(root));
+        });
+
+        Task<List<User>> out = admin.browseEntrants();
+        assertTrue(out.isComplete());
+        assertTrue(out.isSuccessful());
+        assertEquals(2, out.getResult().size());
+        assertEquals("U1", out.getResult().get(0).getUserId());
+        assertEquals("U2", out.getResult().get(1).getUserId());
+    }
+
+    // -------------------- browseEvents --------------------
+
+    @Test
+    public void browseEvents_returnsListSizeMatchingChildren() {
+        // Fake /Event snapshot with two children (each child value is a map)
+        DataSnapshot root = mock(DataSnapshot.class);
+        DataSnapshot e1   = mock(DataSnapshot.class);
+        DataSnapshot e2   = mock(DataSnapshot.class);
+
+        when(e1.getValue()).thenReturn(new java.util.HashMap<String,String>() {{
+            put("id", "E1"); put("name", "Alpha");
+        }});
+        when(e2.getValue()).thenReturn(new java.util.HashMap<String,String>() {{
+            put("id", "E2"); put("name", "Beta");
+        }});
+        when(root.getChildren()).thenAnswer(i -> iterable(e1, e2));
+
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(eventRoot.get()).thenReturn(mockGetTask);
+
+        when(mockGetTask.continueWithTask(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Task<java.util.List<com.example.chicksevent.misc.Event>>> cont =
+                    (Continuation<DataSnapshot, Task<java.util.List<com.example.chicksevent.misc.Event>>>) inv.getArgument(0);
+            return cont.then(Tasks.forResult(root));
+        });
+
+        Task<java.util.List<com.example.chicksevent.misc.Event>> out = admin.browseEvents();
+        assertTrue(out.isComplete());
+        assertTrue(out.isSuccessful());
+        assertEquals(2, out.getResult().size()); // size matches children
+    }
+
+    // -------------------- helpers --------------------
+
+    private static Iterable<DataSnapshot> iterable(DataSnapshot... snaps) {
+        java.util.List<DataSnapshot> list = Arrays.asList(snaps);
+        return new Iterable<DataSnapshot>() {
+            @Override public Iterator<DataSnapshot> iterator() { return list.iterator(); }
+        };
+    }
 }
