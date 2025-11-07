@@ -17,6 +17,14 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+            // If you ever use Robolectric:
+            // isIncludeAndroidResources = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -48,4 +56,9 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.firebase:firebase-database:20.3.1")
     androidTestImplementation("com.google.firebase:firebase-database:20.3.1")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+
+// mock final classes like DataSnapshot
 }
