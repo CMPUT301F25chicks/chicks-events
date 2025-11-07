@@ -3,10 +3,7 @@ package com.example.chicksevent;
 import static androidx.test.InstrumentationRegistry.getContext;
 
 import android.provider.Settings;
-
-import com.example.chicksevent.misc.Entrant;
-import com.example.chicksevent.enums.EntrantStatus;
-import com.example.chicksevent.misc.User;
+import android.util.Log;
 
 import org.junit.Test;
 

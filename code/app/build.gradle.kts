@@ -48,5 +48,14 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.firebase:firebase-database:20.3.1")
     androidTestImplementation("com.google.firebase:firebase-database:20.3.1")
+
+    // Mockito core library
+    testImplementation("org.mockito:mockito-core:5.13.0")
+
+    // Optional: if you use Kotlin-specific Mockito support
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
+    // Optional: if you test Android components with Mockito
+    androidTestImplementation("org.mockito:mockito-android:5.13.0")
 //    implementation(files("C:\\Users\\Dion Alex Mathew\\AppData\\Local\\Android\\Sdk\\platforms\\android-36\\android.jar"));
 }
