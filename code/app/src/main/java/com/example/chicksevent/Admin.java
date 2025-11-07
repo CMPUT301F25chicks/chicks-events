@@ -106,12 +106,12 @@ public class Admin extends User {
         return tcs.getTask();
     }
 
-    public Task<List<User>> browseOrganizers() {
-        TaskCompletionSource<List<User>> tcs = new TaskCompletionSource<>();
+    public Task<List<Organizer>> browseOrganizers() {
+        TaskCompletionSource<List<Organizer>> tcs = new TaskCompletionSource<>();
 
         organizersService.getReference().get().addOnSuccessListener(snapshot -> {
-            List<User> organizers = new ArrayList<>();
-            for (DataSnapshot child: snapshot.getChildren()) {
+            List<Organizer> organizers = new ArrayList<>();
+            for (DataSnapshot child : snapshot.getChildren()) {
                 Organizer o = child.getValue(Organizer.class);
                 if (o != null) {
                     try { o.setOrganizerId(child.getKey()); } catch (Exception ignored) {}

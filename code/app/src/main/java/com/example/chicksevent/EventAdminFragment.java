@@ -2,6 +2,7 @@ package com.example.chicksevent;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ public class EventAdminFragment extends Fragment {
     private RecyclerView recyclerView;
     private EventAdminAdapter adapter;
     private ArrayList<Event> eventList;
-    private FirebaseService firebaseService;
+    private Admin admin; // use Admin class
 
     @Nullable
     @Override
@@ -37,33 +38,27 @@ public class EventAdminFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         eventList = new ArrayList<>();
-        firebaseService = new FirebaseService("Event");
+        admin = new Admin("ADMIN_DEFAULT");
 
         adapter = new EventAdminAdapter(requireContext(), eventList, this::confirmDeleteEvent);
         recyclerView.setAdapter(adapter);
 
         loadEvents();
-
         return view;
     }
 
     private void loadEvents() {
-        firebaseService.getReference().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                eventList.clear();
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    Event event = child.getValue(Event.class);
-                    if (event != null) eventList.add(event);
-                }
-                adapter.notifyDataSetChanged();
-            }
+        eventList.clear();
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show();
-            }
-        });
+        admin.browseEvents()
+                .addOnSuccessListener(events -> {
+                    eventList.addAll(events);
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show();
+                    Log.e("EventAdmin", "Error loading events", e);
+                });
     }
 
     private void confirmDeleteEvent(Event event) {
@@ -76,7 +71,9 @@ public class EventAdminFragment extends Fragment {
     }
 
     private void deleteEvent(Event event) {
-        firebaseService.deleteEntry(event.getId());
+        admin.deleteEvent(event.getId());
+        eventList.remove(event);
+        adapter.notifyDataSetChanged();
         Toast.makeText(requireContext(), "Event deleted", Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/launcherFragment">
+
+    <fragment
+        android:id="@+id/launcherFragment"
+        android:name="com.example.chicksevent.LauncherFragment"
+        android:label="launcher"
+        tools:layout="@layout/fragment_launcher" >
+    </fragment>
 
     <fragment
         android:id="@+id/FirstFragment"
@@ -282,7 +289,37 @@
             app:destination="@id/ProfileFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="com.example.chicksevent.AdminHomeFragment"
+        android:label="Admin Home" >
+        <action
+            android:id="@+id/action_adminHome_to_eventAdminFragment"
+            app:destination="@id/eventAdminFragment"/>
+        <action
+            android:id="@+id/action_adminHome_to_orgAdminFragment"
+            app:destination="@id/orgAdminFragment"/>
+        <action
+            android:id="@+id/action_adminHome_to_profileAdminFragment"
+            app:destination="@id/profileAdminFragment"/>
+    </fragment>
 
+    <fragment
+        android:id="@+id/eventAdminFragment"
+        android:name="com.example.chicksevent.EventAdminFragment"
+        android:label="Events Admin"/>
+    <fragment
+        android:id="@+id/orgAdminFragment"
+        android:name="com.example.chicksevent.OrgAdminFragment"
+        android:label="Organizers Admin"/>
+    <fragment
+        android:id="@+id/profileAdminFragment"
+        android:name="com.example.chicksevent.ProfileAdminFragment"
+        android:label="Profiles Admin"/>
 
 
 </navigation>
+
+
+
+
