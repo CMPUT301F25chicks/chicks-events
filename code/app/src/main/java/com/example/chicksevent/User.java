@@ -197,6 +197,12 @@ public class User {
     }
 
 
+    public void createMockUser() {
+        this.userId = "test-user-id";
+        updateProfile("test-user", "test-email@gmail.com", "123-456-7890", false);
+    }
+
+
 
 //    public void listEvents() {
 //        Log.i("RTD8", "hi");

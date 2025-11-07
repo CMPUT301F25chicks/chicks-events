@@ -62,6 +62,8 @@ public class EventAdminFragment extends Fragment {
     }
 
     private void confirmDeleteEvent(Event event) {
+        Log.i("DEL", "back in time " + event.getId());
+
         new AlertDialog.Builder(requireContext())
                 .setTitle("Delete Event")
                 .setMessage("Are you sure you want to delete \"" + event.getName() + "\"?")
@@ -71,6 +73,7 @@ public class EventAdminFragment extends Fragment {
     }
 
     private void deleteEvent(Event event) {
+        Log.i("DEL", "back in time " + event.getId());
         admin.deleteEvent(event.getId());
         eventList.remove(event);
         adapter.notifyDataSetChanged();

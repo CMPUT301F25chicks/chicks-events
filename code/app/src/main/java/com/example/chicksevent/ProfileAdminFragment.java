@@ -75,12 +75,9 @@ public class ProfileAdminFragment extends Fragment {
 
     /** Deletes an entrant using Admin.deleteEntrantProfile() */
     private void deleteEntrant(EntrantDisplay entrant) {
-        admin.deleteEntrantProfile(entrant.getEntrantId())
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("ProfileAdminFragment", "Deleted entrant: " + entrant.getEntrantId());
-                    loadEntrants(); // refresh list
-                })
-                .addOnFailureListener(e ->
-                        Log.e("ProfileAdminFragment", "Failed to delete entrant: " + entrant.getEntrantId(), e));
+        Log.i("friedchicken", "igot delete " + entrant.getEntrantId());
+
+        admin.deleteEntrantProfile(entrant.getEntrantId());
+        loadEntrants();
     }
 }

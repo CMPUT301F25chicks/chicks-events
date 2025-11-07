@@ -41,6 +41,7 @@ public class Admin extends User {
     /** Service wrapper scoped to the "Event" collection/root in Firebase. */
     private FirebaseService eventsService;
     private FirebaseService organizerService;
+
     /**
      * Constructs an {@code Admin} for the given user id.
      *
@@ -65,22 +66,9 @@ public class Admin extends User {
      * @param eventId the Firebase key of the event to delete; must be non-empty.
      * @return a {@link Task} that completes when the delete operation finishes.
      */
-    public Task<Void> deleteEvent(String eventId) {
-        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
-        if (eventId == null || eventId.isEmpty()) {
-            tcs.setException(new IllegalArgumentException("eventId is empty"));
-            return tcs.getTask();
-        }
-
-        DatabaseReference ref = eventsService.getReference().child(eventId);
-        ref.removeValue((DatabaseError error, DatabaseReference ignored) -> {
-            if (error == null) {
-                tcs.setResult(null);
-            } else {
-                tcs.setException(error.toException());
-            }
-        });
-        return tcs.getTask();
+    public void deleteEvent(String eventId) {
+        Log.i("DEL", "gonna delete " + eventId);
+        eventsService.deleteEntry(eventId);
     }
 
     public Task<List<User>> browseEntrants() {
@@ -119,21 +107,6 @@ public class Admin extends User {
     }
 
 
-
-
-
-
-
-
-    /**
-     * Deletes the admin's profile.
-     * <p>
-     * <b>Status:</b> Not yet implemented.
-     * </p>
-     */
-    public void deleteProfile() {
-        // TODO: implement admin profile deletion if/when profile schema is defined.
-    }
 
     /**
      * Browses (reads) the admin's profile.
@@ -179,7 +152,7 @@ public class Admin extends User {
 //                    try { e.setEntrantId(child.getKey()); } catch (Exception ignored) {}
                 Log.i("friedchicken", child.getKey());
                 HashMap<String, String> eventHash = (HashMap<String, String>) child.getValue();
-                entrants.add(new Event("e","e", eventHash.get("name"),"g","s","w","q","f",3,"v","sa"));
+                entrants.add(new Event("e", eventHash.get("id"), eventHash.get("name"),"g","s","w","q","f",3,"v","sa"));
 //                }
             }
             return entrants;
@@ -207,25 +180,8 @@ public class Admin extends User {
         return tcs.getTask();
     }
 
-    public Task<Void> deleteEntrantProfile(String entrantId) {
-        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
-
-        if (entrantId == null || entrantId.isEmpty()) {
-            tcs.setException(new IllegalArgumentException("entrantId is empty"));
-            return tcs.getTask();
-        }
-
-        DatabaseReference ref = userService.getReference().child(entrantId);
-        ref.removeValue((DatabaseError error, DatabaseReference ignored) -> {
-            if (error == null) {
-                Log.d("AdminDeleteEntrant", "Entrant deleted successfully");
-                tcs.setResult(null);
-            } else {
-                Log.e("AdminDeleteEntrant", "Error deleting entrant", error.toException());
-                tcs.setException(error.toException());
-            }
-        });
-        return tcs.getTask();
+    public void deleteEntrantProfile(String entrantId) {
+        userService.deleteEntry(entrantId);
     }
 
 

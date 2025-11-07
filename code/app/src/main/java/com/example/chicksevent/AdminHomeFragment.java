@@ -128,7 +128,7 @@ public class AdminHomeFragment extends Fragment {
 
 
 
-
+//        (new User("ejwlrkwrer")).createMockUser();
     }
     private static String s(CharSequence cs) {
         return cs == null ? "" : cs.toString().trim();
