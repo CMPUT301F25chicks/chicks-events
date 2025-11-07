@@ -1,5 +1,8 @@
 package com.example.chicksevent;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.HashMap;
 
 /**
@@ -29,8 +32,11 @@ public class Notification {
     /** The message body or content of the notification. */
     private String message;
 
+    private String eventName;
+
     /** Firebase service for performing notification-related database operations. */
     private FirebaseService notificationService;
+    private FirebaseService eventService;
 
     /**
      * Constructs a new {@code Notification} for a specific user and event.
@@ -42,6 +48,7 @@ public class Notification {
      */
     Notification(String userId, String eventId, NotificationType notificationType, String message) {
         notificationService = new FirebaseService("Notification");
+        eventService = new FirebaseService("Event");
         this.userId = userId;
         this.eventId = eventId;
         this.notificationType = notificationType;
@@ -76,5 +83,29 @@ public class Notification {
      */
     public String getEventId() {
         return eventId;
+    }
+
+    public Task<String> getEventName() {
+        return eventService.getReference().get().continueWith(task -> {
+//            eventName =
+            for (DataSnapshot ds : task.getResult().getChildren()) {
+                if (ds.getKey().equals(eventId)) {
+                    return ((HashMap<String, String>) ds.getValue()).get("name");
+                }
+            }
+            return "NO NAME";
+        });
+
+
+
+//            if (eventName == null) {
+
+//        }
+
+//        return eventName;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

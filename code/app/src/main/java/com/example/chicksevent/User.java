@@ -45,7 +45,7 @@ public class User {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
         return eventService.getReference().get().continueWith(task -> {
-            Log.d(TAG, "=== All Children at Root filter ===");
+            Log.d(TAG, "=== filtering events ===");
             ArrayList<String> eventList = new ArrayList<>();
 
             // Iterate through all children
@@ -56,12 +56,13 @@ public class User {
 
                 Log.d(TAG, "Key: " + key);
                 for (String val : value) {
+                    Log.d(TAG, "Value: " + val);
                     if (filterList.contains(val)) {
                         eventList.add(key);
 //                        return eventList;
                     }
                 }
-                Log.d(TAG, "Value: " + value);
+
                 Log.d(TAG, "---");
             }
 

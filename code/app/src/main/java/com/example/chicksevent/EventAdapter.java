@@ -43,6 +43,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         ImageButton btn_arrow = view.findViewById(R.id.btn_arrow);
 
         event_name.setText(event.getName());
+        tv_time.setText(event.getTag());
 //        event_name.setText(event.time());
 
         btn_arrow.setOnClickListener(l -> {

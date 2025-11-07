@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,15 +27,20 @@ import java.util.ArrayList;
  * @author Jordan Kwan
  */
 public class NotificationAdapter extends ArrayAdapter<Notification> {
+    OnItemButtonClickListener listener;
 
+    public interface OnItemButtonClickListener {
+        void onItemButtonClick(Notification notification);
+    }
     /**
      * Constructs a new adapter for displaying a list of notifications.
      *
      * @param context the current context used to inflate the layout
      * @param notifArray the list of {@link Notification} objects to display
      */
-    public NotificationAdapter(Context context, ArrayList<Notification> notifArray) {
+    public NotificationAdapter(Context context, ArrayList<Notification> notifArray, OnItemButtonClickListener listener) {
         super(context, 0, notifArray);
+        this.listener = listener;
     }
 
     /**
@@ -63,6 +69,18 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         TextView status = view.findViewById(R.id.tv_status);
         TextView eventName = view.findViewById(R.id.tv_event_name);
         TextView time = view.findViewById(R.id.tv_time);
+        ImageButton btnDelete = view.findViewById(R.id.btn_delete);
+
+        notification.getEventName().addOnCompleteListener(t -> {
+            eventName.setText(t.getResult());
+        });
+
+        time.setText(notification.getMessage());
+
+        status.setText(notification.getNotificationType() == NotificationType.WAITING ? "WAITING" : "INVITED");
+        btnDelete.setOnClickListener(v -> {
+            if (listener != null) listener.onItemButtonClick(notification);
+        });
 
         // TODO: Bind actual data once Notification properties are finalized
         // e.g., eventName.setText(notification.getEventId());

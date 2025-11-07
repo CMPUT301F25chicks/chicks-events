@@ -24,6 +24,7 @@ public class NotificationFragment extends Fragment {
     private FirebaseService service;
     ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
     NotificationAdapter notificationAdapter;
+    FirebaseService notificationService;
 
 
     private String androidId;
@@ -35,6 +36,7 @@ public class NotificationFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        notificationService = new FirebaseService("Notification");
 
         binding = FragmentNotificationBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -55,13 +57,43 @@ public class NotificationFragment extends Fragment {
 //        createMockEvent();
 
         ListView notificationView = view.findViewById(R.id.recycler_notifications);
-
-
-        notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
-
-        notificationView.setAdapter(notificationAdapter);
-
         User userToUpdate = new User(androidId);
+
+        userToUpdate.getNotificationList().addOnCompleteListener(task -> {
+//            Log.i(TAG, "should i change");
+
+            notificationDataList = task.getResult();
+            ArrayList<Notification> notifNewList = new ArrayList<>();
+
+
+            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, item -> {
+                Log.i("WATTHE", notificationDataList.size() + " : " + item.getEventId() + " : " + item.getNotificationType().toString());
+                for (Notification notif : notificationDataList) {
+                    Log.i("WATTHE", item.getEventId() + " : " + item.getNotificationType().toString());
+
+                    if (item.getNotificationType() == notif.getNotificationType() && item.getEventId().equals(notif.getEventId())) {
+                        notificationService.deleteSubCollectionEntry(userToUpdate.getUserId(), item.getEventId(), item.getNotificationType().toString());
+                    } else {
+                        notifNewList.add(notif);
+                    }
+                }
+                Log.i("WATTHE", "hi : " + notifNewList.size());
+                notificationDataList = notifNewList;
+                // DON'T DELETE THIS CUZ WE NEED TO RESET NOTIF
+                notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, b -> {});
+                notificationView.setAdapter(notificationAdapter);
+            });
+
+
+
+            notificationView.setAdapter(notificationAdapter);
+
+
+//            Log.i(TAG, String.valueOf(notificationDataList.size()));
+
+        });
+
+
 
         userToUpdate.isAdmin().addOnCompleteListener(v -> {
             if (v.getResult()) {
@@ -77,7 +109,6 @@ public class NotificationFragment extends Fragment {
             Log.i(TAG, "should i change");
 
             notificationDataList = task.getResult();
-            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
 
             Log.i(TAG, String.valueOf(notificationDataList.size()));
             notificationView.setAdapter(notificationAdapter);

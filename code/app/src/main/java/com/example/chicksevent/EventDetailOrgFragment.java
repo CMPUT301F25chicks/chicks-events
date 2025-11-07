@@ -20,10 +20,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
 import com.example.chicksevent.databinding.FragmentEventDetailOrgBinding;
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
 
 public class EventDetailOrgFragment extends Fragment {
 
     private FragmentEventDetailOrgBinding binding;
+    private FirebaseService eventService;
 
     public EventDetailOrgFragment() {
         // You can keep the constructor-empty and inflate via binding below
@@ -40,6 +44,7 @@ public class EventDetailOrgFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        eventService = new FirebaseService("Event");
 
         TextView eventName = view.findViewById(R.id.tv_event_name);
 
@@ -54,14 +59,45 @@ public class EventDetailOrgFragment extends Fragment {
         Button notificationButton = view.findViewById(R.id.btn_notification);
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
+        Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
+        TextView eventDetails = view.findViewById(R.id.tv_event_details);
+        TextView eventNameReal = view.findViewById(R.id.tv_time);
+
+        eventService.getReference().get().continueWith(task -> {
+//            eventName =
+            for (DataSnapshot ds : task.getResult().getChildren()) {
+                if (ds.getKey().equals(args.getString("eventName"))) {
+                    HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
+                    eventNameReal.setText(hash.get("name"));
+                    eventDetails.setText(hash.get("eventDetails"));
+                }
+            }
+            return null;
+        });
 
         viewWaitingListButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 
             Bundle bundle = new Bundle();
             bundle.putString("eventName", args.getString("eventName"));
+//            bundle.putString("organizerId", args.getString("organizerId"));
+
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment, bundle);
+
+//            NavHostFragment.findNavController(EventDetailOrgFragment.this)
+//                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
+        });
+
+        viewChosenListButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("eventName", args.getString("eventName"));
+//            bundle.putString("organizerId", args.getString("organizerId"));
+
+
+            navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
 
 //            NavHostFragment.findNavController(EventDetailOrgFragment.this)
 //                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
@@ -83,6 +119,12 @@ public class EventDetailOrgFragment extends Fragment {
 
             NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
         });
+
+        createEventButton.setOnClickListener(v -> {
+//            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
+
+            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
+        });
 //        eventName
     }
 
@@ -91,7 +133,7 @@ public class EventDetailOrgFragment extends Fragment {
     }
 
     private void toast(String msg) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

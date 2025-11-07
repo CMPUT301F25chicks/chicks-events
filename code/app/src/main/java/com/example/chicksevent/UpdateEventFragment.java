@@ -76,7 +76,7 @@ public class UpdateEventFragment extends Fragment {
     }
 
     private void toast(String msg) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

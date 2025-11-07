@@ -30,6 +30,7 @@ public class EventDetailFragment extends Fragment {
 
     private FragmentEventDetailBinding binding;
     private FirebaseService userService;
+    private FirebaseService eventService;
     String userId;
 
 
@@ -50,6 +51,7 @@ public class EventDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         userService = new FirebaseService("User");
+        eventService = new FirebaseService("Event");
 
         TextView eventName = view.findViewById(R.id.tv_event_name);
 
@@ -63,6 +65,21 @@ public class EventDetailFragment extends Fragment {
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
+        TextView eventDetails = view.findViewById(R.id.tv_event_details);
+        TextView eventNameReal = view.findViewById(R.id.tv_time);
+
+        eventService.getReference().get().continueWith(task -> {
+//            eventName =
+            for (DataSnapshot ds : task.getResult().getChildren()) {
+                if (ds.getKey().equals(args.getString("eventName"))) {
+                    HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
+                    eventNameReal.setText(hash.get("name"));
+                    eventDetails.setText(hash.get("eventDetails"));
+                }
+            }
+            return null;
+        });
+
         userId = Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
@@ -91,11 +108,11 @@ public class EventDetailFragment extends Fragment {
                    Entrant e = new Entrant(userId, args.getString("eventName"));
 
                    e.joinWaitingList();
-                   Toast.makeText(requireContext(),
+                   Toast.makeText(getContext(),
                            "Joined waiting list :)",
                            Toast.LENGTH_SHORT).show();
                } else {
-                   Toast.makeText(requireContext(),
+                   Toast.makeText(getContext(),
                            "You need to create profile to join waiting list",
                            Toast.LENGTH_SHORT).show();
                }
@@ -129,7 +146,7 @@ public class EventDetailFragment extends Fragment {
     }
 
     private void toast(String msg) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -47,6 +47,7 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
         Button update_button = view.findViewById(R.id.update_button);
 
         event_name.setText(event.getName());
+        tv_time.setText(event.getTag());
 
 
         btn_arrow.setOnClickListener(l -> {

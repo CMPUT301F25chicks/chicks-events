@@ -36,6 +36,7 @@ public class WaitingListFragment extends Fragment {
     private ArrayList<User> userDataList = new ArrayList<>();
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
     private String TAG = "RTD8";
+    String organizerId;
     String eventId;
     public WaitingListFragment() {
         // You can keep the constructor-empty and inflate via binding below
@@ -56,6 +57,7 @@ public class WaitingListFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             eventId = args.getString("eventName");
+//            organizerId = args.getString("organizerId");
             // Use it to populate UI
         }
 
@@ -63,6 +65,9 @@ public class WaitingListFragment extends Fragment {
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button poolingButton = view.findViewById(R.id.btn_pool);
+
+        Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
+
         waitingListAdapter = new UserAdapter(getContext(), userDataList);
         userView =  view.findViewById(R.id.recycler_notifications);
 ////
@@ -94,8 +99,47 @@ public class WaitingListFragment extends Fragment {
             NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_WaitingListFragment_to_CreateEventFragment);
         });
 
+        sendNotificationButton.setOnClickListener(v -> {
+            Organizer organizer = new Organizer(Settings.Secure.getString(
+                    getContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            ), eventId);
+            organizer.sendWaitingListNotification("waiting list notification");
+            Toast.makeText(getContext(), "awiting list notfication sent", Toast.LENGTH_SHORT).show();
+
+//            organizer.sendWaitingListNotification();
+        });
+
         listEntrants();
+
+
 //        eventName
+    }
+
+    public void sendWaitingListNotification(EntrantStatus status) {
+
+        Log.i(TAG, "in here " + eventId + " " + status);
+        waitingListService.getReference().child(eventId).child(status.toString())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.i(TAG, "IN HERE bef " + status);
+                        userDataList = new ArrayList<>();
+                        for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
+                            userDataList.add(new User(childSnap.getKey()));
+//                            Log.i(TAG, "child key: " + childSnap.getKey());
+                        }
+
+                        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+////
+                        userView.setAdapter(waitingListAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, "Error reading data: " + databaseError.getMessage());
+                    }
+                });
     }
 
     public void listEntrants() {
@@ -132,7 +176,7 @@ public class WaitingListFragment extends Fragment {
     }
 
     private void toast(String msg) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -56,7 +56,7 @@ public class EventAdminFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load events", Toast.LENGTH_SHORT).show();
                     Log.e("EventAdmin", "Error loading events", e);
                 });
     }
@@ -74,6 +74,6 @@ public class EventAdminFragment extends Fragment {
         admin.deleteEvent(event.getId());
         eventList.remove(event);
         adapter.notifyDataSetChanged();
-        Toast.makeText(requireContext(), "Event deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Event deleted", Toast.LENGTH_SHORT).show();
     }
 }

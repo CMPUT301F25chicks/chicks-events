@@ -51,7 +51,7 @@ public class OrgAdminFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(requireContext(), "Failed to load organizers", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load organizers", Toast.LENGTH_SHORT).show();
                     Log.e("OrgAdmin", "Error loading organizers", e);
                 });
     }
@@ -70,6 +70,6 @@ public class OrgAdminFragment extends Fragment {
         admin.deleteOrganizerProfile(organizer.getOrganizerId());
         organizerList.remove(organizer);
         adapter.notifyDataSetChanged();
-        Toast.makeText(requireContext(), "Organizer deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Organizer deleted", Toast.LENGTH_SHORT).show();
     }
 }

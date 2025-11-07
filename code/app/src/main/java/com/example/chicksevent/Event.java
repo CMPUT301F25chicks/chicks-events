@@ -1,6 +1,7 @@
 package com.example.chicksevent;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.chicksevent.FirebaseService;
@@ -42,20 +43,20 @@ public class Event {
         this.id = id;
         this.name = name;
         this.eventDetails = eventDetails;
-        this.eventStartDate = eventStartDate;
-        this.eventEndDate = eventEndDate;
+        this.eventStartDate = eventStartDate == null ? "" : eventStartDate;
+        this.eventEndDate = eventEndDate == null ? "" : eventEndDate;
         this.registrationStartDate = registrationStartDate;
         this.registrationEndDate = registrationEndDate;
         this.entrantLimit = entrantLimit;
 
-        this.poster = poster;
-        this.tag = tag;
+        this.poster = poster == null ? "" : tag;
+        this.tag = tag == null ? "" : tag;
 
         this.organizer = new Organizer(entrantId, id);
 
     } // Required by Firebase
     public void createEvent(){
-
+        Log.i("filtering", "creating event");
         HashMap<String, Object> map = new HashMap<>();
         id = eventService.getReference().push().getKey();
 
@@ -117,9 +118,9 @@ public class Event {
 //        BarcodeEncoder enc = new BarcodeEncoder();
 //        Bitmap bmp = enc.encodeBitmap(deepLink, BarcodeFormat.QR_CODE, 900, 900);
 //        qrImg.setImageBitmap(bmp);
-//        Toast.makeText(requireContext(), "Event published. QR generated.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Event published. QR generated.", Toast.LENGTH_SHORT).show();
 //    } catch (Exception ex) {
-//        Toast.makeText(requireContext(), "QR error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(getContext(), "QR error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
 //    } finally {
 //        publishBtn.setEnabled(true);
 }

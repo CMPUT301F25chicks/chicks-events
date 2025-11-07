@@ -154,10 +154,10 @@ public class ProfileFragment extends Fragment {
 
         user = new User(userId);
         if (user.updateProfile(editName.getText().toString(), editEmail.getText().toString(), editPhone.getText().toString(), notificationSwitch.isChecked())) {
-            Toast.makeText(requireContext(), "Updated Profile", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Updated Profile", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(requireContext(), "Failed to Update Profile", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Failed to Update Profile", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -175,7 +175,7 @@ public class ProfileFragment extends Fragment {
         editEmail.setText("");
         editPhone.setText("");
 
-        Toast.makeText(requireContext(), "You are Deleted RIP :(", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "You are Deleted RIP :(", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -184,7 +184,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void toast(String msg) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

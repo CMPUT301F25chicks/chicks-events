@@ -2,6 +2,7 @@ package com.example.chicksevent;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,23 +62,25 @@ public class SearchEventFragment extends Fragment {
             }
 
             // availability (optional): if not "Any", add as a tag
-            if (spAvailability != null && spAvailability.getSelectedItem() != null) {
-                String opt = spAvailability.getSelectedItem().toString().trim();
-                if (!opt.equalsIgnoreCase("Any") && !opt.isEmpty()) {
-                    filters.add(opt);
-                }
-            }
+//            if (spAvailability != null && spAvailability.getSelectedItem() != null) {
+//                String opt = spAvailability.getSelectedItem().toString().trim();
+//                if (!opt.equalsIgnoreCase("Any") && !opt.isEmpty()) {
+//                    filters.add(opt);
+//                }
+//            }
+
+            Log.i("filteringthing", "what is this filter " + filters);
 
             user.filterEvents(filters).addOnCompleteListener(task -> {
                 if (!isAdded()) return;
 //                boolean ok = task.isSuccessful() && Boolean.TRUE.equals(task.getResult());
 
                 ArrayList<String> eventList = task.getResult();
-
-                Toast.makeText(requireContext(),
+//
+                Toast.makeText(getContext(),
                         !eventList.isEmpty() ? "Found matching events" : "No matching events",
                         Toast.LENGTH_SHORT).show();
-
+////
                 NavController navController = NavHostFragment.findNavController(SearchEventFragment.this);
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("eventList", eventList);
@@ -86,7 +89,7 @@ public class SearchEventFragment extends Fragment {
                 // TODO: if ok, you can now refresh your RecyclerView with matching events
             }).addOnFailureListener(e -> {
                 if (!isAdded()) return;
-                Toast.makeText(requireContext(),
+                Toast.makeText(getContext(),
                         "Filter error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         });
