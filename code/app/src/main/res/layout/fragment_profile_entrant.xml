@@ -48,6 +48,8 @@
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/profile_avatar"
         app:layout_constraintBottom_toTopOf="@+id/name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteX="155dp" />
 
     <TextView

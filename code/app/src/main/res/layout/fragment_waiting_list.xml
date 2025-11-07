@@ -99,6 +99,8 @@
 
         <Button
             android:id="@+id/btn_pool"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="240dp"
             android:layout_height="48dp"
             android:layout_weight="1"

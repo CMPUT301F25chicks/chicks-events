@@ -10,6 +10,8 @@ import static org.hamcrest.CoreMatchers.not;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.chicksevent.fragment.CreateEventFragment;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -115,6 +115,8 @@
 
                 <EditText
                     android:id="@+id/tv_time"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
@@ -128,6 +130,8 @@
 
                 <TextView
                     android:id="@+id/textView3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="257dp"
                     android:layout_height="22dp"
                     android:layout_marginTop="16dp"
@@ -139,6 +143,8 @@
 
                 <TextView
                     android:id="@+id/textView6"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="245dp"
                     android:layout_height="21dp"
                     android:layout_marginTop="4dp"
@@ -150,6 +156,8 @@
 
                 <TextView
                     android:id="@+id/tv_registration_open"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -163,6 +171,8 @@
 
                 <TextView
                     android:id="@+id/tv_registration_deadline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -176,6 +186,8 @@
 
                 <TextView
                     android:id="@+id/textView5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="220dp"
                     android:layout_height="22dp"
                     android:layout_marginTop="4dp"
@@ -191,6 +203,8 @@
                     android:layout_height="18dp"
                     android:layout_marginTop="8dp"
                     android:text="12 / 50"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:textColor="@color/dateBox"
                     android:textSize="16sp"
                     app:layout_constraintTop_toBottomOf="@+id/textView5"
@@ -198,6 +212,8 @@
 
                 <TextView
                     android:id="@+id/textView4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="224dp"
                     android:layout_height="22dp"
                     android:layout_marginTop="8dp"
@@ -209,6 +225,8 @@
 
                 <EditText
                     android:id="@+id/tv_event_details"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="297dp"
                     android:layout_height="46dp"
                     android:background="@null"

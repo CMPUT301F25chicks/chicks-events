@@ -70,10 +70,16 @@ dependencies {
 
     // Espresso for UI interaction testing
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1") // Use the latest stable version
+//
 
-
+//    implementation(files("C:\\Users\\jorda\\AppData\\Local\\Android\\Sdk\\platforms\\android-36\\android.jar"));
 
 
 
 // mock final classes like DataSnapshot
+}
+
+
+tasks.withType<Javadoc> {
+    isFailOnError = false
 }
