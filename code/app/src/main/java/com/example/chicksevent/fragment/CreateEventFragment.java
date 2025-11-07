@@ -64,6 +64,7 @@ public class CreateEventFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button eventButton = view.findViewById(R.id.btn_events);
+        Button profileButton = view.findViewById(R.id.btn_profile);
 
 
         notificationButton.setOnClickListener(v -> {
@@ -73,6 +74,11 @@ public class CreateEventFragment extends Fragment {
         eventButton.setOnClickListener(v -> {
             NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_EventFragment);
         });
+
+        profileButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(CreateEventFragment.this).navigate(R.id.action_CreateEventFragment_to_ProfileFragment);
+        });
+
 
         // Show/hide "max entrants" field when checkbox changes
         binding.cbLimitWaitingList.setOnCheckedChangeListener((btn, checked) -> {

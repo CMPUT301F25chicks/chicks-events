@@ -110,8 +110,11 @@
             app:destination="@id/EventFragment" />
 
         <action
-        android:id="@+id/action_CreateEventFragment_to_NotificationFragment"
-        app:destination="@id/NotificationFragment" />
+            android:id="@+id/action_CreateEventFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+        <action
+            android:id="@+id/action_CreateEventFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
 
 
         </fragment>

@@ -129,6 +129,11 @@ public class EventFragment extends Fragment {
             NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_CreateEventFragment);
         });
 
+        Button profileButton = view.findViewById(R.id.btn_profile);
+        profileButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_ProfileFragment);
+        });
+
         eventView =  view.findViewById(R.id.recycler_notifications);;
 //
         eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
