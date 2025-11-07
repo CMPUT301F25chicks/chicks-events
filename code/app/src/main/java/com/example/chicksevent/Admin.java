@@ -144,9 +144,7 @@ public class Admin extends User {
     }
 
 
-    public Boolean isAdmin() {
-        return true;
-    }
+
 
     public Boolean isOrganizer() {
         return false;

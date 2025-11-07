@@ -153,8 +153,4 @@ public class Organizer extends User {
         return true;
     }
 
-    public Boolean isAdmin() {
-        return false;
-    }
-
 }

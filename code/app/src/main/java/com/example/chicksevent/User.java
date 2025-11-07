@@ -204,7 +204,7 @@ public class User {
 //    }
 
 
-    public Task<Boolean> isAdmin(Consumer<Boolean> callback) {
+    public Task<Boolean> isAdmin() {
         return adminService.getReference().get().continueWith(ds -> {
             for (DataSnapshot d : ds.getResult().getChildren()) {
                 Log.i("ilovechicken", d.getKey());
