@@ -53,10 +53,10 @@ public class EventDetailFragment extends Fragment {
     private FragmentEventDetailBinding binding;
 
     /** Firebase service wrapper for accessing user data. */
-    private FirebaseService userService;
+    public FirebaseService userService;
 
     /** Firebase service wrapper for accessing event data. */
-    private FirebaseService eventService;
+    public FirebaseService eventService;
 
     /** Unique identifier for the current user, derived from device Android ID. */
     String userId;
