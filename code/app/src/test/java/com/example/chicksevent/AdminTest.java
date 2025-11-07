@@ -3,35 +3,23 @@ package com.example.chicksevent;
 /**
  * Unit tests for the {@link Admin} class.
  *
- * <p>This test suite validates the functionality of Admin methods such as
- * {@code deleteEvent()} and {@code browseEvents()}, ensuring they behave correctly
- * under various conditions without interacting with the real Firebase Realtime Database.</p>
+ * <p>This test suite validates Admin methods such as {@code deleteEvent()} and
+ * {@code browseEvents()} under various conditions without interacting with the real
+ * Firebase Realtime Database.</p>
  *
- * <p>Firebase dependencies are fully mocked using {@code Mockito}:
- * <ul>
- *   <li>{@link FirebaseDatabase} is statically mocked to prevent network access.</li>
- *   <li>{@link DatabaseReference} instances are replaced with mock objects.</li>
- *   <li>All tests are executed in isolation, ensuring no persistent side effects.</li>
- * </ul>
- * </p>
+ * <p>Firebase SDK calls are isolated via Mockito. For logic that uses {@link FirebaseService},
+ * we inject a mocked instance directly into {@link Admin} using reflection.</p>
  *
- * <p><b>Purpose:</b> To verify Admin logic (event deletion, event browsing, etc.)
- * behaves as expected using simulated Firebase behavior in a controlled environment.</p>
- *
- * <p><b>Note:</b> These tests are designed for local execution only and
- * will not modify or connect to a live Firebase instance.</p>
- *
- * @author Jinn Kasai
+ * <p><b>Note:</b> Local unit tests only; no network or emulator required.</p>
  */
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
@@ -49,27 +37,21 @@ import java.util.List;
 
 public class AdminTest {
 
+    // Optional static mocking scaffold (not strictly needed for these tests,
+    // but kept here in case Admin ever calls FirebaseDatabase.getInstance()).
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
-    private DatabaseReference mockAdminRef;
-    private DatabaseReference mockEventRef;
+    private DatabaseReference eventsRootRef;
 
     @Before
     public void setUpFirebaseStatic() {
-        // Static mock for FirebaseDatabase.getInstance(...)
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
-
         mockDb = mock(FirebaseDatabase.class);
-        mockAdminRef = mock(DatabaseReference.class);
-        mockEventRef = mock(DatabaseReference.class);
+        eventsRootRef = mock(DatabaseReference.class);
 
-        // Any URL -> return mocked db
         firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
                 .thenReturn(mockDb);
-
-        // FirebaseService("Admin") and FirebaseService("Event")
-        when(mockDb.getReference("Admin")).thenReturn(mockAdminRef);
-        when(mockDb.getReference("Event")).thenReturn(mockEventRef);
+        when(mockDb.getReference("Event")).thenReturn(eventsRootRef);
     }
 
     @After
@@ -97,7 +79,8 @@ public class AdminTest {
     @Test
     public void deleteEvent_emptyId_completesExceptionally() {
         Admin admin = new Admin("u1");
-        var task = admin.deleteEvent("");
+
+        Task<?> task = admin.deleteEvent("");
         assertTrue(task.isComplete());
         assertFalse(task.isSuccessful());
         assertTrue(task.getException() instanceof IllegalArgumentException);
@@ -122,7 +105,7 @@ public class AdminTest {
         Admin admin = new Admin("u1");
         setPrivateField(admin, "eventsService", eventsService);
 
-        var task = admin.deleteEvent("E123");
+        Task<?> task = admin.deleteEvent("E123");
         assertTrue(task.isComplete());
         assertTrue(task.isSuccessful());
         assertNull(task.getResult());
@@ -148,7 +131,7 @@ public class AdminTest {
         Admin admin = new Admin("u1");
         setPrivateField(admin, "eventsService", eventsService);
 
-        var task = admin.deleteEvent("E123");
+        Task<?> task = admin.deleteEvent("E123");
         assertTrue(task.isComplete());
         assertFalse(task.isSuccessful());
         Throwable ex = task.getException();
@@ -159,19 +142,19 @@ public class AdminTest {
     // ---------- browseEvents tests ----------
 
     @Test
+    @SuppressWarnings({"rawtypes","unchecked"})
     public void browseEvents_success_materializesEvents_andSetsIdFromKey() throws Exception {
         FirebaseService eventsService = mock(FirebaseService.class);
         DatabaseReference eventsRef   = mock(DatabaseReference.class);
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> getTask   = mock(Task.class);
+        Task<DataSnapshot> getTask    = mock(Task.class);
         DataSnapshot rootSnapshot     = mock(DataSnapshot.class);
 
         when(eventsService.getReference()).thenReturn(eventsRef);
         when(eventsRef.get()).thenReturn(getTask);
 
-        // When Admin calls addOnSuccessListener, immediately invoke it with rootSnapshot
+        // Immediately invoke success listener with a fake root snapshot
         when(getTask.addOnSuccessListener(any(OnSuccessListener.class))).thenAnswer(inv -> {
-            OnSuccessListener<DataSnapshot> l = inv.getArgument(0);
+            OnSuccessListener<DataSnapshot> l = (OnSuccessListener<DataSnapshot>) inv.getArgument(0);
             l.onSuccess(rootSnapshot);
             return getTask; // fluent chain
         });
@@ -193,33 +176,35 @@ public class AdminTest {
         Admin admin = new Admin("u1");
         setPrivateField(admin, "eventsService", eventsService);
 
-        var task = admin.browseEvents();
+        Task<?> task = admin.browseEvents();
 
         assertTrue(task.isComplete());
         assertTrue(task.isSuccessful());
-        List<Event> result = task.getResult();
+
+        @SuppressWarnings("unchecked")
+        List<Event> result = (List<Event>) task.getResult();
+        assertNotNull(result);
         assertEquals(2, result.size());
         verify(e1).setId("E1");
         verify(e2).setId("E2");
     }
 
-
     @Test
+    @SuppressWarnings({"rawtypes","unchecked"})
     public void browseEvents_failure_propagatesException() throws Exception {
         FirebaseService eventsService = mock(FirebaseService.class);
         DatabaseReference eventsRef   = mock(DatabaseReference.class);
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> getTask   = mock(Task.class);
+        Task<DataSnapshot> getTask    = mock(Task.class);
 
         when(eventsService.getReference()).thenReturn(eventsRef);
         when(eventsRef.get()).thenReturn(getTask);
 
-        // Success listener: do nothing
+        // Success listener: return chain unchanged
         when(getTask.addOnSuccessListener(any(OnSuccessListener.class))).thenReturn(getTask);
 
         // Failure listener: immediately invoke with an exception
         when(getTask.addOnFailureListener(any(OnFailureListener.class))).thenAnswer(inv -> {
-            OnFailureListener l = inv.getArgument(0);
+            OnFailureListener l = (OnFailureListener) inv.getArgument(0);
             l.onFailure(new RuntimeException("read failed"));
             return getTask;
         });
@@ -227,7 +212,7 @@ public class AdminTest {
         Admin admin = new Admin("u1");
         setPrivateField(admin, "eventsService", eventsService);
 
-        var task = admin.browseEvents();
+        Task<?> task = admin.browseEvents();
 
         assertTrue(task.isComplete());
         assertFalse(task.isSuccessful());
@@ -235,5 +220,4 @@ public class AdminTest {
         assertNotNull(ex);
         assertTrue(String.valueOf(ex.getMessage()).contains("read failed"));
     }
-
 }
