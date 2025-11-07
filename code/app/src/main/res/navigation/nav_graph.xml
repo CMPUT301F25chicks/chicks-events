@@ -6,10 +6,50 @@
     app:startDestination="@id/NotificationFragment">
 
     <fragment
+        android:id="@+id/AdminHomeFragment"
+        android:name="com.example.chicksevent.AdminHomeFragment"
+        android:label="Admin Home" >
+        <action
+            android:id="@+id/action_adminHome_to_eventAdminFragment"
+            app:destination="@id/EventAdminFragment"/>
+        <action
+            android:id="@+id/action_adminHome_to_orgAdminFragment"
+            app:destination="@id/OrgAdminFragment"/>
+        <action
+            android:id="@+id/action_adminHome_to_profileAdminFragment"
+            app:destination="@id/ProfileAdminFragment"/>
+
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_EventFragment"
+            app:destination="@id/EventFragment"/>
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/EventAdminFragment"
+        android:name="com.example.chicksevent.EventAdminFragment"
+        android:label="Events Admin"/>
+    <fragment
+        android:id="@+id/OrgAdminFragment"
+        android:name="com.example.chicksevent.OrgAdminFragment"
+        android:label="Organizers Admin"/>
+    <fragment
+        android:id="@+id/ProfileAdminFragment"
+        android:name="com.example.chicksevent.ProfileAdminFragment"
+        android:label="Profiles Admin"/>
+
+    <fragment
         android:id="@+id/NotificationFragment"
         android:name="com.example.chicksevent.NotificationFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_notification">
+        <action
+            android:id="@+id/action_NotificationFragment_to_AdminHomeFragment"
+            app:destination="@id/AdminHomeFragment" />
 
         <action
             android:id="@+id/action_NotificationFragment_to_EventFragment"

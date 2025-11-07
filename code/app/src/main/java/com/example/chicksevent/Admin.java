@@ -1,5 +1,7 @@
 package com.example.chicksevent;
 
+import android.util.Log;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.database.DataSnapshot;
@@ -7,6 +9,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -33,10 +36,11 @@ import java.util.List;
 public class Admin extends User {
     /** Service wrapper scoped to the "Admin" collection/root in Firebase. */
     private FirebaseService adminService;
+    private FirebaseService userService;
 
     /** Service wrapper scoped to the "Event" collection/root in Firebase. */
     private FirebaseService eventsService;
-
+    private FirebaseService organizerService;
     /**
      * Constructs an {@code Admin} for the given user id.
      *
@@ -45,7 +49,8 @@ public class Admin extends User {
     Admin(String userId) {
         super(userId);
         adminService = new FirebaseService("Admin");
-        this.eventsService = new FirebaseService("Event");
+        userService = new FirebaseService("User");
+        eventsService = new FirebaseService("Event");
     }
 
     /**
@@ -78,6 +83,48 @@ public class Admin extends User {
         return tcs.getTask();
     }
 
+    public Task<List<User>> browseEntrants() {
+//        TaskCompletionSource<List<User>> tcs = new TaskCompletionSource<>();
+
+        return userService.getReference().get().continueWith(snapshot -> {
+            List<User> entrants = new ArrayList<>();
+            for (DataSnapshot child: snapshot.getResult().getChildren()) {
+//                Entrant e = child.getValue(Entrant.class);
+//                if (e != null) {
+//                    try { e.setEntrantId(child.getKey()); } catch (Exception ignored) {}
+                Log.i("friedchicken", child.getKey());
+                entrants.add(new User(child.getKey()));
+//                }
+            }
+            return entrants;
+        });
+    }
+
+    public Task<List<Organizer>> browseOrganizers() {
+        TaskCompletionSource<List<Organizer>> tcs = new TaskCompletionSource<>();
+
+        organizerService.getReference().get().addOnSuccessListener(snapshot -> {
+            List<Organizer> organizers = new ArrayList<>();
+            for (DataSnapshot child : snapshot.getChildren()) {
+                Organizer o = child.getValue(Organizer.class);
+                if (o != null) {
+                    try { o.setOrganizerId(child.getKey()); } catch (Exception ignored) {}
+                    organizers.add(o);
+                }
+            }
+            tcs.setResult(organizers);
+        }).addOnFailureListener(tcs::setException);
+
+        return tcs.getTask();
+    }
+
+
+
+
+
+
+
+
     /**
      * Deletes the admin's profile.
      * <p>
@@ -109,30 +156,78 @@ public class Admin extends User {
      * @return a {@link Task} that resolves to a list of events on success.
      */
     public Task<List<Event>> browseEvents() {
-        TaskCompletionSource<List<Event>> tcs = new TaskCompletionSource<>();
+//        TaskCompletionSource<List<Event>> tcs = new TaskCompletionSource<>();
+//
+//        eventsService.getReference().get().addOnSuccessListener(snapshot ->{
+//            List<Event> list = new ArrayList<>();
+//            for (DataSnapshot child : snapshot.getChildren()) {
+//                Event e = child.getValue(Event.class);
+//                if (e != null) {
+//                    try { e.setId(child.getKey()); } catch (Exception ignored) {}
+//                    list.add(e);
+//                }
+//            }
+//            tcs.setResult(list);
+//        }).addOnFailureListener(tcs::setException);
+//        return tcs.getTask();
 
-        eventsService.getReference().get().addOnSuccessListener(snapshot ->{
-            List<Event> list = new ArrayList<>();
-            for (DataSnapshot child : snapshot.getChildren()) {
-                Event e = child.getValue(Event.class);
-                if (e != null) {
-                    try { e.setId(child.getKey()); } catch (Exception ignored) {}
-                    list.add(e);
-                }
+        return eventsService.getReference().get().continueWith(snapshot -> {
+            List<Event> entrants = new ArrayList<>();
+            for (DataSnapshot child: snapshot.getResult().getChildren()) {
+//                Entrant e = child.getValue(Entrant.class);
+//                if (e != null) {
+//                    try { e.setEntrantId(child.getKey()); } catch (Exception ignored) {}
+                Log.i("friedchicken", child.getKey());
+                HashMap<String, String> eventHash = (HashMap<String, String>) child.getValue();
+                entrants.add(new Event("e","e", eventHash.get("name"),"g","s","w","q","f",3,"v","sa"));
+//                }
             }
-            tcs.setResult(list);
-        }).addOnFailureListener(tcs::setException);
+            return entrants;
+        });
+    }
+
+    public Task<Void> deleteOrganizerProfile(String organizerId) {
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        if (organizerId == null || organizerId.isEmpty()) {
+            tcs.setException(new IllegalArgumentException("organizerId is empty"));
+            return tcs.getTask();
+        }
+
+        DatabaseReference ref = organizerService.getReference().child(organizerId);
+        ref.removeValue((DatabaseError error, DatabaseReference ignored) -> {
+            if (error == null) {
+                Log.d("AdminDeleteOrganizer", "Organizer deleted successfully");
+                tcs.setResult(null);
+            } else {
+                Log.e("AdminDeleteOrganizer", "Error deleting organizer", error.toException());
+                tcs.setException(error.toException());
+            }
+        });
         return tcs.getTask();
     }
 
-    /**
-     * Identifies this user as an admin.
-     *
-     * @return always {@code true} for this class.
-     */
-    public Boolean isAdmin() {
-        return true;
+    public Task<Void> deleteEntrantProfile(String entrantId) {
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        if (entrantId == null || entrantId.isEmpty()) {
+            tcs.setException(new IllegalArgumentException("entrantId is empty"));
+            return tcs.getTask();
+        }
+
+        DatabaseReference ref = userService.getReference().child(entrantId);
+        ref.removeValue((DatabaseError error, DatabaseReference ignored) -> {
+            if (error == null) {
+                Log.d("AdminDeleteEntrant", "Entrant deleted successfully");
+                tcs.setResult(null);
+            } else {
+                Log.e("AdminDeleteEntrant", "Error deleting entrant", error.toException());
+                tcs.setException(error.toException());
+            }
+        });
+        return tcs.getTask();
     }
+
 
     /**
      * Identifies this user as an organizer.

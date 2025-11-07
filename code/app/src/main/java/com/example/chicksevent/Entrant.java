@@ -89,8 +89,7 @@ public class Entrant extends User {
         return false;
     }
 
-    public Boolean isAdmin() {
-        return false;
+    public void setEntrantId(String key) {
+        entrantId = key;
     }
-
 }

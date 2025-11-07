@@ -37,6 +37,7 @@ public class User {
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
         notificationService = new FirebaseService("Notification");
+        adminService = new FirebaseService("Admin");
         this.notificationsEnabled = true;
     }
 
@@ -233,11 +234,17 @@ public class User {
 //
 //    }
 
-    public Boolean isAdmin() {
+public Task<Boolean> isAdmin() {
+    return adminService.getReference().get().continueWith(ds -> {
+        for (DataSnapshot d : ds.getResult().getChildren()) {
+            Log.i("ilovechicken", d.getKey());
+            if (d.getKey().equals(userId)) {
+                return true;
+            }
+        }
         return false;
-//        return adminService.getReference().get().continueWith(task -> {
-
-    }
+    });
+}
 
     public Boolean isOrganizer() {
         return false;

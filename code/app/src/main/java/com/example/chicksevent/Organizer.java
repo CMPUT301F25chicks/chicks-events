@@ -172,6 +172,7 @@ public class Organizer extends User {
     /** @return {@code true} because this user is an organizer. */
     public Boolean isOrganizer() { return true; }
 
-    /** @return {@code false} because this user is not an admin. */
-    public Boolean isAdmin() { return false; }
+    public void setOrganizerId(String key) {
+        organizerId = key;
+    }
 }

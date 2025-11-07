@@ -61,6 +61,17 @@ public class NotificationFragment extends Fragment {
         notificationView.setAdapter(notificationAdapter);
 
         User userToUpdate = new User(androidId);
+
+        userToUpdate.isAdmin().addOnCompleteListener(v -> {
+            if (v.getResult()) {
+                Log.i("im admin", "yay");
+                NavHostFragment.findNavController(NotificationFragment.this)
+                        .navigate(R.id.action_NotificationFragment_to_AdminHomeFragment);
+            } else {
+                Log.i("im admin", "no");
+            }
+        });
+
         userToUpdate.getNotificationList().addOnCompleteListener(task -> {
             Log.i(TAG, "should i change");
 
