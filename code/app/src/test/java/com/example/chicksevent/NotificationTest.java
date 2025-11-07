@@ -25,8 +25,37 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Unit tests for Notification that avoid main-thread continuations by
- * stubbing Task.continueWith(...) to return an already-completed Task.
+ * Unit tests for {@link Notification}.
+ *
+ * <p>
+ * These tests are designed to run entirely synchronously and without any main-thread dependency.
+ * By mocking Firebase Realtime Database and the {@link com.google.android.gms.tasks.Task} API,
+ * we ensure deterministic behaviour of {@link Notification#getEventName()} and
+ * {@link Notification#createNotification()} methods without awaiting asynchronous callbacks.
+ * </p>
+ *
+ * <h2>Key Behaviours Verified</h2>
+ * <ul>
+ *   <li>{@code createNotification()} correctly writes to the expected Firebase path and payload</li>
+ *   <li>Constructor getters return consistent values for all fields</li>
+ *   <li>{@code getEventName()} properly resolves the event name when found in mock snapshots</li>
+ *   <li>Graceful handling of missing or unmatched event IDs (returns "NO NAME")</li>
+ * </ul>
+ *
+ * <h2>Testing Approach</h2>
+ * <ul>
+ *   <li>Mocks {@link FirebaseDatabase#getInstance(String)} to prevent real Firebase initialization</li>
+ *   <li>Injects {@link FirebaseService} mocks using reflection to isolate test scope</li>
+ *   <li>Replaces {@link Task#continueWith(Continuation)} with synchronous lambda evaluation</li>
+ * </ul>
+ *
+ * <p>
+ * All Firebase references and snapshot traversals are simulated to guarantee full control
+ * over test inputs and outputs, ensuring safe execution in local JVM environments.
+ * </p>
+ *
+ * @author Jinn Kasai
+ * @author Dung
  */
 public class NotificationTest {
 

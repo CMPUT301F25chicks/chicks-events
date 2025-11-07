@@ -18,8 +18,30 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 /**
- * Minimal, synchronous unit tests for {@link User}.
- * These avoid any Task/async Firebase reads so they pass reliably.
+ * Unit tests for {@link User}.
+ *
+ * <p>
+ * These tests are designed to verify the synchronous logic within {@link User}
+ * while avoiding any real Firebase network calls or asynchronous {@code Task} behaviour.
+ * Firebase Realtime Database interactions are fully mocked using Mockito.
+ * </p>
+ *
+ * <h2>Test coverage includes:</h2>
+ * <ul>
+ *   <li>Validation and trimming of profile update fields</li>
+ *   <li>Ensuring no writes occur when required fields are invalid</li>
+ *   <li>Static mocking of {@link FirebaseDatabase#getInstance(String)} to prevent real initialization</li>
+ *   <li>Reflection-based injection of {@link FirebaseService} mocks</li>
+ *   <li>Verification of expected write payloads for {@code updateProfile()} and {@code createMockUser()}</li>
+ * </ul>
+ *
+ * <p>
+ * All tests execute synchronously and deterministically — no reliance on {@code Tasks.await()}
+ * or Android main-thread components.
+ * </p>
+ *
+ * @author Jinn Kasai
+ * @author Dung
  */
 public class UserTest {
 

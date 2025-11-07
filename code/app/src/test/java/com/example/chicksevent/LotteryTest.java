@@ -24,10 +24,38 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Minimal, synchronous tests for Lottery.runLottery().
- * - No real Firebase initialisation.
- * - No randomness (WAITING <= limit case).
- * - Verifies listener wiring and atomic update payload.
+ * Unit tests for {@link Lottery}.
+ *
+ * <p>
+ * These tests provide a fully synchronous verification of the {@link Lottery#runLottery()} logic,
+ * ensuring that Firebase interactions occur as expected without relying on real network operations
+ * or randomised selections. Firebase Realtime Database calls are mocked using Mockito, and
+ * {@link FirebaseDatabase#getInstance(String)} is statically replaced to avoid SDK initialisation.
+ * </p>
+ *
+ * <h2>Key Behaviours Verified</h2>
+ * <ul>
+ *   <li>Correct listener attachment and event handling on {@code entrantLimit} and {@code WAITING} nodes</li>
+ *   <li>No writes occur when no waiting entrants exist</li>
+ *   <li>Atomic update payload correctly includes {@code INVITED} entries and deletions from {@code WAITING}</li>
+ *   <li>Ensures that no {@code UNINVITED} nodes are created when all entrants fit within the limit</li>
+ * </ul>
+ *
+ * <h2>Testing Approach</h2>
+ * <ul>
+ *   <li>Mocks Firebase structure under {@code /Event} and {@code /WaitingList}</li>
+ *   <li>Injects {@link FirebaseService} instances using reflection to isolate test behaviour</li>
+ *   <li>Triggers {@link ValueEventListener#onDataChange(DataSnapshot)} manually to simulate database reads</li>
+ *   <li>Uses {@link ArgumentCaptor} to validate the correctness of atomic update payloads</li>
+ * </ul>
+ *
+ * <p>
+ * These tests run purely on the JVM and are deterministic — no async tasks, randomness,
+ * or external Firebase interactions are required.
+ * </p>
+ *
+ * @author Hanh
+ * @author Jinn Kasai
  */
 public class LotteryTest {
 

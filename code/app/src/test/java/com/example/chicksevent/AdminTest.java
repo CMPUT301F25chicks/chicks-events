@@ -22,10 +22,33 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Minimal, synchronous tests for {@link Admin}.
- * - Prevents real Firebase init (static mock of FirebaseDatabase.getInstance(url)).
- * - Verifies deletes and simple browse calls without Tasks.await / main-thread usage.
- * - Stubs removeValue() to return a completed Task to avoid NPE in FirebaseService chains.
+ * Unit tests for {@link Admin}.
+ *
+ * <p>
+ * These tests run fully on the JVM and synchronously. They prevent real Firebase
+ * initialization by statically mocking {@link FirebaseDatabase#getInstance(String)},
+ * stub RTDB references, and short-circuit {@link Task} continuations to avoid any
+ * main-thread or network dependencies.
+ * </p>
+ *
+ * <h2>Behaviours verified</h2>
+ * <ul>
+ *   <li>{@code deleteEvent} and {@code deleteEntrantProfile} issue deletes only for non-empty IDs</li>
+ *   <li>{@code deleteOrganizerProfile} returns an exception task for empty IDs and completes on success</li>
+ *   <li>{@code browseEntrants} builds lightweight {@link User} objects from snapshot keys</li>
+ *   <li>{@code browseEvents} returns a list whose size matches snapshot children</li>
+ * </ul>
+ *
+ * <h2>Technique</h2>
+ * <ul>
+ *   <li>Static mock of {@link FirebaseDatabase} to block SDK initialization</li>
+ *   <li>Manual triggering of continuation lambdas for {@code continueWithTask}</li>
+ *   <li>Mockito stubs for {@link DatabaseReference} chains and completion listeners</li>
+ * </ul>
+ *
+ * <p>All assertions are synchronous and deterministic.</p>
+ *
+ * @author Jinn Kasai
  */
 public class AdminTest {
 

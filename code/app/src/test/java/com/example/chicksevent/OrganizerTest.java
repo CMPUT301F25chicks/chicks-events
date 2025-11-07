@@ -18,9 +18,33 @@ import org.mockito.MockedStatic;
 import java.lang.reflect.Field;
 
 /**
- * Minimal, synchronous tests for {@link Organizer}.
- * - No async Task usage.
- * - Verifies listener wiring and simple getters/delegations.
+ * Unit tests for {@link Organizer}.
+ *
+ * <p>
+ * These tests provide minimal, synchronous verification of the {@link Organizer}
+ * class, ensuring that no asynchronous Firebase {@code Task} behaviour is invoked.
+ * Firebase interactions are mocked using Mockito, and {@link FirebaseDatabase#getInstance(String)}
+ * is statically stubbed to prevent any real network or SDK initialization.
+ * </p>
+ *
+ * <h2>Key Behaviours Verified</h2>
+ * <ul>
+ *   <li>Organizer ID getters and setters behave consistently</li>
+ *   <li>{@code isOrganizer()} always returns {@code true}</li>
+ *   <li>{@code listEntrants()} correctly attaches a {@link ValueEventListener}
+ *       to the expected Realtime Database path for both WAITING and INVITED statuses</li>
+ *   <li>{@code sendSelectedNotification()} correctly delegates to the
+ *       {@code INVITED} branch of {@code sendWaitingListNotification()}</li>
+ *   <li>Overloaded methods that default to WAITING behaviour are verified</li>
+ * </ul>
+ *
+ * <p>
+ * All Firebase service references inside {@link Organizer} are replaced via reflection
+ * to ensure isolated, deterministic test execution with no dependency on network or
+ * Android main-thread context.
+ * </p>
+ *
+ * @author Jinn Kasai
  */
 public class OrganizerTest {
 
