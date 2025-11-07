@@ -142,6 +142,7 @@ public class EventDetailFragment extends Fragment {
         });
 
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
+        Button leaveButton = view.findViewById(R.id.btn_map);
         joinButton.setOnClickListener(v -> {
             userExists().addOnSuccessListener(boole -> {
                 if (boole) {
@@ -156,6 +157,16 @@ public class EventDetailFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 }
             });
+        });
+
+        leaveButton.setOnClickListener(v -> {
+            Entrant e = new Entrant(userId, args.getString("eventName"));
+
+            e.leaveWaitingList();
+            Toast.makeText(getContext(),
+                    "You left the waiting list",
+                    Toast.LENGTH_SHORT).show();
+
         });
     }
 

@@ -149,6 +149,8 @@ public class ChosenListFragment extends Fragment {
                     Settings.Secure.ANDROID_ID
             ), eventId);
             organizer.sendWaitingListNotification(EntrantStatus.INVITED, "chosen list notification");
+            organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
+
             Toast.makeText(getContext(), "chosen list notfication sent", Toast.LENGTH_SHORT).show();
         });
     }

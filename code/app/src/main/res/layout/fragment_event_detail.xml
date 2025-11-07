@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:backgroundTint="@color/purpleText"
-                        android:text="View Map"
+                        android:text="Leave Waiting List"
                         android:textColor="@color/black" />
 
                     <Button

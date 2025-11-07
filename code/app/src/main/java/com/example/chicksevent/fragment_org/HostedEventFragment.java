@@ -1,9 +1,5 @@
 package com.example.chicksevent.fragment_org;
 
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -14,7 +10,9 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.adapter.HostedEventAdapter;

@@ -29,12 +29,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 /**
- * Unit tests for {@link ../misc/Notification}.
- *
- * These tests never touch the real DB. We:
- *  - Mock FirebaseDatabase.getInstance(...) statically to avoid FirebaseApp initialization.
- *  - Inject a mocked FirebaseService into Notification for createNotification() behavior checks.
- */
+ Notification Class Unit Testing
+ * <p>
+ **/
 public class NotificationTest {
 
     // --- static mocking to stop Firebase from initializing in JVM unit tests ---

@@ -102,10 +102,12 @@ public class Lottery {
                                         Log.i(TAG, "waitingCount = " + waiting.size());
 
                                         // Decide invited/uninvited
-                                        List<String> invited;
+                                        List<String> invited = new ArrayList<>();
                                         List<String> uninvited = new ArrayList<>();
 
-                                        if (waiting.size() <= limit) {
+                                        if (limit == 0) {
+                                            uninvited = new ArrayList<>(waiting);
+                                        } else if (waiting.size() <= limit) {
                                             invited = new ArrayList<>(waiting);
                                         } else {
                                             Collections.shuffle(waiting);

@@ -34,12 +34,9 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Unit tests for {@link ../Organizer}.
- *
- * - Statically mocks FirebaseDatabase.getInstance(...) to avoid FirebaseApp init.
- * - Injects mocked FirebaseService for WaitingList/Event/Organizer services.
- * - Uses mockConstruction(Notification) to verify notifications are created & sent.
- */
+ Organizer Class Unit Testing
+ * <p>
+ **/
 public class OrganizerTest {
 
     private static final String ORG_ID = "org-123";

@@ -36,6 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ User Class Unit Testing
+ * <p>
+ **/
 public class UserTest {
 
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;

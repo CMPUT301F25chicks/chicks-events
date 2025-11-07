@@ -16,7 +16,7 @@ import com.example.chicksevent.R;
 import java.util.ArrayList;
 
 /**
- * Custom {@link ArrayAdapter} for displaying {@link Event} objects within a ListView or GridView.
+ * Custom {@link ../ArrayAdapter} for displaying {@link Event} objects within a ListView or GridView.
  * <p>
  * The adapter inflates the {@code item_event.xml} layout for each event, binding event details such as
  * name and time (if available) and providing a clickable arrow button to trigger callback actions.

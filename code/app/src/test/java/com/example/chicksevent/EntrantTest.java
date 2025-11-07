@@ -27,6 +27,10 @@ import org.mockito.MockedStatic;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+/**
+ Entrant Class Unit Testing
+ * <p>
+ **/
 public class EntrantTest {
     private MockedStatic<FirebaseDatabase> firebaseDbStatic;
     private FirebaseDatabase mockDb;
