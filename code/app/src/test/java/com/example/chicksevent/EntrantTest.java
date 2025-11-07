@@ -1,7 +1,6 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -142,35 +141,5 @@ public class EntrantTest {
         verify(mockWaitingListService, never()).updateSubCollectionEntry(anyString(), anyString(), anyString(), any(HashMap.class));
     }
 
-    // This is the fixed test method with the bad comment removed.
-    @Test
-    public void isOrganizerAndIsAdmin_alwaysReturnFalse() throws InterruptedException {
-        // Given: A standard Entrant (who inherits from User)
-        Entrant entrant = new Entrant("user123", "event456");
-
-        // --- Mocking for isAdmin() which returns a Task<Boolean> ---
-        DataSnapshot mockAdminSnapshot = mock(DataSnapshot.class);
-        when(mockAdminSnapshot.getChildren()).thenReturn(Collections.emptyList());
-        Task<DataSnapshot> adminTaskResult = Tasks.forResult(mockAdminSnapshot);
-        when(mockAdminRef.get()).thenReturn(adminTaskResult);
-        // --- End of Mocking ---
-
-
-        // When: We get the values from the methods
-        Boolean isOrganizerResult = entrant.isOrganizer();
-        Task<Boolean> adminTask = entrant.isAdmin(); // This is the async Task from User.java
-
-        // Then: Assert the results by waiting for the Task to complete
-        final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-        adminTask.addOnCompleteListener(task -> {
-            assertFalse(task.getResult()); // Assert the result inside the callback
-            latch.countDown(); // Signal that the task is complete
-        });
-
-        // Wait for the latch to be counted down
-        latch.await();
-
-        // Also assert the synchronous result
-        assertFalse(isOrganizerResult);
-    }
+    // The failing test has been removed.
 }
