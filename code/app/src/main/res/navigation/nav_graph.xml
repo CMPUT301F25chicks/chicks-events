@@ -27,6 +27,11 @@
         <action
             android:id="@+id/action_AdminHomeFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment"/>
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment"/>
+
     </fragment>
 
     <fragment

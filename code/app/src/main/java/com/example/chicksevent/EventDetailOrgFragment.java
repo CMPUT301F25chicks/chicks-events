@@ -54,14 +54,30 @@ public class EventDetailOrgFragment extends Fragment {
         Button notificationButton = view.findViewById(R.id.btn_notification);
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
-
+        Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
         viewWaitingListButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 
             Bundle bundle = new Bundle();
             bundle.putString("eventName", args.getString("eventName"));
+//            bundle.putString("organizerId", args.getString("organizerId"));
+
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment, bundle);
+
+//            NavHostFragment.findNavController(EventDetailOrgFragment.this)
+//                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
+        });
+
+        viewChosenListButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("eventName", args.getString("eventName"));
+//            bundle.putString("organizerId", args.getString("organizerId"));
+
+
+            navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
 
 //            NavHostFragment.findNavController(EventDetailOrgFragment.this)
 //                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
@@ -76,6 +92,12 @@ public class EventDetailOrgFragment extends Fragment {
 
         eventButton.setOnClickListener(v -> {
             NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_EventFragment);
+        });
+
+        createEventButton.setOnClickListener(v -> {
+//            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
+
+            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
         });
 
         createEventButton.setOnClickListener(v -> {

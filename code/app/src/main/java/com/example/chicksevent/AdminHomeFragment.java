@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.databinding.FragmentAdminHomeBinding;
@@ -25,10 +27,12 @@ public class AdminHomeFragment extends Fragment {
 
     private FragmentAdminHomeBinding binding;
     ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
+    FirebaseService notificationService;
     NotificationAdapter notificationAdapter;
     NotificationAdapter notificationView;
 
     public AdminHomeFragment() {
+        notificationService = new FirebaseService("Notification");
         // You can keep the constructor-empty and inflate via binding below
     }
 
@@ -45,7 +49,7 @@ public class AdminHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
-
+        Button profileButton = view.findViewById(R.id.btn_profile);
 
 
         eventButton.setOnClickListener(v -> {
@@ -56,10 +60,14 @@ public class AdminHomeFragment extends Fragment {
             NavHostFragment.findNavController(AdminHomeFragment.this).navigate(R.id.action_AdminHomeFragment_to_CreateEventFragment);
         });
 
+        profileButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(AdminHomeFragment.this).navigate(R.id.action_AdminHomeFragment_to_ProfileFragment);
+
+        });
+
         Button btnEvents = view.findViewById(R.id.btn_admin_event);
         Button btnOrganizers = view.findViewById(R.id.btn_admin_org);
         Button btnProfiles = view.findViewById(R.id.btn_admin_profile);
-
         User userToUpdate = new User(Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
@@ -74,10 +82,35 @@ public class AdminHomeFragment extends Fragment {
 //            Log.i(TAG, "should i change");
 
             notificationDataList = task.getResult();
-            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList);
+            ArrayList<Notification> notifNewList = new ArrayList<>();
+
+            notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, item -> {
+                Log.i("WATTHE", notificationDataList.size() + " : " + item.getEventId() + " : " + item.getNotificationType().toString());
+                for (Notification notif : notificationDataList) {
+                    Log.i("WATTHE", item.getEventId() + " : " + item.getNotificationType().toString());
+
+                    if (item.getNotificationType() == notif.getNotificationType() && item.getEventId().equals(notif.getEventId())) {
+                        notificationService.deleteSubCollectionEntry(userToUpdate.getUserId(), item.getEventId(), item.getNotificationType().toString());
+                    } else {
+                        notifNewList.add(notif);
+                    }
+                }
+                Log.i("WATTHE", "hi : " + notifNewList.size());
+                notificationDataList = notifNewList;
+                // DON'T DELETE THIS CUZ WE NEED TO RESET NOTIF
+                notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, b -> {});
+                notificationView.setAdapter(notificationAdapter);
+            });
+
+
+
+            notificationView.setAdapter(notificationAdapter);
+//            notificationDataList = notifNewList;
+////
+//            notificationAdapter.notifyDataSetChanged();
+
 
 //            Log.i(TAG, String.valueOf(notificationDataList.size()));
-            notificationView.setAdapter(notificationAdapter);
 
         });
         btnEvents.setOnClickListener(v ->
@@ -91,6 +124,8 @@ public class AdminHomeFragment extends Fragment {
         btnProfiles.setOnClickListener(v ->
                 NavHostFragment.findNavController(AdminHomeFragment.this)
                         .navigate(R.id.action_adminHome_to_profileAdminFragment));
+
+
 
 
 

@@ -148,6 +148,7 @@ public class HostedEventFragment extends Fragment {
 
                     Bundle bundle = new Bundle();
                     bundle.putString("eventName", item.getId());
+//                    bundle.putString("organizerId", item.getId());
 
                     if (type == 0) {
                         navController.navigate(R.id.action_HostedEventFragment_to_EventDetailOrgFragment, bundle);
