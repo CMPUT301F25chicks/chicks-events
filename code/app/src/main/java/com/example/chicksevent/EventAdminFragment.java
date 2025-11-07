@@ -20,13 +20,58 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment that displays a list of all events for administrative management.
+ * <p>
+ * Allows an admin to view all events in the system and delete them via a confirmation dialog.
+ * Events are loaded from Firebase using {@link Admin#browseEvents()} and displayed using
+ * {@link EventAdminAdapter}.
+ * </p>
+ *
+ * <p>
+ * Deletion is performed via {@link Admin#deleteEvent(String)} and immediately reflected
+ * in the UI by removing the event from the list and notifying the adapter.
+ * </p>
+ *
+ * @see Admin
+ * @see Event
+ * @see EventAdminAdapter
+ */
 public class EventAdminFragment extends Fragment {
 
+    /**
+     * RecyclerView that displays the list of events.
+     * Uses a {@link LinearLayoutManager} and {@link EventAdminAdapter}.
+     */
     private RecyclerView recyclerView;
-    private EventAdminAdapter adapter;
-    private ArrayList<Event> eventList;
-    private Admin admin; // use Admin class
 
+    /**
+     * Adapter responsible for binding {@link Event} data to RecyclerView items.
+     * Configured with a delete click listener.
+     */
+    private EventAdminAdapter adapter;
+
+    /**
+     * List holding all {@link Event} objects loaded from Firebase.
+     * Serves as the backing data for the adapter.
+     */
+    private ArrayList<Event> eventList;
+
+    /**
+     * Admin instance used to perform privileged operations such as
+     * browsing and deleting events.
+     */
+    private Admin admin;
+
+    /**
+     * Inflates the fragment layout and initializes the RecyclerView, adapter,
+     * and admin instance. Begins loading event data from Firebase.
+     *
+     * @param inflater           the LayoutInflater to inflate the view
+     * @param container          parent view that the fragment UI should attach to
+     * @param savedInstanceState previous saved state (not used)
+     * @return the root view of the fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,6 +92,13 @@ public class EventAdminFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Loads all events from Firebase using {@link Admin#browseEvents()}.
+     * <p>
+     * Clears the current list, adds all fetched events, and notifies the adapter
+     * of data changes. Shows a toast and logs on failure.
+     * </p>
+     */
     private void loadEvents() {
         eventList.clear();
 
@@ -61,6 +113,14 @@ public class EventAdminFragment extends Fragment {
                 });
     }
 
+    /**
+     * Shows a confirmation dialog before deleting an event.
+     * <p>
+     * Called by {@link EventAdminAdapter} when the delete button is clicked.
+     * </p>
+     *
+     * @param event the {@link Event} to be deleted
+     */
     private void confirmDeleteEvent(Event event) {
         Log.i("DEL", "back in time " + event.getId());
 
@@ -72,6 +132,16 @@ public class EventAdminFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Deletes the specified event from Firebase and updates the UI.
+     * <p>
+     * Calls {@link Admin#deleteEvent(String)} to remove from database,
+     * removes from {@link #eventList}, and notifies the adapter.
+     * Shows a success toast.
+     * </p>
+     *
+     * @param event the {@link Event} to delete
+     */
     private void deleteEvent(Event event) {
         Log.i("DEL", "back in time " + event.getId());
         admin.deleteEvent(event.getId());

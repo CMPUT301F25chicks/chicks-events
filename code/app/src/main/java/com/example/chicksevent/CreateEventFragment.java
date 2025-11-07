@@ -16,15 +16,32 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 
-
+/**
+ * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
+ * <p>
+ * This fragment allows users to input event details such as name, description, start and end
+ * registration dates, and optionally specify a maximum number of entrants. The event is then
+ * persisted to Firebase through the {@link Event#createEvent()} method.
+ * </p>
+ *
+ * <p><b>Navigation:</b> Provides quick access to Notification and Event fragments through buttons.
+ * </p>
+ *
+ * @author Jinn Kasai
+ */
 public class CreateEventFragment extends Fragment {
 
+    /** View binding for accessing UI elements. */
     private FragmentCreateEventBinding binding;
 
-    public CreateEventFragment() {
-        // You can keep the constructor-empty and inflate via binding below
-    }
-
+    /**
+     * Inflates the layout for this fragment using ViewBinding.
+     *
+     * @param inflater  The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The root view for the fragment's layout.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -33,6 +50,13 @@ public class CreateEventFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Called after the view hierarchy associated with the fragment has been created.
+     * Initializes listeners and button click handlers.
+     *
+     * @param view The root view returned by {@link #onCreateView}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -64,6 +88,10 @@ public class CreateEventFragment extends Fragment {
 
     }
 
+    /**
+     * Reads form data, validates it, creates an {@link Event} object, and uploads it to Firebase.
+     * Displays appropriate toast messages on success or validation errors.
+     */
     private void createEventFromForm() {
         // Read inputs
         String name  = s(binding.etEventName.getText());
@@ -132,14 +160,28 @@ public class CreateEventFragment extends Fragment {
         requireActivity().onBackPressed();
     }
 
+    /**
+     * Utility helper to safely trim CharSequence values.
+     *
+     * @param cs The CharSequence to trim.
+     * @return The trimmed String or an empty string if null.
+     */
     private static String s(CharSequence cs) {
         return cs == null ? "" : cs.toString().trim();
     }
 
+    /**
+     * Displays a short {@link Toast} message.
+     *
+     * @param msg The message to display.
+     */
     private void toast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Cleans up resources by nullifying the binding when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

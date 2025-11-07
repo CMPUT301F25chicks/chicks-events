@@ -95,14 +95,6 @@ public class Notification {
             }
             return "NO NAME";
         });
-
-
-
-//            if (eventName == null) {
-
-//        }
-
-//        return eventName;
     }
 
     public String getMessage() {

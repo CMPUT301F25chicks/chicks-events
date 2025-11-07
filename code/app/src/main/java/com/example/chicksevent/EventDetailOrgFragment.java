@@ -24,15 +24,44 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 
+/**
+ * Fragment displaying detailed information about an event from the organizer's perspective.
+ * <p>
+ * This screen enables organizers to view event details, navigate to related fragments
+ * (such as the waiting list, notifications, or the event list), and create new events.
+ * It passes the selected event name between fragments using a {@link Bundle}.
+ * </p>
+ *
+ * <p><b>Navigation:</b>
+ * <ul>
+ *   <li>Navigate to {@code NotificationFragment}</li>
+ *   <li>Navigate to {@code EventFragment}</li>
+ *   <li>Navigate to {@code CreateEventFragment}</li>
+ *   <li>Navigate to {@code WaitingListFragment} (with event name argument)</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Usage:</b> Typically accessed when an organizer selects an event they manage.
+ * It retrieves the event name from fragment arguments and binds it to the view.
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class EventDetailOrgFragment extends Fragment {
 
+    /** View binding for the organizer event detail layout. */
     private FragmentEventDetailOrgBinding binding;
+
     private FirebaseService eventService;
 
-    public EventDetailOrgFragment() {
-        // You can keep the constructor-empty and inflate via binding below
-    }
-
+    /**
+     * Inflates the layout for the organizer event detail fragment.
+     *
+     * @param inflater LayoutInflater used to inflate the fragment's views.
+     * @param container Parent view that the fragment's UI should attach to.
+     * @param savedInstanceState Saved state from previous instance, if any.
+     * @return the inflated root view for this fragment.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -41,6 +70,13 @@ public class EventDetailOrgFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Called after the fragment view hierarchy has been created.
+     * Initializes event detail display, sets up navigation and button interactions.
+     *
+     * @param view the root view returned by {@link #onCreateView}.
+     * @param savedInstanceState Previously saved state, if available.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -80,13 +116,9 @@ public class EventDetailOrgFragment extends Fragment {
 
             Bundle bundle = new Bundle();
             bundle.putString("eventName", args.getString("eventName"));
-//            bundle.putString("organizerId", args.getString("organizerId"));
 
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment, bundle);
-
-//            NavHostFragment.findNavController(EventDetailOrgFragment.this)
-//                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
         });
 
         viewChosenListButton.setOnClickListener(v -> {
@@ -94,20 +126,14 @@ public class EventDetailOrgFragment extends Fragment {
 
             Bundle bundle = new Bundle();
             bundle.putString("eventName", args.getString("eventName"));
-//            bundle.putString("organizerId", args.getString("organizerId"));
-
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
-
-//            NavHostFragment.findNavController(EventDetailOrgFragment.this)
-//                    .navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment);
         });
 
         notificationButton.setOnClickListener(v -> {
                     NavHostFragment.findNavController(EventDetailOrgFragment.this)
                             .navigate(R.id.action_EventDetailOrgFragment_to_NotificationFragment);
                 }
-//
         );
 
         eventButton.setOnClickListener(v -> {
@@ -115,25 +141,12 @@ public class EventDetailOrgFragment extends Fragment {
         });
 
         createEventButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
-
             NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
         });
 
         createEventButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(EventDetailFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
-
             NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
         });
-//        eventName
-    }
-
-    private static String s(CharSequence cs) {
-        return cs == null ? "" : cs.toString().trim();
-    }
-
-    private void toast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

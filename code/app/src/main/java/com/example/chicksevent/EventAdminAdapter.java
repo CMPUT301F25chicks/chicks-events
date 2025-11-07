@@ -12,6 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Custom {@link ArrayAdapter} for displaying {@link Event} objects within a ListView or GridView.
+ * <p>
+ * The adapter inflates the {@code item_event.xml} layout for each event, binding event details such as
+ * name and time (if available) and providing a clickable arrow button to trigger callback actions.
+ * </p>
+ *
+ * <p><b>Usage:</b>
+ * <pre>
+ * EventAdapter adapter = new EventAdapter(context, events, event -> {
+ *     // handle click on event item
+ * });
+ * listView.setAdapter(adapter);
+ * </pre>
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.ViewHolder> {
 
     private ArrayList<Event> events;

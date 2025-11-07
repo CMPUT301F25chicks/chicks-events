@@ -29,19 +29,50 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment for running a lottery ("pooling") and displaying selected entrants for a given event.
+ * <p>
+ * This screen lets an organizer trigger the {@link Lottery} for the current event and view the
+ * resulting entrant list for a particular {@link EntrantStatus} bucket (e.g., INVITED/WAITING).
+ * It also provides quick navigation to Notifications, Events, and Create Event flows.
+ * </p>
+ *
+ * <p><b>Responsibilities:</b>
+ * <ul>
+ *   <li>Resolve the current event id from fragment arguments (key: {@code "eventName"}).</li>
+ *   <li>Run the lottery and display the updated entrant list.</li>
+ *   <li>Bind a {@link ListView} via {@link UserAdapter} to render user ids.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class PoolingFragment extends Fragment {
 
+    /** View binding for the pooling layout. */
     private FragmentPoolingBinding binding;
-    private ListView userView;
-    private UserAdapter waitingListAdapter;
-    private ArrayList<User> userDataList = new ArrayList<>();
-    private FirebaseService waitingListService = new FirebaseService("WaitingList");
-    private String TAG = "RTD8";
-    String eventId;
-    public PoolingFragment() {
-        // You can keep the constructor-empty and inflate via binding below
-    }
 
+    /** List view that renders the selected entrants. */
+    private ListView userView;
+
+    /** Adapter bridging entrant user ids to the list. */
+    private UserAdapter waitingListAdapter;
+
+    /** Backing list of users in the chosen status bucket. */
+    private ArrayList<User> userDataList = new ArrayList<>();
+
+    /** Firebase service for reading/writing waiting-list buckets. */
+    private FirebaseService waitingListService = new FirebaseService("WaitingList");
+
+    /** Log tag. */
+    private static final String TAG = "RTD8";
+
+    /** The event id whose waiting list is being managed. */
+    String eventId;
+
+    /**
+     * Inflates the pooling layout using ViewBinding.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -50,6 +81,13 @@ public class PoolingFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Initializes navigation buttons, resolves arguments, wires the list adapter, and sets the
+     * pooling action to run the lottery and display INVITED entrants.
+     *
+     * @param view the root view returned by {@link #onCreateView}.
+     * @param savedInstanceState previously saved state, if any.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -96,10 +134,16 @@ public class PoolingFragment extends Fragment {
 
 //        eventName
     }
-
+    /** Convenience wrapper to list entrants in the WAITING bucket. */
     public void listEntrants() {
         listEntrants(EntrantStatus.WAITING);
     }
+
+    /**
+     * Lists entrants for the provided status bucket and updates the list view.
+     *
+     * @param status the {@link EntrantStatus} bucket to display
+     */
     public void listEntrants(EntrantStatus status) {
 
         Log.i(TAG, "in here " + eventId + " " + status);
@@ -126,14 +170,7 @@ public class PoolingFragment extends Fragment {
                 });
     }
 
-    private static String s(CharSequence cs) {
-        return cs == null ? "" : cs.toString().trim();
-    }
-
-    private void toast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-    }
-
+    /** Clears binding references when the view is destroyed. */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

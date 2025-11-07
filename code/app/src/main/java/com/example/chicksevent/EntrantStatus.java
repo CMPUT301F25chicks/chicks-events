@@ -18,7 +18,6 @@ package com.example.chicksevent;
  * @author Jordan Kwan
  */
 public enum EntrantStatus {
-
     /** Entrant has joined the waiting list but not yet selected. */
     WAITING,
 

@@ -17,20 +17,49 @@ import com.example.chicksevent.databinding.FragmentNotificationBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/**
+ * Fragment that displays notifications addressed to the current user.
+ * <p>
+ * Binds a {@link ListView} to {@link NotificationAdapter} and loads the user's notifications
+ * using their Android ID as the user key. Also exposes navigation to the Event list and
+ * Create Event flows.
+ * </p>
+ *
+ * <p><b>Responsibilities:</b>
+ * <ul>
+ *   <li>Resolve device Android ID and use it to fetch the user's notification list.</li>
+ *   <li>Initialize and bind the {@link NotificationAdapter}.</li>
+ *   <li>Provide quick navigation to related screens.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class NotificationFragment extends Fragment {
 
+    /** View binding for the notification layout. */
     private FragmentNotificationBinding binding;
+
+    /** Firebase service (placeholder root used during development). */
     private FirebaseService service;
-    ArrayList<Notification> notificationDataList = new ArrayList<Notification>();
+
+    /** Backing list for notifications to render. */
+    ArrayList<Notification> notificationDataList = new ArrayList<>();
+
+    /** Adapter bridging notifications to the ListView. */
     NotificationAdapter notificationAdapter;
-    FirebaseService notificationService;
 
-
+    /** Current device Android ID (used as the user identifier). */
     private String androidId;
 
-    private final String TAG = "RTD8";
+    /** Log tag. */
+    private static final String TAG = "RTD8";
 
+    private FirebaseService notificationService;
+
+    /**
+     * Inflates the fragment layout using ViewBinding.
+     */
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -43,6 +72,13 @@ public class NotificationFragment extends Fragment {
 
     }
 
+    /**
+     * Initializes services, resolves the device ID, sets up the list adapter, and fetches
+     * notifications for the current user.
+     *
+     * @param view the root view returned by {@link #onCreateView}.
+     * @param savedInstanceState previously saved instance state, if any.
+     */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         service = new FirebaseService("bruhmoment");
@@ -132,6 +168,9 @@ public class NotificationFragment extends Fragment {
         });
     }
 
+    /**
+     * Example helper for creating a mock event (disabled by default).
+     */
     private void createMockEvent() {
         User userToUpdate = new User(androidId);
         Event event = new Event(
@@ -151,6 +190,9 @@ public class NotificationFragment extends Fragment {
         event.createEvent();
     }
 
+    /**
+     * Releases binding resources when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

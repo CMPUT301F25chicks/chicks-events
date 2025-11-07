@@ -15,23 +15,84 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Domain model representing an app user and related operations.
+ * <p>
+ * Provides convenience methods for event discovery (filtering by tags), reading notifications,
+ * and persisting user preferences (e.g., notification opt-in). Firebase CRUD operations are
+ * delegated to {@link FirebaseService} wrappers for the corresponding roots.
+ * </p>
+ *
+ * <p><b>Firebase roots used:</b>
+ * <ul>
+ *   <li><code>User</code> — user profile & preferences</li>
+ *   <li><code>Event</code> — event catalog (read for filtering)</li>
+ *   <li><code>Notification</code> — per-user notification tree</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Note:</b> This class does not enforce authorization; callers should ensure appropriate
+ * access control before invoking read/write operations tied to a user.</p>
+ *
+ * @author Jordan Kwan
+ * @author Juan Rea
+ * @author Eric Kane
+ * @author Jinn Kasai
+ * @author Hanh
+ * @author Dung
+ */
 public class User {
 
+//    private ArrayList<Event> eventList;
+//    private FirebaseService userService;
+//    private FirebaseService eventService;
+//    private FirebaseService notificationService;
+//    private FirebaseService adminService;
+//    private String userId;
+//    private String phoneNumber;
+//    private String email;
+//    private String name;
+
+
+    /** Optional in-memory cache of events associated with this user. */
     private ArrayList<Event> eventList;
+
+    /** Firebase service for the "User" root. */
     private FirebaseService userService;
+
+    /** Firebase service for the "Event" root. */
     private FirebaseService eventService;
+
+    /** Firebase service for the "Notification" root. */
     private FirebaseService notificationService;
+
+    /** Firebase service for admin-related operations (reserved). */
     private FirebaseService adminService;
+
+    /** Unique identifier for this user (e.g., Android ID). */
     private String userId;
-    private String phoneNumber;
-    private String email;
+
+    /* Optional user name */
     private String name;
+
+    /** Optional phone number. */
+    private String phoneNumber;
+
+    /** Optional email address. */
+    private String email;
+
+    /** Whether this user has enabled notifications. Defaults to {@code true}. */
     private boolean notificationsEnabled;
+
+
 
     String TAG = "RTD8";
 
-
+    /**
+     * Constructs a {@code User} bound to the provided identifier.
+     *
+     * @param userId unique identifier for the user (e.g., device Android ID)
+     */
     User(String userId) {
         this.userId = userId;
         userService = new FirebaseService("User");
@@ -41,6 +102,15 @@ public class User {
         this.notificationsEnabled = true;
     }
 
+    /**
+     * Returns a list of event IDs whose tags match any of the provided filter tokens.
+     * <p>
+     * The filter is applied against each event's {@code tag} field (space-separated tokens).
+     * </p>
+     *
+     * @param filterList case-sensitive tokens to match against event tags
+     * @return a task resolving to a list of matching event IDs
+     */
     public Task<ArrayList<String>> filterEvents(ArrayList<String> filterList) {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
@@ -71,10 +141,16 @@ public class User {
         });
     }
 
+    /**
+     * @return this user's unique identifier
+     */
     public String getUserId() {
         return userId;
     }
 
+    /**
+     * Logs all events to Logcat (diagnostic utility).
+     */
     public void listEvents() {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
@@ -103,21 +179,20 @@ public class User {
         });
     }
 
-    public boolean areNotificationsEnabled() {
-        return notificationsEnabled;
-    }
+    /**
+     * Sets the in-memory notifications flag.
+     *
+     * @param notificationsEnabled desired notifications state
+     */
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
-    // update value in firebase
-    public void updateNotificationPreference(boolean isEnabled) {
-        this.setNotificationsEnabled(isEnabled);
 
-        java.util.HashMap<String, Object> update = new java.util.HashMap<>();
-        update.put("notificationsEnabled", isEnabled);
-        userService.editEntry(userId, update);
-    }
-
+    /**
+     * Reads the user's notifications from Firebase and materializes them into {@link Notification} objects.
+     *
+     * @return a task resolving to the user's notifications
+     */
     public Task<ArrayList<Notification>> getNotificationList() {
         Log.i(TAG, "in notif list");
         return notificationService.getReference().child(userId).get().continueWith(task -> {
@@ -165,6 +240,28 @@ public class User {
         });
     }
 
+    /**
+     * Updates the user's profile in Firebase Realtime Database.
+     * <p>
+     * Validates input fields, updates local instance state, and persists changes to the
+     * {@code /User/{userId}} node using only the fields that are being updated.
+     * </p>
+     *
+     * <p><strong>Validation Rules:</strong></p>
+     * <ul>
+     *   <li>{@code userId} must be non-null and non-empty</li>
+     *   <li>{@code name} and {@code email} must be non-null and non-empty after trimming</li>
+     *   <li>{@code phone} is optional; if provided, it is trimmed</li>
+     *   <li>{@code notification} is stored as-is</li>
+     * </ul>
+     *
+     * @param name                the new display name (required)
+     * @param email               the new email address (required)
+     * @param phone               the new phone number (optional, may be {@code null})
+     * @param notification        whether push notifications are enabled
+     * @return a {@link Task} that completes successfully if the update is sent to Firebase,
+     *         or fails with an exception if validation fails or Firebase reports an error
+     */
     public boolean updateProfile(String name, String email, String phone, boolean notification) {
         // Basic validation
         if (userId == null || userId.isEmpty()) {
@@ -201,58 +298,28 @@ public class User {
         this.userId = "test-user-id";
         updateProfile("test-user", "test-email@gmail.com", "123-456-7890", false);
     }
-
-
-
-//    public void listEvents() {
-//        Log.i("RTD8", "hi");
-////        Log.i("RTD8", String.format(eventService.getReference().get().getResult()));
-//        eventService.getReference().get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-//            @Override
-//            public void onSuccess(DataSnapshot snapshot) {
-//                Log.i("RTD8", "in here");
-//                Log.i("RTD8", String.format("%d", snapshot.getChildrenCount()));
-//
-//                Log.i("RTD8", String.valueOf(snapshot.getChildren()));
-////                List<String> childrenKeys = new ArrayList<>();
-////                List<Object> childrenValues = new ArrayList<>();
-////                if (snapshot.getValue() != null) {
-////                Log.i("RTDB", "Raw value: " + snapshot.getValue());
-//////                }
-//////                if (snapshot.getValue() != null) {
-////                Log.i("RTDB", "poop");
-////                }
-////                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-//////                    String key = childSnapshot.getKey();                // e.g., "-Nabc123"
-//////                    Object value = childSnapshot.getValue();            // Full child data
-////                    // Or typed: String msg = childSnapshot.child("message").getValue(String.class);
-////
-////
-////                    Log.i("RTDB", "Key: ");
-////                }
-//
-//                Log.i("RTD8", "bruh");
-//            }
-//        }).addOnFailureListener(e -> {
-//            Log.i("RTDB", "Error: " + e.getMessage());
-//        });
-//
-//
-//
-//    }
-
-public Task<Boolean> isAdmin() {
-    return adminService.getReference().get().continueWith(ds -> {
-        for (DataSnapshot d : ds.getResult().getChildren()) {
-            Log.i("ilovechicken", d.getKey());
-            if (d.getKey().equals(userId)) {
-                return true;
+    /**
+     * Indicates whether this user is an admin. Default implementation returns {@code false}.
+     *
+     * @return {@code false} unless overridden by a derived type
+     */
+    public Task<Boolean> isAdmin() {
+        return adminService.getReference().get().continueWith(ds -> {
+            for (DataSnapshot d : ds.getResult().getChildren()) {
+                Log.i("ilovechicken", d.getKey());
+                if (d.getKey().equals(userId)) {
+                    return true;
+                }
             }
-        }
-        return false;
-    });
-}
+            return false;
+        });
+    }
 
+    /**
+     * Indicates whether this user is an organizer. Default implementation returns {@code false}.
+     *
+     * @return {@code false} unless overridden by a derived type
+     */
     public Boolean isOrganizer() {
         return false;
     }

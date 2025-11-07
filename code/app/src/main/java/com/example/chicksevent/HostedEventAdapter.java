@@ -15,18 +15,73 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.ArrayList;
 
+/**
+ * Custom {@link ArrayAdapter} subclass for displaying events hosted by the current organizer.
+ * <p>
+ * Each list item is inflated from {@code item_hosted_event.xml} and provides UI elements for
+ * displaying the event name and interacting with two buttons:
+ * <ul>
+ *     <li>An arrow button to view event details.</li>
+ *     <li>An update button to modify event information.</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Usage:</b>
+ * <pre>
+ * HostedEventAdapter adapter = new HostedEventAdapter(context, hostedEvents, (event, type) -> {
+ *     if (type == 0) {
+ *         // Open event detail view
+ *     } else if (type == 1) {
+ *         // Open update form
+ *     }
+ * });
+ * listView.setAdapter(adapter);
+ * </pre>
+ * </p>
+ *
+ * <p>The callback interface {@link OnItemButtonClickListener} allows the hosting fragment or
+ * activity to differentiate which button was clicked for a given event.</p>
+ *
+ * @author Jordan Kwan
+ */
 public class HostedEventAdapter extends ArrayAdapter<Event> {
+    /** Listener interface for responding to per-item button clicks. */
     OnItemButtonClickListener listener;
 
+    /**
+     * Callback interface to handle button interactions within each hosted event row.
+     */
     public interface OnItemButtonClickListener {
+        /**
+         * Invoked when a button associated with an event item is clicked.
+         *
+         * @param item the {@link Event} that was clicked.
+         * @param type integer flag representing the button type — typically 0 for arrow/view and 1 for update.
+         */
         void onItemButtonClick(Event item, int type);
-//        void onUpdateButtonClick(Event item);
     }
+
+    /**
+     * Constructs a {@code HostedEventAdapter} to display the organizer's hosted events.
+     *
+     * @param context the activity or fragment context.
+     * @param eventArray the list of hosted events to display.
+     * @param listener a callback listener for button click events.
+     */
     public HostedEventAdapter(Context context, ArrayList<Event> eventArray, OnItemButtonClickListener listener) {
         super(context, 0, eventArray);
         this.listener = listener;
     }
 
+    /**
+     * Inflates or reuses a view for each list item and binds event data to its visual components.
+     * Also wires up click handlers for the arrow and update buttons.
+     *
+     * @param position the position of the current item in the list.
+     * @param convertView the old view to reuse, if available.
+     * @param parent the parent view group that this view will eventually be attached to.
+     * @return the populated view representing the event.
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i("sigma", "sigma");

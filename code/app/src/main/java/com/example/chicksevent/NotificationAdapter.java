@@ -82,9 +82,6 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
             if (listener != null) listener.onItemButtonClick(notification);
         });
 
-        // TODO: Bind actual data once Notification properties are finalized
-        // e.g., eventName.setText(notification.getEventId());
-
         return view;
     }
 }

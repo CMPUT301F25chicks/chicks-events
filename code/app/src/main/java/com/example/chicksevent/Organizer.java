@@ -34,6 +34,31 @@ import java.util.HashMap;
  * @author Hanh
  * @author Dung
  */
+
+/**
+ * Represents an organizer user who manages events and their waiting lists.
+ * <p>
+ * Provides utilities to list entrants by status (e.g., WAITING/INVITED) and to broadcast
+ * {@link Notification} messages to entrants in a given bucket. Organizer identity is derived
+ * from the supplied user id, and actions are scoped to a specific {@code eventId}.
+ * </p>
+ *
+ * <p><b>Firebase roots used:</b>
+ * <ul>
+ *   <li><code>WaitingList</code> — read buckets and notify entrants</li>
+ *   <li><code>Organizer</code> — reserved for organizer-specific data</li>
+ *   <li><code>Event</code> — reserved for event reads/writes</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Note:</b> This class performs no authorization checks; callers should ensure only
+ * permitted users invoke organizer actions.</p>
+ *
+ * @author Jordan Kwan
+ * @author Jinn Kasai
+ * @author Hanh
+ * @author Dung
+ */
 public class Organizer extends User {
 
     /** Firebase service for organizer-specific operations (root: "Organizer"). */

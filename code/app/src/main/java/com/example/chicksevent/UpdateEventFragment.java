@@ -19,14 +19,37 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.databinding.FragmentUpdateEventDetailBinding;
 
+/**
+ * Fragment that displays and allows navigation from an event update screen.
+ * <p>
+ * This fragment serves as a placeholder for future event editing functionality.
+ * It currently supports navigation to related views such as Notifications, Events,
+ * and Create Event screens.
+ * </p>
+ *
+ * <p><b>Responsibilities:</b>
+ * <ul>
+ *     <li>Display the event name passed as a fragment argument.</li>
+ *     <li>Provide navigation to other fragments in the app flow.</li>
+ *     <li>Serve as a structural base for upcoming event modification features.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class UpdateEventFragment extends Fragment {
 
+    /** View binding for the Update Event layout. */
     private FragmentUpdateEventDetailBinding binding;
 
-    public UpdateEventFragment() {
-        // You can keep the constructor-empty and inflate via binding below
-    }
-
+    /**
+     * Inflates the fragment layout using ViewBinding.
+     *
+     * @param inflater the layout inflater
+     * @param container the parent view container
+     * @param savedInstanceState the saved instance state
+     * @return the inflated view hierarchy
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -35,6 +58,13 @@ public class UpdateEventFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Initializes view components, displays the event name (if provided),
+     * and wires navigation buttons for related fragments.
+     *
+     * @param view the root view returned by {@link #onCreateView}
+     * @param savedInstanceState previously saved state, or {@code null} for a fresh instance
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -68,17 +98,10 @@ public class UpdateEventFragment extends Fragment {
 
             NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_UpdateEventFragment_to_CreateEventFragment);
         });
-//        eventName
+
     }
 
-    private static String s(CharSequence cs) {
-        return cs == null ? "" : cs.toString().trim();
-    }
-
-    private void toast(String msg) {
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-    }
-
+    /** Clears binding references when the view is destroyed. */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

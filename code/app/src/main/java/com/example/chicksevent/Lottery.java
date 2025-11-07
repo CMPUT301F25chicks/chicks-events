@@ -42,8 +42,8 @@ public class Lottery {
     private static final String INVITED_NODE   = "INVITED";
     private static final String UNINVITED_NODE = "UNINVITED"; // or "UNSELECTED"
 
-    private final FirebaseService waitingListService; // root: "WaitingList"
-    private final FirebaseService eventService;       // root: "Event"
+    private final FirebaseService waitingListService;
+    private final FirebaseService eventService;
     private final String eventId;
 
     /**

@@ -29,39 +29,74 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Fragment that lists events hosted by the current organizer (device user).
+ * <p>
+ * The list is populated by reading from the <code>Event</code> root and filtering for entries
+ * where the <code>organizer</code> matches this device's Android ID. Each list row (inflated from
+ * {@code item_hosted_event.xml}) exposes actions to view organizer details for an event or open an
+ * update flow for that event.
+ * </p>
+ *
+ * <p><b>Navigation:</b>
+ * <ul>
+ *   <li>To {@code NotificationFragment}</li>
+ *   <li>To {@code EventFragment}</li>
+ *   <li>To {@code CreateEventFragment}</li>
+ *   <li>To {@code EventDetailOrgFragment} (view action)</li>
+ *   <li>To {@code UpdateEventFragment} (update action)</li>
+ * </ul>
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class HostedEventFragment extends Fragment {
 
+    /** View binding for the hosted events layout. */
     private FragmentHostedEventBinding binding;
+
+    /** Backing list of hosted events. */
     private ArrayList<Event> eventDataList = new ArrayList<>();
 
+    /** Firebase service for the "Event" root. */
     private FirebaseService eventService;
+
+    /** Firebase service for the "WaitingList" root (reserved for future use). */
     private FirebaseService waitingListService;
 
+    /** Log tag. */
     private String TAG = "RTD8";
+
+    /** ListView that renders hosted events. */
     ListView eventView;
+
+    /** Adapter used to bind hosted events to the list view. */
     HostedEventAdapter hostedEventAdapter;
 
+    /** Android device ID used to identify the organizer's events. */
     private String androidId;
 
-
-
+    /**
+     * Inflates the fragment layout using ViewBinding.
+     */
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
         Log.i("sigma", "create view");
-
-
         binding = FragmentHostedEventBinding.inflate(inflater, container, false);
-//        View view = inflater.inflate(R.layout.fragment_hosted_event, container, false);
-
-
-
         return binding.getRoot();
 
     }
 
+    /**
+     * Initializes Firebase services, resolves the device ID, wires up navigation buttons, and
+     * triggers the initial event list load.
+     *
+     * @param view The root view returned by {@link #onCreateView}.
+     * @param savedInstanceState Previously saved state, if any.
+     */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.i("sigma", "life");
@@ -98,23 +133,17 @@ public class HostedEventFragment extends Fragment {
         });
 
         Log.i("sigma", "wtf");
-//
-
-//
-//
-//
-////            eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
-////            eventView.setAdapter(eventAdapter);
-////        });
-////
         listEvents();
     }
 
-
-    public void showHostedEvents() {
-
-    }
-
+    /**
+     * Queries the <code>Event</code> root once, filters for events whose <code>organizer</code> equals
+     * this device's {@link #androidId}, and binds the result set to the list view.
+     * <p>
+     * On item interaction, navigates to {@code EventDetailOrgFragment} (view) or
+     * {@code UpdateEventFragment} (update) depending on the clicked control.
+     * </p>
+     */
     public void listEvents() {
         Log.i("sigma", "what");
         Log.i(TAG, "e" + eventService);
@@ -172,6 +201,9 @@ public class HostedEventFragment extends Fragment {
         });
     }
 
+    /**
+     * Releases binding references when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

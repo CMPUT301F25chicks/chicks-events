@@ -18,14 +18,42 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment that allows users to search and filter events by interests and availability.
+ * <p>
+ * This screen collects user-defined search filters and invokes
+ * {@link User#filterEvents(ArrayList)} to retrieve matching event IDs
+ * from Firebase. Results are passed to {@link EventFragment} for display.
+ * </p>
+ *
+ * <p><b>Responsibilities:</b>
+ * <ul>
+ *     <li>Collect filter input (interests and availability) from the user interface.</li>
+ *     <li>Delegate filtering logic to the current {@link User} instance.</li>
+ *     <li>Navigate to the event list screen with the filtered results.</li>
+ *     <li>Provide an option to reset search filters.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Jinn Kasai
+ * @author Jordan Kwan
+ */
 public class SearchEventFragment extends Fragment {
 
-    ArrayList<String> eventList = new ArrayList<>();
-
+    /** Default constructor inflating the search event layout. */
     public SearchEventFragment() {
         super(R.layout.fragment_search_event);
     }
 
+    /**
+     * Called after the fragment’s view has been created.
+     * <p>
+     * Sets up UI listeners, handles filter application, and triggers navigation upon completion.
+     * </p>
+     *
+     * @param view the root view of the fragment
+     * @param savedInstanceState saved instance state, or {@code null} for a fresh creation
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -36,7 +64,7 @@ public class SearchEventFragment extends Fragment {
                 NavHostFragment.findNavController(this).popBackStack()
         );
 
-        // ---- UI references from your XML ----
+        // ---- UI references from XML ----
         EditText etInterest       = view.findViewById(R.id.search_interest);
         Spinner  spAvailability   = view.findViewById(R.id.spinner_availability);
         Button   btnApply         = view.findViewById(R.id.btn_apply_filter);

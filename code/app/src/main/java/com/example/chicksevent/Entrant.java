@@ -9,17 +9,59 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+/**
+ * Represents an entrant (participant) within the ChicksEvent system.
+ * <p>
+ * An {@code Entrant} corresponds to a user who can join or leave waiting lists for specific events,
+ * and whose participation status is tracked via {@link EntrantStatus}. The class also provides helper
+ * methods for updating Firebase Realtime Database entries within the "WaitingList" and "Event" roots.
+ * </p>
+ *
+ * <p><b>Responsibilities:</b>
+ * <ul>
+ *   <li>Join or leave a waiting list for a given event.</li>
+ *   <li>Swap between waiting list states (e.g., WAITING → INVITED).</li>
+ *   <li>Provide identification of the entrant within Firebase.</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Firebase structure:</b> Data is organized under:
+ * <pre>
+ * WaitingList/{eventId}/{EntrantStatus}/{entrantId}
+ * </pre>
+ * </p>
+ *
+ * @author Jordan Kwan
+ */
 public class Entrant extends User {
 
+    /** Firebase wrapper for entrant-level operations. */
     private FirebaseService entrantService;
-    private FirebaseService eventService;
-    private FirebaseService waitingListService;
-    private String eventId;       // The event this participation refers to
-    private String entrantId;     // The entrant participating
-    private EntrantStatus status; // Current state of this participation
 
+    /** Firebase wrapper for event-level operations. */
+    private FirebaseService eventService;
+
+    /** Firebase wrapper for waiting list-level operations. */
+    private FirebaseService waitingListService;
+
+    /** The event ID associated with this entrant's participation. */
+    private String eventId;
+
+    /** The unique identifier of the entrant (user ID). */
+    private String entrantId;
+
+    /** The current participation status of this entrant. */
+    private EntrantStatus status;
+
+    /** Reference to the related organizer (optional; may be null). */
     private Organizer organizer;
 
+    /**
+     * Constructs an {@code Entrant} object for the specified user and event.
+     *
+     * @param id the entrant's unique identifier.
+     * @param eventId the ID of the event this entrant is associated with.
+     */
     Entrant(String id, String eventId) {
         super(id);
         eventService = new FirebaseService("Event");
@@ -36,60 +78,65 @@ public class Entrant extends User {
     public String getEntrantId() { return entrantId; }
     public EntrantStatus getStatus() { return status; }
 
+    /**
+     * Adds this entrant to the waiting list with default status {@link EntrantStatus#WAITING}.
+     */
     public void joinWaitingList() {
         joinWaitingList(EntrantStatus.WAITING);
     }
 
+    /**
+     * Removes this entrant from the waiting list under default {@link EntrantStatus#WAITING}.
+     */
     public void leaveWaitingList() {
         leaveWaitingList(EntrantStatus.WAITING);
     }
+
+    /**
+     * Adds this entrant to a waiting list node in Firebase under a specific status.
+     *
+     * @param status the {@link EntrantStatus} to register under (e.g., WAITING, INVITED).
+     */
     public void joinWaitingList(EntrantStatus status) {
         Log.i("RTD8", "hi wtf is " + eventId);
 
         String statusString = status.toString();
         this.status = status;
 
-        // WaitingList/event-name/list-type/entrant-id
         HashMap<String, Object> data = new HashMap<>();
         data.put(" ", "");
 
-//        Log.i("FirestoreTest", entrantId == null ? "what" : entrantId);
         waitingListService.updateSubCollectionEntry(eventId, status.toString(), entrantId, data);
-//        service.updateSubCollectionEntry(entrantId, "participation", eventId, data);
     }
 
+    /**
+     * Removes this entrant from a waiting list node in Firebase under a specific status.
+     *
+     * @param status the {@link EntrantStatus} from which the entrant should be removed.
+     */
     public void leaveWaitingList(EntrantStatus status) {
         Log.i("FirestoreTest", "hi");
 
-        // WaitingList/event-name/list-type/entrant-id
         HashMap<String, Object> data = new HashMap<>();
         this.status = null;
-//        data.put("bruh", "moment");
 
-//        Log.i("FirestoreTest", entrantId == null ? "what" : entrantId);
         waitingListService.deleteSubCollectionEntry(eventId, status.toString(), entrantId);
-//        service.updateSubCollectionEntry(entrantId, "participation", eventId, data);
     }
 
+    /**
+     * Switches this entrant's waiting list status by first removing them from their current
+     * {@link EntrantStatus} node and re-adding them under a new one.
+     *
+     * @param newStatus the new status to apply (e.g., from WAITING to INVITED).
+     */
     public void swapStatus(EntrantStatus newStatus) {
         Log.i("RTD8", "output");
         leaveWaitingList(status);
         joinWaitingList(newStatus);
     }
 
-    public void acceptInvitation() {
-
-    }
-
-    public void declineInvitation() {
-
-    }
-
-    public Boolean isOrganizer() {
-        return false;
-    }
-
-    public void setEntrantId(String key) {
-        entrantId = key;
-    }
+    /**
+     * @return always {@code false} for Entrant objects.
+     */
+    public Boolean isOrganizer() { return false; }
 }

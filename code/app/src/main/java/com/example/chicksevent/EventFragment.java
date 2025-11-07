@@ -23,35 +23,77 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Fragment displaying a list of available events and entry points to related actions.
+ * <p>
+ * Users can view all events, filter a subset (when arguments are provided), navigate to the
+ * event-creation flow, open notifications, search, and view their joined/hosted events. The
+ * fragment binds results to a {@link ListView} via {@link EventAdapter}.
+ * </p>
+ *
+ * <p><b>Firebase roots used:</b>
+ * <ul>
+ *   <li><code>Event</code> — source of event listings</li>
+ *   <li><code>WaitingList</code> — used to compute "joined events" for the current device</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Arguments:</b> If a {@link Bundle} argument contains an <code>ArrayList<String></code>
+ * under the key <code>"eventList"</code>, the fragment displays only those events whose ids match
+ * the provided values.</p>
+ *
+ * @author Jordan Kwan
+ */
 public class EventFragment extends Fragment {
 
+    /** View binding for the event list layout. */
     private FragmentEventBinding binding;
+
+    /** Backing list for events rendered in the adapter. */
     private ArrayList<Event> eventDataList = new ArrayList<>();
+
+    /** Optional list of event ids used to filter the displayed set. */
     private ArrayList<String> eventFilterList = new ArrayList<>();
+
+    /** Whether a filter from arguments has been applied. */
     private Boolean filterApplied = false;
 
+    /** Firebase service for the "Event" root. */
     private FirebaseService eventService;
+
+    /** Firebase service for the "WaitingList" root. */
     private FirebaseService waitingListService;
 
+    /** Log tag. */
     private String TAG = "RTD8";
+
+    /** The list view displaying events. */
     ListView eventView;
+
+    /** Adapter bridging event data to the list view. */
     EventAdapter eventAdapter;
 
+    /** The Android device ID (used to correlate joined events). */
     private String androidId;
 
-
-
+    /**
+     * Inflates the fragment layout using ViewBinding.
+     */
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentEventBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
+    /**
+     * Initializes Firebase services, UI controls, adapters, and populates the list on first render.
+     *
+     * @param view The root view returned by {@link #onCreateView}.
+     * @param savedInstanceState Previously saved state, if any.
+     */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventService = new FirebaseService("Event");
@@ -120,28 +162,24 @@ public class EventFragment extends Fragment {
 
     }
 
+    /**
+     * Displays only those events that the current device/user has joined, inferred by
+     * scanning the <code>WaitingList</code> root for entries matching {@link #androidId}.
+     * The method updates the list view with a new adapter instance containing the filtered set.
+     */
     public void showJoinedEvents() {
         ArrayList<String> arr = new ArrayList<>();
         waitingListService.getReference().get().continueWith(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
                 HashMap<String, HashMap<String, Object>> waitingList = (HashMap<String, HashMap<String, Object>>) ds.getValue();
                 for (Map.Entry<String, HashMap<String, Object>> entry : waitingList.entrySet()) {
-//                        Log.i(TAG, "key " + entry.getKey() + " " + "value" + entry.getValue());
                     for (Map.Entry<String, Object> entry2 : ((HashMap<String, Object>) entry.getValue()).entrySet()) {
-//                            Log.i(TAG, "what is );
                         String uid = entry2.getKey();
                         if (androidId.compareTo(uid) == 0) {
-
                             arr.add(ds.getKey());
-//                                eventDataList
                             Log.i(TAG, "found event " + ds.getKey());
-//                                arr.add();
                         }
-
-
                     }
-
-
                 }
             }
 
@@ -165,10 +203,10 @@ public class EventFragment extends Fragment {
         });
     }
 
-    public void showHostedEvents() {
-        
-    }
-
+    /**
+     * Lists only the events whose ids are present in {@link #eventFilterList}. Results are read
+     * in one shot from the <code>Event</code> root and bound to the list view.
+     */
     public void listFilteredEvents() {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
@@ -216,6 +254,10 @@ public class EventFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * Lists all events from the <code>Event</code> root and binds them to the list view.
+     */
     public void listEvents() {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
@@ -261,6 +303,9 @@ public class EventFragment extends Fragment {
         });
     }
 
+    /**
+     * Clears the binding reference when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
