@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="#000000"
-    tools:context=".PoolingFragment">
+    tools:context=".fragment.PoolingFragment">
 
     <!-- Scrollable content -->
 

@@ -3,6 +3,8 @@ package com.example.chicksevent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import com.example.chicksevent.misc.Event;
+
 import org.junit.Test;
 
 /**
