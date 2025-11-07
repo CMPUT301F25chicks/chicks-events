@@ -1,6 +1,7 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,7 @@ public class LauncherFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.i("admin", "ew");
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (firebaseUser == null) {
@@ -44,31 +45,22 @@ public class LauncherFragment extends Fragment {
         String uid = firebaseUser.getUid();
         userService = new FirebaseService("User"); // "User" node in DB
 
-        userService.getReference().child(uid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        User user = snapshot.getValue(User.class);
+        User user = new User(Settings.Secure.getString(
+                getContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID
+        ));
 
-                        user.isAdmin(isAdmin -> {
-                            if (isAdmin) {
-                                NavHostFragment.findNavController(LauncherFragment.this)
-                                        .navigate(R.id.adminHomeFragment);
-                            } else {
-                                NavHostFragment.findNavController(LauncherFragment.this)
-                                        .navigate(R.id.FirstFragment);
-                            }
-                        });
+        user.isAdmin(isAdmin -> {
+            if (isAdmin) {
+                Log.i("im admin", "yay");
+                NavHostFragment.findNavController(LauncherFragment.this)
+                        .navigate(R.id.adminHomeFragment);
+            } else {
+                Log.i("im admin", "no");
 
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("LauncherFragment", "Failed to fetch user info", error.toException());
-                        // Fallback to regular home
-                        NavHostFragment.findNavController(LauncherFragment.this)
-                                .navigate(R.id.FirstFragment);
-                    }
-                });
+                NavHostFragment.findNavController(LauncherFragment.this)
+                        .navigate(R.id.FirstFragment);
+            }
+        });
     }
 }

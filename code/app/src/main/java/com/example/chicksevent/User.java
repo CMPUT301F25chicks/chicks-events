@@ -24,6 +24,7 @@ public class User {
     private ArrayList<Event> eventList;
     private FirebaseService userService;
     private FirebaseService eventService;
+    private FirebaseService adminService;
     private FirebaseService notificationService;
     private String userId;
     private String username;
@@ -203,18 +204,15 @@ public class User {
 //    }
 
 
-    public void isAdmin(Consumer<Boolean> callback) {
-        DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Admin");
-        adminRef.child(getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                callback.accept(snapshot.exists());
+    public Task<Boolean> isAdmin(Consumer<Boolean> callback) {
+        return adminService.getReference().get().continueWith(ds -> {
+            for (DataSnapshot d : ds.getResult().getChildren()) {
+                Log.i("ilovechicken", d.getKey());
+                if (d.getKey().equals(userId)) {
+                    return true;
+                }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                callback.accept(false);
-            }
+            return false;
         });
     }
 
