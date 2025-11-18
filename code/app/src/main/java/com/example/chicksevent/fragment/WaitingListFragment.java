@@ -102,9 +102,7 @@ public class WaitingListFragment extends Fragment {
             return;
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+
         Button poolingButton = view.findViewById(R.id.btn_pool);
 
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
@@ -121,21 +119,6 @@ public class WaitingListFragment extends Fragment {
             bundle.putString("eventName", args.getString("eventName"));
 
             navController.navigate(R.id.action_WaitingListFragment_to_PoolingFragment, bundle);
-        });
-
-        notificationButton.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(WaitingListFragment.this)
-                            .navigate(R.id.action_WaitingListFragment_to_NotificationFragment);
-                }
-//
-        );
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_WaitingListFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(WaitingListFragment.this).navigate(R.id.action_WaitingListFragment_to_CreateEventFragment);
         });
 
         sendNotificationButton.setOnClickListener(v -> {

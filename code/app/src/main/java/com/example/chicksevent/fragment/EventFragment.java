@@ -116,25 +116,7 @@ public class EventFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-
-
-        notificationButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(EventFragment.this)
-                        .navigate(R.id.action_EventFragment_to_NotificationFragment)
-        );
-
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_CreateEventFragment);
-        });
-
-        Button profileButton = view.findViewById(R.id.btn_profile);
-        profileButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_ProfileFragment);
-        });
-
-        eventView =  view.findViewById(R.id.recycler_notifications);;
+        eventView =  view.findViewById(R.id.recycler_notifications);
 //
         eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
         eventView.setAdapter(eventAdapter);
@@ -166,6 +148,7 @@ public class EventFragment extends Fragment {
         if (filterApplied) {
             listFilteredEvents();
         } else {
+            Log.i("listing events", "hi");
             listEvents();
         }
 
@@ -298,7 +281,8 @@ public class EventFragment extends Fragment {
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
 
                 });
-
+                Log.i("listing events", "" + eventDataList.size());
+                Log.i("listing events", "gonna display events now");
                 eventView.setAdapter(eventAdapter);
 
 

@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
@@ -127,23 +126,7 @@ public class EventDetailFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_NotificationFragment);
-        });
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_EventFragment);
-        });
-
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
-        });
 
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);

@@ -86,9 +86,7 @@ public class EventDetailOrgFragment extends Fragment {
             // Use it to populate UI
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
         Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
@@ -124,24 +122,6 @@ public class EventDetailOrgFragment extends Fragment {
             bundle.putString("eventName", args.getString("eventName"));
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
-        });
-
-        notificationButton.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(EventDetailOrgFragment.this)
-                            .navigate(R.id.action_EventDetailOrgFragment_to_NotificationFragment);
-                }
-        );
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
         });
     }
 

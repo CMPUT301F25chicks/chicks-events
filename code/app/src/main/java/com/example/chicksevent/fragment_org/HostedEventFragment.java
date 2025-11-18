@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -110,24 +109,6 @@ public class HostedEventFragment extends Fragment {
         eventView =  view.findViewById(R.id.recycler_notifications);
 ////
         eventView.setAdapter(hostedEventAdapter);
-
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-
-        notificationButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(HostedEventFragment.this)
-                        .navigate(R.id.action_HostedEventFragment_to_NotificationFragment)
-        );
-//
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(HostedEventFragment.this).navigate(R.id.action_HostedEventFragment_to_CreateEventFragment);
-        });
-
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(HostedEventFragment.this).navigate(R.id.action_HostedEventFragment_to_EventFragment);
-        });
 
         Log.i("sigma", "wtf");
         listEvents();

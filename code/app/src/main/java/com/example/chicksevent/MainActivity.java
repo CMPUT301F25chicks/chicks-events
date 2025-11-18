@@ -1,8 +1,10 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -54,10 +56,39 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-
+        Log.i("hehe", "reach");
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        Log.i("hehe", "reach");
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        Log.i("hehe", "reach3");
+
+        Button eventButton = findViewById(R.id.btn_events);
+        Button createEventButton = findViewById(R.id.btn_addEvent);
+        Button profileButton = findViewById(R.id.btn_profile);
+        Button notificationButton = findViewById(R.id.btn_notification);
+
+        notificationButton.setOnClickListener(v -> {
+            navController.navigate(R.id.NotificationFragment);
+        });
+
+        eventButton.setOnClickListener(v -> {
+            navController.navigate(R.id.EventFragment);
+        });
+
+
+        createEventButton.setOnClickListener(v -> {
+            navController.navigate(R.id.CreateEventFragment);
+
+        });
+
+        profileButton.setOnClickListener(v -> {
+            navController.navigate(R.id.ProfileFragment);
+
+        });
+
+        Log.i("hehe4", "checking event");
     }
 
     /**

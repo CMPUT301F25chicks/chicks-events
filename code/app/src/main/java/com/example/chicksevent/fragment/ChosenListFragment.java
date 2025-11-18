@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.adapter.EntrantAdapter;
@@ -117,29 +116,14 @@ public class ChosenListFragment extends Fragment {
             eventId = args.getString("eventName");
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView = view.findViewById(R.id.recycler_chosenUser);
         userView.setAdapter(waitingListAdapter);
 
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ChosenListFragment.this)
-                    .navigate(R.id.action_ChosenListFragment_to_NotificationFragment);
-        });
 
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ChosenListFragment.this)
-                    .navigate(R.id.action_ChosenListFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ChosenListFragment.this)
-                    .navigate(R.id.action_ChosenListFragment_to_CreateEventFragment);
-        });
 
         listEntrants(EntrantStatus.INVITED);
 

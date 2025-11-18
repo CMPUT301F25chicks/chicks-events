@@ -10,6 +10,10 @@
         android:name="com.example.chicksevent.fragment_admin.AdminHomeFragment"
         android:label="Admin Home" >
         <action
+            android:id="@+id/action_adminHomeFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+
+        <action
             android:id="@+id/action_adminHome_to_eventAdminFragment"
             app:destination="@id/EventAdminFragment"/>
         <action
@@ -59,6 +63,10 @@
         <action
             android:id="@+id/action_NotificationFragment_to_EventFragment"
             app:destination="@id/EventFragment" />
+
+        <action
+            android:id="@+id/action_NotificationFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
 
         <action
             android:id="@+id/action_NotificationFragment_to_CreateEventFragment"
