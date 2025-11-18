@@ -241,7 +241,7 @@
                         android:id="@+id/tv_waiting_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Number of People: 40"
+                        android:text="Number of Entrants: LOADING..."
                         android:textColor="@color/dateBox"
                         android:textSize="14sp"
                         android:layout_marginBottom="8dp"/>

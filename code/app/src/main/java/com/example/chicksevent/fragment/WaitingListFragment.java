@@ -17,9 +17,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
-import com.example.chicksevent.adapter.UserAdapter;
+import com.example.chicksevent.adapter.EntrantAdapter;
 import com.example.chicksevent.databinding.FragmentWaitingListBinding;
 import com.example.chicksevent.enums.EntrantStatus;
+import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Organizer;
 import com.example.chicksevent.misc.User;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
  * <p>
  * Resolves the current {@code eventId} from arguments (key: {@code "eventName"}),
  * reads the selected bucket (default: {@link EntrantStatus#WAITING}) from Firebase under
- * the <code>WaitingList</code> root, and renders results using {@link UserAdapter}.
+ * the <code>WaitingList</code> root, and renders results using {@link EntrantAdapter}.
  * Also exposes navigation to Notifications, Events, Create Event, and Pooling screens.
  * </p>
  *
@@ -56,10 +57,10 @@ public class WaitingListFragment extends Fragment {
     private ListView userView;
 
     /** Adapter that binds {@link User} items to the list. */
-    private UserAdapter waitingListAdapter;
+    private EntrantAdapter waitingListAdapter;
 
     /** In-memory list of users for the current bucket. */
-    private ArrayList<User> userDataList = new ArrayList<>();
+    private ArrayList<Entrant> entrantDataList = new ArrayList<>();
 
     /** Firebase service for interacting with the "WaitingList" root. */
     private final FirebaseService waitingListService = new FirebaseService("WaitingList");
@@ -97,6 +98,10 @@ public class WaitingListFragment extends Fragment {
             eventId = args.getString("eventName");
         }
 
+        if (getContext() == null) {
+            return;
+        }
+
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
@@ -104,7 +109,7 @@ public class WaitingListFragment extends Fragment {
 
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
-        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView =  view.findViewById(R.id.recycler_notifications);
 ////
         userView.setAdapter(waitingListAdapter);
@@ -160,13 +165,16 @@ public class WaitingListFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.i(TAG, "IN HERE bef " + status);
-                        userDataList = new ArrayList<>();
+                        if (getContext() == null) {
+                            return;
+                        }
+                        entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            userDataList.add(new User(childSnap.getKey()));
+                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
 //                            Log.i(TAG, "child key: " + childSnap.getKey());
                         }
 
-                        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+                        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
 ////
                         userView.setAdapter(waitingListAdapter);
                     }

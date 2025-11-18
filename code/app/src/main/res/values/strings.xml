@@ -2,8 +2,8 @@
     <string name="app_name">ChicksEvent</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label">Home Fragment</string>
+    <string name="second_fragment_label">Event Fragment</string>
     <string name="create_event_fragment_label">Create Event Fragment</string>
     <string name="waiting_list_fragment_label">Waiting List Fragment</string>
     <string name="event_detail_fragment_label">Event Detail Fragment</string>
