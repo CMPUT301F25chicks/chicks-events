@@ -12,7 +12,6 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.adapter.EntrantAdapter;
@@ -96,31 +95,13 @@ public class PoolingFragment extends Fragment {
             // Use it to populate UI
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+        
+        
+        
         Button poolingButton = view.findViewById(R.id.btn_pool);
         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView =  view.findViewById(R.id.rv_selected_entrants);
-////
         userView.setAdapter(waitingListAdapter);
-//
-        notificationButton.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(PoolingFragment.this)
-                            .navigate(R.id.action_PoolingFragment_to_NotificationFragment);
-                }
-//
-        );
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_PoolingFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
-
-            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_PoolingFragment_to_CreateEventFragment);
-        });
 
         poolingButton.setOnClickListener(v -> {
 //            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);

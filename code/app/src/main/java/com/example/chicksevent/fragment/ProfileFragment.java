@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentProfileEntrantBinding;
@@ -115,9 +114,9 @@ public class ProfileFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+        
+        
+        
 
         editName = view.findViewById(R.id.edit_name);
         editPhone = view.findViewById(R.id.edit_phone);
@@ -130,19 +129,6 @@ public class ProfileFragment extends Fragment {
         editName.setText("LOADING...");
         editEmail.setText("LOADING...");
         editPhone.setText("LOADING...");
-
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ProfileFragment.this)
-                    .navigate(R.id.action_ProfileFragment_to_NotificationFragment);
-        });
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ProfileFragment.this).navigate(R.id.action_ProfileFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ProfileFragment.this).navigate(R.id.action_ProfileFragment_to_CreateEventFragment);
-        });
 
         deleteProfileButton.setOnClickListener(v -> {
             deleteProfile();

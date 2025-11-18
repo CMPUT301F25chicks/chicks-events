@@ -271,65 +271,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
-            android:id="@+id/btn_notification"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_notification"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_events"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_events"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_scan"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_addEvent"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_addevents"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_profile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_profile"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

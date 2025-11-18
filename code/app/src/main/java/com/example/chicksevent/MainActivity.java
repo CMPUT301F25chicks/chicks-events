@@ -1,8 +1,10 @@
 package com.example.chicksevent;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -58,6 +60,31 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        Button eventButton = findViewById(R.id.btn_events);
+        Button createEventButton = findViewById(R.id.btn_addEvent);
+        Button profileButton = findViewById(R.id.btn_profile);
+        Button notificationButton = findViewById(R.id.btn_notification);
+
+        notificationButton.setOnClickListener(v -> {
+            Log.i("listing events", "eee");
+            navController.navigate(R.id.NotificationFragment);
+        });
+
+        eventButton.setOnClickListener(v -> {
+            navController.navigate(R.id.EventFragment);
+        });
+
+
+        createEventButton.setOnClickListener(v -> {
+            navController.navigate(R.id.CreateEventFragment);
+
+        });
+
+        profileButton.setOnClickListener(v -> {
+            navController.navigate(R.id.ProfileFragment);
+
+        });
     }
 
     /**

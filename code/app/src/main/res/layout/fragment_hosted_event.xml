@@ -23,60 +23,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-    <!-- Button row -->
-    <LinearLayout
-        android:id="@+id/button_row"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:weightSum="3"
-        app:layout_constraintTop_toBottomOf="@id/header_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <Button
-            android:id="@+id/btn_search_events"
-            style="?attr/materialButtonOutlinedStyle"
-            app:cornerRadius="0dp"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
-            android:backgroundTint="@color/purpleText"
-            android:text="Search Events"
-            android:textColor="@color/darkPurple"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_joined_events"
-            style="?attr/materialButtonOutlinedStyle"
-            app:cornerRadius="0dp"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="2dp"
-            android:backgroundTint="@color/purpleText"
-            android:text="Joined Events"
-            android:textColor="@color/darkPurple"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_hosted_events"
-            style="?attr/materialButtonOutlinedStyle"
-            app:cornerRadius="0dp"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:backgroundTint="@color/purpleText"
-            android:text="Hosted Events"
-            android:textColor="@color/darkPurple"
-            android:textSize="12sp" />
-    </LinearLayout>
-
     <!-- Scrollable ListView -->
     <ListView
         android:id="@+id/recycler_notifications"
@@ -87,8 +33,20 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp"
         tools:listitem="@layout/item_hosted_event"
-        app:layout_constraintTop_toBottomOf="@id/button_row"
-        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+        app:layout_constraintTop_toBottomOf="@id/header_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layoute"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

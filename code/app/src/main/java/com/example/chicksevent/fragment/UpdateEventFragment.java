@@ -4,13 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentUpdateEventDetailBinding;
@@ -72,28 +70,6 @@ public class UpdateEventFragment extends Fragment {
             eventName.setText(args.getString("eventName"));
             // Use it to populate UI
         }
-
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-
-
-        notificationButton.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(UpdateEventFragment.this)
-                            .navigate(R.id.action_UpdateEventFragment_to_NotificationFragment);
-                }
-//
-        );
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_UpdateEventFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
-
-            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_UpdateEventFragment_to_CreateEventFragment);
-        });
 
     }
 

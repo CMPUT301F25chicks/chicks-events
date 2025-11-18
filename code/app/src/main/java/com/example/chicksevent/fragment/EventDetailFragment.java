@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
@@ -127,23 +126,6 @@ public class EventDetailFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_NotificationFragment);
-        });
-
-        Button eventButton = view.findViewById(R.id.btn_events);
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_EventFragment);
-        });
-
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
-        });
 
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
@@ -163,15 +145,15 @@ public class EventDetailFragment extends Fragment {
         });
 
         joinButton.setOnClickListener(v -> {
-            userExists().addOnSuccessListener(boole -> {
-                if (boole) {
+            userExists().continueWithTask(boole -> {
+                if (boole.getResult()) {
                     Entrant e = new Entrant(userId, args.getString("eventName"));
                     e.joinWaitingList();
                     Toast.makeText(getContext(),
                             "Joined waiting list :)",
                             Toast.LENGTH_SHORT).show();
                     waitingStatus.setVisibility(View.VISIBLE);
-                    waitingCount.setText("Number of Entrants: " + waitingListCount);
+
 
                     joinButton.setVisibility(View.INVISIBLE);
                 } else {
@@ -180,7 +162,9 @@ public class EventDetailFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 }
 
-
+                return getWaitingCount();
+            }).addOnCompleteListener(task -> {
+                waitingCount.setText("Number of Entrants: " + task.getResult());
             });
         });
 
