@@ -150,13 +150,16 @@ public class EventDetailFragment extends Fragment {
         LinearLayout waitingStatus = view.findViewById(R.id.layout_waiting_status);
         TextView waitingCount = view.findViewById(R.id.tv_waiting_count);
 
-        getEventDetail().addOnCompleteListener(t -> {
+        getEventDetail().continueWithTask(t -> {
 //            Log.i("browaiting", t.getResult().toString());
             if (t.getResult()) {
                 waitingStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
             }
 
-            waitingCount.setText("Number of Entrants: " + waitingListCount);
+            return getWaitingCount();
+        }).addOnCompleteListener(t -> {
+            waitingCount.setText("Number of Entrants: " + t.getResult());
         });
 
         joinButton.setOnClickListener(v -> {
@@ -168,7 +171,9 @@ public class EventDetailFragment extends Fragment {
                             "Joined waiting list :)",
                             Toast.LENGTH_SHORT).show();
                     waitingStatus.setVisibility(View.VISIBLE);
+                    waitingCount.setText("Number of Entrants: " + waitingListCount);
 
+                    joinButton.setVisibility(View.INVISIBLE);
                 } else {
                     Toast.makeText(getContext(),
                             "You need to create profile to join waiting list",
@@ -189,6 +194,7 @@ public class EventDetailFragment extends Fragment {
 
 
             waitingStatus.setVisibility(View.INVISIBLE);
+            joinButton.setVisibility(View.VISIBLE);
 
         });
     }
@@ -221,8 +227,6 @@ public class EventDetailFragment extends Fragment {
                     eventDetails.setText(hash.get("eventDetails"));
                     eventId = hash.get("id");
 
-                    getWaitingCount();
-
                     // Return Task<Boolean> directly (no extra wrapping)
                     return lookWaitingList();
                 }
@@ -236,17 +240,7 @@ public class EventDetailFragment extends Fragment {
     public Task<Boolean> lookWaitingList() {
         Log.i("browaiting", "out waiting " + eventId);
 
-        return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
-            for (DataSnapshot obj : task.getResult().getChildren()) {
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("WAITING")) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        });
+        return waitingListService.getReference().child(eventId).child("WAITING").child(userId).get().continueWith(task -> task.getResult().exists());
     }
 
 
@@ -261,21 +255,7 @@ public class EventDetailFragment extends Fragment {
      *         {@code false} if not
      */
     public Task<Boolean> userExists() {
-        return userService.getReference().get().continueWith(ds -> {
-            boolean userExists = false;
-            for (DataSnapshot d : ds.getResult().getChildren()) {
-                Log.i("TAGwerw", d.getKey());
-                try {
-                    HashMap<String, Object> userHash = (HashMap<String, Object>) d.getValue();
-                    if (userId.equals(d.getKey())) {
-                        return true;
-                    }
-                } catch(Exception e) {
-                    Log.e("ERROR", "weird error " + e);
-                }
-            }
-            return false;
-        });
+        return userService.getReference().child(userId).get().continueWith(task -> task.getResult().exists());
     }
 
     /**

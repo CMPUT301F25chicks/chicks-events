@@ -36,7 +36,7 @@
 
     <fragment
         android:id="@+id/EventAdminFragment"
-        android:name="com.example.chicksevent.fragment.EventAdminFragment"
+        android:name="com.example.chicksevent.fragment_admin.EventAdminFragment"
         android:label="Events Admin"/>
     <fragment
         android:id="@+id/OrgAdminFragment"

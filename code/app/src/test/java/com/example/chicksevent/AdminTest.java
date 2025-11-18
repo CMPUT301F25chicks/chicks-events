@@ -33,7 +33,7 @@ import java.util.List;
  *
  * <h2>Behaviours verified</h2>
  * <ul>
- *   <li>{@code deleteEvent} and {@code deleteEntrantProfile} issue deletes only for non-empty IDs</li>
+ *   <li>{@code deleteEvent} and {@code deleteUserProfile} issue deletes only for non-empty IDs</li>
  *   <li>{@code deleteOrganizerProfile} returns an exception task for empty IDs and completes on success</li>
  *   <li>{@code browseEntrants} builds lightweight {@link User} objects from snapshot keys</li>
  *   <li>{@code browseEvents} returns a list whose size matches snapshot children</li>
@@ -116,25 +116,25 @@ public class AdminTest {
         verify(eventRoot, never()).child(anyString());
     }
 
-    // -------------------- deleteEntrantProfile --------------------
+    // -------------------- deleteUserProfile --------------------
 
     @Test
-    public void deleteEntrantProfile_nonEmpty_callsRemoveOnUserPath() {
+    public void deleteUserProfile_nonEmpty_callsRemoveOnUserPath() {
         DatabaseReference userIdRef = mock(DatabaseReference.class);
         when(userRoot.child("U42")).thenReturn(userIdRef);
 
         // ensure removeValue() returns a completed Task
         when(userIdRef.removeValue()).thenReturn(Tasks.forResult(null));
 
-        admin.deleteEntrantProfile("U42");
+        admin.deleteUserProfile("U42");
 
         verify(userIdRef, times(1)).removeValue();
     }
 
     @Test
-    public void deleteEntrantProfile_empty_isNoop() {
-        admin.deleteEntrantProfile(null);
-        admin.deleteEntrantProfile("");
+    public void deleteUserProfile_empty_isNoop() {
+        admin.deleteUserProfile(null);
+        admin.deleteUserProfile("");
         verify(userRoot, never()).child(anyString());
     }
 
@@ -169,7 +169,7 @@ public class AdminTest {
     // -------------------- browseEntrants --------------------
 
     @Test
-    public void browseEntrants_returnsUsersFromSnapshot() {
+    public void browseUsers_returnsUsersFromSnapshot() {
         // Fake /User snapshot: children with keys U1, U2
         DataSnapshot root = mock(DataSnapshot.class);
         DataSnapshot u1   = mock(DataSnapshot.class);
@@ -191,7 +191,7 @@ public class AdminTest {
             return cont.then(Tasks.forResult(root));
         });
 
-        Task<List<User>> out = admin.browseEntrants();
+        Task<List<User>> out = admin.browseUsers();
         assertTrue(out.isComplete());
         assertTrue(out.isSuccessful());
         assertEquals(2, out.getResult().size());

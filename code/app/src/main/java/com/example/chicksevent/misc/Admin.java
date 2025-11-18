@@ -85,7 +85,7 @@ public class Admin extends User {
      *
      * @return a {@link Task} that resolves to a {@link List} of {@link User} objects on success.
      */
-    public Task<List<User>> browseEntrants() {
+    public Task<List<User>> browseUsers() {
         return userService.getReference().get().continueWithTask(task -> {
             if (task.isSuccessful()) {
                 List<User> entrants = new ArrayList<>();
@@ -224,7 +224,7 @@ public class Admin extends User {
      *
      * @param entrantId the Firebase key of the entrant to delete
      */
-    public void deleteEntrantProfile(String entrantId) {
+    public void deleteUserProfile(String entrantId) {
         if (entrantId != null && !entrantId.isEmpty()) {
             userService.deleteEntry(entrantId);
         }

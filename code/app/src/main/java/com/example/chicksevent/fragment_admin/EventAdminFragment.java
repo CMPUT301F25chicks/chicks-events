@@ -1,4 +1,4 @@
-package com.example.chicksevent.fragment;
+package com.example.chicksevent.fragment_admin;
 
 import android.app.AlertDialog;
 import android.os.Bundle;

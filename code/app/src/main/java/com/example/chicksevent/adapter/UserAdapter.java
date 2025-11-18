@@ -1,71 +1,120 @@
 package com.example.chicksevent.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.misc.User;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Adapter that binds {@link User} objects to a ListView for display.
- * <p>
- * Provides a simple textual representation of each user, currently displaying
- * the user ID associated with each {@link User} instance.
- * </p>
- *
- * <p><b>Responsibilities:</b>
- * <ul>
- *     <li>Inflate the {@code item_user} layout for each list entry.</li>
- *     <li>Populate the layout with data from a {@link User} object.</li>
- *     <li>Reuse views efficiently through view recycling.</li>
- * </ul>
- * </p>
- *
- * <p>This adapter can be extended to include additional user details (e.g.,
- * name, email, phone number) as the application evolves.</p>
- *
- * @author Jordan Kwan
+ * {@link RecyclerView.Adapter} that displays a list of {@link User} objects
+ * in a RecyclerView. Each item shows the entrant's ID, status, and includes a delete button.
+ * Clicking the delete button notifies the registered {@link OnDeleteClickListener}.
  */
-public class UserAdapter extends ArrayAdapter<User> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
+
     /**
-     * Constructs a new adapter for displaying user information.
-     *
-     * @param context the current context
-     * @param userArray the list of {@link User} objects to display
+     * Callback interface for handling delete button clicks on entrant items.
      */
-    public UserAdapter(Context context, ArrayList<User> userArray) {
-        super(context, 0, userArray);
+    public interface OnDeleteClickListener {
+        /**
+         * Called when the delete button is clicked for a specific entrant.
+         *
+         * @param user The {@link User} object associated with the clicked item.
+         */
+        void onDeleteClicked(User user);
+    }
+
+    /** List of entrant data to be displayed. */
+    private List<User> entrants;
+
+    /** Listener to handle delete actions. */
+    private OnDeleteClickListener listener;
+
+    /**
+     * Constructs a new adapter with the given entrant list and delete listener.
+     *
+     * @param entrants The list of {@link User} objects to display.
+     * @param listener The {@link OnDeleteClickListener} to notify on delete clicks.
+     */
+    public UserAdapter(List<User> entrants, OnDeleteClickListener listener) {
+        this.entrants = entrants;
+        this.listener = listener;
     }
 
     /**
-     * Returns a populated list item view for a given position.
+     * Inflates the item layout and creates a new {@link ViewHolder}.
      *
-     * @param position the position of the item within the list
-     * @param convertView an existing view to reuse if possible
-     * @param parent the parent view group that this view will be attached to
-     * @return a populated view representing the {@link User} at the given position
+     * @param parent   The parent view group into which the new view will be added.
+     * @param viewType The view type of the new view (not used here).
+     * @return A new {@link ViewHolder} that holds the view for each list item.
+     */
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_chosen_user, parent, false);
+        return new ViewHolder(v);
+    }
+
+    /**
+     * Binds data from the specified position to the {@link ViewHolder}.
+     * Sets the user name, status text, and attaches the delete click listener.
+     *
+     * @param holder   The {@link ViewHolder} to bind data to.
+     * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        User user = entrants.get(position);
+        user.getName().addOnCompleteListener(task -> holder.tvUserName.setText(task.getResult()));
+        holder.tvStatus.setText(user.getUserId());
 
-        View view;
-        if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false);
-        } else {
-            view = convertView;
+        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClicked(user));
+    }
+
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return Size of the {@link User} list.
+     */
+    @Override
+    public int getItemCount() {
+        return entrants.size();
+    }
+
+    /**
+     * {@link RecyclerView.ViewHolder} subclass that represents a single list item view.
+     * Holds references to the user name, status text, and delete button.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        /** TextView displaying the entrant's ID. */
+        TextView tvUserName;
+
+        /** TextView displaying the entrant's status. */
+        TextView tvStatus;
+
+        /** ImageButton to trigger deletion of the entrant. */
+        ImageButton btnDelete;
+
+        /**
+         * Initializes the ViewHolder by finding and storing references to child views.
+         *
+         * @param itemView The root view of the list item.
+         */
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvUserName = itemView.findViewById(R.id.tv_user_name);
+            tvStatus = itemView.findViewById(R.id.tv_status);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
-
-        User user = getItem(position);
-        TextView userName = view.findViewById(R.id.tv_user_name);
-
-        userName.setText(user.getUserId());
-
-        return view;
     }
 }
