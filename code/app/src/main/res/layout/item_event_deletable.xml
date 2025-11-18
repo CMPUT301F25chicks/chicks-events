@@ -12,8 +12,8 @@
 
     <!-- Date box -->
 
-    <!-- Notification info -->
-    <ImageView
+    <!-- Image info -->
+    <ImageButton
         android:id="@+id/img_event"
         android:layout_width="397dp"
         android:layout_height="168dp"

@@ -86,7 +86,7 @@ public class EventAdminFragment extends Fragment {
         eventList = new ArrayList<>();
         admin = new Admin("ADMIN_DEFAULT");
 
-        adapter = new EventAdminAdapter(requireContext(), eventList, this::confirmDeleteEvent);
+        adapter = new EventAdminAdapter(requireContext(), eventList, this::confirmDeleteEvent, this::confirmDeletePoster);
         recyclerView.setAdapter(adapter);
 
         loadEvents();
@@ -134,6 +134,25 @@ public class EventAdminFragment extends Fragment {
     }
 
     /**
+     * Shows a confirmation dialog before deleting a poster.
+     * <p>
+     * Called by {@link EventAdminAdapter} when the delete button is clicked.
+     * </p>
+     *
+     * @param event the {@link Event} that the poster will be deleted from.
+     */
+    private void confirmDeletePoster(Event event) {
+        Log.i("DEL", "back in time " + event.getId());
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Poster")
+                .setMessage("Are you sure you want to delete poster for \"" + event.getName() + "\"?")
+                .setPositiveButton("Delete", (dialog, which) -> deletePoster(event))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    /**
      * Deletes the specified event from Firebase and updates the UI.
      * <p>
      * Calls {@link Admin#deleteEvent(String)} to remove from database,
@@ -149,5 +168,15 @@ public class EventAdminFragment extends Fragment {
         eventList.remove(event);
         adapter.notifyDataSetChanged();
         Toast.makeText(getContext(), "Event deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    private void deletePoster(Event event) {
+        Log.i("DEL", "back in time " + event.getId());
+        admin.deletePoster(event.getId());
+//        admin.deleteEvent(event.getId());
+//        eventList.remove(event);
+        adapter.notifyDataSetChanged();
+        loadEvents();
+        Toast.makeText(getContext(), "Poster deleted", Toast.LENGTH_SHORT).show();
     }
 }
