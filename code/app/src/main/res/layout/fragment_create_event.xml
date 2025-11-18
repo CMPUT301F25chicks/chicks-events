@@ -45,17 +45,17 @@
 
             <!-- Event Name -->
 
-            <ImageView
+
+
+            <ImageButton
                 android:id="@+id/img_event_poster"
-                android:layout_width="120dp"
-                android:layout_height="108dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:contentDescription="Event Poster"
-                android:focusable="true"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_image"
-                app:tint="@color/purpleText" />
+                app:layout_constraintBottom_toTopOf="@+id/info_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"

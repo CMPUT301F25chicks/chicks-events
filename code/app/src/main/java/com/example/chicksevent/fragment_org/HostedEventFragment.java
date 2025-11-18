@@ -154,7 +154,7 @@ public class HostedEventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(HostedEventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 //                    bundle.putString("organizerId", item.getId());
 
                     if (type == 0) {
@@ -167,6 +167,7 @@ public class HostedEventFragment extends Fragment {
                 });
 
                 eventView.setAdapter(eventAdapter);
+
 
 
 //                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());

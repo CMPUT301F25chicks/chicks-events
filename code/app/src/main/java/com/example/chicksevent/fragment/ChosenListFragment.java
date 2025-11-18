@@ -113,7 +113,7 @@ public class ChosenListFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
         

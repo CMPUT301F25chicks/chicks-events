@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
         userId = Settings.Secure.getString(

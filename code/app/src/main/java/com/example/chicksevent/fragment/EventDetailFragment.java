@@ -1,12 +1,16 @@
 package com.example.chicksevent.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,7 +119,7 @@ public class EventDetailFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventNameString = args.getString("eventName");
+            eventNameString = args.getString("eventId");
             eventName.setText(eventNameString);
         }
 
@@ -147,7 +151,7 @@ public class EventDetailFragment extends Fragment {
         joinButton.setOnClickListener(v -> {
             userExists().continueWithTask(boole -> {
                 if (boole.getResult()) {
-                    Entrant e = new Entrant(userId, args.getString("eventName"));
+                    Entrant e = new Entrant(userId, args.getString("eventId"));
                     e.joinWaitingList();
                     Toast.makeText(getContext(),
                             "Joined waiting list :)",
@@ -169,7 +173,7 @@ public class EventDetailFragment extends Fragment {
         });
 
         leaveButton.setOnClickListener(v -> {
-            Entrant e = new Entrant(userId, args.getString("eventName"));
+            Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.leaveWaitingList();
             Toast.makeText(getContext(),
@@ -180,6 +184,16 @@ public class EventDetailFragment extends Fragment {
             waitingStatus.setVisibility(View.INVISIBLE);
             joinButton.setVisibility(View.VISIBLE);
 
+        });
+
+        ImageView posterImageView = view.findViewById(R.id.img_event);
+
+        new FirebaseService("Image").getReference().child(args.getString("eventId")).get().addOnCompleteListener(task -> {
+            if (task.getResult().getValue() == null) return;
+            String base64Image = ((HashMap<String, String>) task.getResult().getValue()).get("url");
+            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            posterImageView.setImageBitmap(bitmap);
         });
     }
 

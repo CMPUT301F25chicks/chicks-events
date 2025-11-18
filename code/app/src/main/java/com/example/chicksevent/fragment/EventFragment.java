@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -139,6 +140,7 @@ public class EventFragment extends Fragment {
             NavHostFragment.findNavController(EventFragment.this)
                     .navigate(R.id.action_EventFragment_to_SearchEventFragment);
         });
+        ImageView posterImageView = view.findViewById(R.id.img_event);
 
 
 //            eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
@@ -227,7 +229,7 @@ public class EventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
 
@@ -275,7 +277,7 @@ public class EventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
 

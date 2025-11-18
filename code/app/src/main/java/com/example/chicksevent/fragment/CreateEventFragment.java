@@ -1,19 +1,34 @@
 package com.example.chicksevent.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.misc.Event;
+import com.example.chicksevent.misc.FirebaseService;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
@@ -32,6 +47,14 @@ public class CreateEventFragment extends Fragment {
 
     /** View binding for accessing UI elements. */
     private FragmentCreateEventBinding binding;
+    private FirebaseService imageService = new FirebaseService("Image");
+
+    private ActivityResultLauncher<Intent> pickImageLauncher;
+
+    private Uri imageUri;
+
+    private HashMap<String, Object> urlData = new HashMap<>();
+
 
     /**
      * Inflates the layout for this fragment using ViewBinding.
@@ -74,7 +97,31 @@ public class CreateEventFragment extends Fragment {
         // Optional: Cancel just pops back
         binding.btnCancel.setOnClickListener(v -> requireActivity().onBackPressed());
 
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getData() != null) {
+                            imageUri = data.getData();
+                            binding.imgEventPoster.setImageURI(imageUri);
+                        }
+                    }
+                }
+        );
 
+        binding.imgEventPoster.setOnClickListener(v -> {
+            openImageChooser();
+
+
+        });
+    }
+
+    public String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos); // compress if needed
+        byte[] bytes = baos.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 
     /**
@@ -143,10 +190,36 @@ public class CreateEventFragment extends Fragment {
         );
 
         // Push to Firebase
-        e.createEvent();
+        String id = e.createEvent();
+        Bitmap bitmap = null;
+//
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), imageUri);
+                bitmap = ImageDecoder.decodeBitmap(source);
+            } else {
+                // fallback for older versions
+                bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
+            }
+        } catch (IOException err) {
+            err.printStackTrace();
+        }
+//
+        String base64Image = bitmapToBase64(bitmap);
+        urlData.put("url", base64Image);
+
+        imageService.addEntry(urlData, id);
+
+
         toast("Event created 🎉");
         // Optionally navigate back:
         requireActivity().onBackPressed();
+    }
+
+    private void openImageChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        pickImageLauncher.launch(intent);
     }
 
     /**

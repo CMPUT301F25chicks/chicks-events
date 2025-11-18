@@ -240,7 +240,7 @@
 
     <fragment
         android:id="@+id/UpdateEventFragment"
-        android:name="com.example.chicksevent.fragment.UpdateEventFragment"
+        android:name="com.example.chicksevent.fragment_org.UpdateEventFragment"
         android:label="@string/update_event_fragment_label"
         tools:layout="@layout/fragment_update_event_detail">
 

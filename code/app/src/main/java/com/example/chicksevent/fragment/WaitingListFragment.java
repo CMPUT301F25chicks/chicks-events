@@ -32,7 +32,7 @@ import java.util.ArrayList;
 /**
  * Fragment that displays entrants in a waiting-list bucket for a specific event.
  * <p>
- * Resolves the current {@code eventId} from arguments (key: {@code "eventName"}),
+ * Resolves the current {@code eventId} from arguments (key: {@code "eventId"}),
  * reads the selected bucket (default: {@link EntrantStatus#WAITING}) from Firebase under
  * the <code>WaitingList</code> root, and renders results using {@link EntrantAdapter}.
  * Also exposes navigation to Notifications, Events, Create Event, and Pooling screens.
@@ -95,7 +95,7 @@ public class WaitingListFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
         if (getContext() == null) {
@@ -118,7 +118,7 @@ public class WaitingListFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(WaitingListFragment.this);
 
             Bundle bundle = new Bundle();
-            bundle.putString("eventName", args.getString("eventName"));
+            bundle.putString("eventId", args.getString("eventId"));
 
             navController.navigate(R.id.action_WaitingListFragment_to_PoolingFragment, bundle);
         });
