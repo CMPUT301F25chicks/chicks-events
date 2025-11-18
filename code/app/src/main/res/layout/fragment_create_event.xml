@@ -178,10 +178,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:clickable="true"
                         android:hint="Start Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="false"
-                        android:inputType="none"
+                        android:focusable="true"
                         android:background="@null" />
 
                     <ImageView
@@ -217,8 +217,8 @@
                         android:layout_weight="1"
                         android:hint="End Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="false"
-                        android:inputType="none"
+                        android:focusable="true"
+                        android:clickable="true"
                         android:background="@null" />
 
                     <ImageView
