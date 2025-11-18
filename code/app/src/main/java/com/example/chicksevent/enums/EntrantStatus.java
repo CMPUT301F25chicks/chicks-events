@@ -34,8 +34,6 @@ public enum EntrantStatus {
     CANCELLED,
 
     /** Entrant was not selected in the lottery. */
-    UNINVITED,
+    UNINVITED
 
-    /** Entrant's participation is finalized and confirmed. */
-    CONFIRMED
 }

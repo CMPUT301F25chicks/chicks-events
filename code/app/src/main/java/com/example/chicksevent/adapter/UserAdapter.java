@@ -5,67 +5,103 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.chicksevent.R;
-import com.example.chicksevent.misc.User;
+import com.example.chicksevent.misc.Entrant;
+import com.example.chicksevent.misc.FirebaseService;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Adapter that binds {@link User} objects to a ListView for display.
- * <p>
- * Provides a simple textual representation of each user, currently displaying
- * the user ID associated with each {@link User} instance.
- * </p>
+ * Adapter that binds {@link Entrant} objects to a list for the organizer UI.
  *
- * <p><b>Responsibilities:</b>
+ * <p><b>Displays:</b></p>
  * <ul>
- *     <li>Inflate the {@code item_user} layout for each list entry.</li>
- *     <li>Populate the layout with data from a {@link User} object.</li>
- *     <li>Reuse views efficiently through view recycling.</li>
+ *     <li>Entrant name</li>
+ *     <li>Entrant status (WAITING, INVITED, ACCEPTED, CANCELLED, etc.)</li>
+ *     <li>A delete/cancel button to remove an invited entrant</li>
  * </ul>
+ *
+ * <p>
+ * Used when the organizer needs to manage the invited list and cancel or replace entrants.
  * </p>
- *
- * <p>This adapter can be extended to include additional user details (e.g.,
- * name, email, phone number) as the application evolves.</p>
- *
- * @author Jordan Kwan
  */
-public class UserAdapter extends ArrayAdapter<User> {
+public class UserAdapter extends ArrayAdapter<Entrant> {
+
+    private final String eventId;
+
     /**
-     * Constructs a new adapter for displaying user information.
+     * Creates the adapter.
      *
-     * @param context the current context
-     * @param userArray the list of {@link User} objects to display
+     * @param context app context
+     * @param entrantList list of entrants to display
+     * @param eventId the event whose waiting-list is being modified
      */
-    public UserAdapter(Context context, ArrayList<User> userArray) {
-        super(context, 0, userArray);
+    public UserAdapter(Context context, ArrayList<Entrant> entrantList, String eventId) {
+        super(context, 0, entrantList);
+        this.eventId = eventId;
     }
 
-    /**
-     * Returns a populated list item view for a given position.
-     *
-     * @param position the position of the item within the list
-     * @param convertView an existing view to reuse if possible
-     * @param parent the parent view group that this view will be attached to
-     * @return a populated view representing the {@link User} at the given position
-     */
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    /** Holder pattern for performance */
+    private static class ViewHolder {
+        TextView nameView;
+        TextView statusView;
+        ImageButton deleteButton;
+    }
 
-        View view;
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+        ViewHolder holder;
+
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.item_user, parent, false);
+            convertView = LayoutInflater.from(getContext())
+                    .inflate(R.layout.item_chosen_user, parent, false);
+
+            holder = new ViewHolder();
+            holder.nameView = convertView.findViewById(R.id.tv_user_name);
+            holder.statusView = convertView.findViewById(R.id.tv_status);
+            holder.deleteButton = convertView.findViewById(R.id.btn_delete);
+
+            convertView.setTag(holder);
+
         } else {
-            view = convertView;
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        User user = getItem(position);
-        TextView userName = view.findViewById(R.id.tv_user_name);
+        Entrant entrant = getItem(position);
 
-        userName.setText(user.getUserId());
+        if (entrant != null) {
 
-        return view;
+            // Show entrant name + status
+            holder.nameView.setText(entrant.getName());
+            holder.statusView.setText(entrant.getStatus().name());
+
+            // Delete / Cancel an invited entrant
+            holder.deleteButton.setOnClickListener(v -> {
+
+                String entrantId = entrant.getEntrantId();
+                DatabaseReference ref =
+                        new FirebaseService("WaitingList").getReference().child(eventId);
+
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("INVITED/" + entrantId, null);       // remove from invited
+                updates.put("CANCELLED/" + entrantId, true);     // move to cancelled
+
+                ref.updateChildren(updates);
+            });
+        }
+
+        return convertView;
     }
 }

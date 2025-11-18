@@ -53,7 +53,7 @@ public class EntrantTest {
         when(Log.e(anyString(), anyString())).thenReturn(0);
         when(Log.e(anyString(), anyString(), any(Throwable.class))).thenReturn(0);
 
-        entrant = new Entrant(ENTRANT_ID, EVENT_ID);
+        entrant = new Entrant(ENTRANT_ID, EVENT_ID, null);
 
         mockWaitingSvc = mock(FirebaseService.class);
         mockEntrantSvc = mock(FirebaseService.class);

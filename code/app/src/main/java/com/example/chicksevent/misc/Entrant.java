@@ -30,6 +30,13 @@ import java.util.HashMap;
  *
  * @author Jordan Kwan
  */
+/**
+ * Represents an event participant (entrant), extending the basic {@link User}.
+ * <p>
+ * Tracks entrant-specific information such as status and associated event.
+ * Provides Firebase service handles for operations on entrants and waiting lists.
+ * </p>
+ */
 public class Entrant extends User {
 
     /** Firebase wrapper for entrant-level operations. */
@@ -54,21 +61,23 @@ public class Entrant extends User {
     private Organizer organizer;
 
     /**
-     * Constructs an {@code Entrant} object for the specified user and event.
+     * Constructs an {@code Entrant} object for the specified user, event, and status.
      *
-     * @param id the entrant's unique identifier.
-     * @param eventId the ID of the event this entrant is associated with.
+     * @param id       the entrant's unique identifier (user ID)
+     * @param eventId  the ID of the event this entrant is associated with
+     * @param status   the current participation status of the entrant
      */
-    public Entrant(String id, String eventId) {
+    public Entrant(String id, String eventId, EntrantStatus status) {
         super(id);
-        eventService = new FirebaseService("Event");
-        entrantService = new FirebaseService("Entrant");
-        waitingListService = new FirebaseService("WaitingList");
-        this.eventId = eventId;
         this.entrantId = id;
-        this.status = EntrantStatus.WAITING; // default when joining waiting list
+        this.eventId = eventId;
+        this.status = status;
 
+        this.eventService = new FirebaseService("Event");
+        this.entrantService = new FirebaseService("Entrant");
+        this.waitingListService = new FirebaseService("WaitingList");
     }
+
 
     // Getter methods
     public String getEventId() { return eventId; }

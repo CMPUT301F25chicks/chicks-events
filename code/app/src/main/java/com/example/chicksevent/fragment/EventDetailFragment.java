@@ -18,6 +18,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
+import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.google.android.gms.tasks.Task;
@@ -70,6 +71,12 @@ public class EventDetailFragment extends Fragment {
     private TextView eventDetails;
     private TextView eventNameReal;
     private Integer waitingListCount;
+    private LinearLayout waitingStatus;
+    private LinearLayout notChosenStatus;
+
+    // state flags filled by lookWaitingList()
+    private boolean isWaiting = false;
+    private boolean isNotChosen = false;
 
     /**
      * Default constructor required for Fragment instantiation.
@@ -147,8 +154,14 @@ public class EventDetailFragment extends Fragment {
 
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
-        LinearLayout waitingStatus = view.findViewById(R.id.layout_waiting_status);
+
+        // assign to fragment fields so other methods can see them
+        waitingStatus = view.findViewById(R.id.layout_waiting_status);
+        notChosenStatus = view.findViewById(R.id.layout_not_chosen_status);
         TextView waitingCount = view.findViewById(R.id.tv_waiting_count);
+
+        Button rejoinButton = view.findViewById(R.id.btn_rejoin_waiting_list);
+
 
         getEventDetail().addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
@@ -162,7 +175,7 @@ public class EventDetailFragment extends Fragment {
         joinButton.setOnClickListener(v -> {
             userExists().addOnSuccessListener(boole -> {
                 if (boole) {
-                    Entrant e = new Entrant(userId, args.getString("eventName"));
+                    Entrant e = new Entrant(userId, args.getString("eventName"), EntrantStatus.WAITING);
                     e.joinWaitingList();
                     Toast.makeText(getContext(),
                             "Joined waiting list :)",
@@ -180,7 +193,7 @@ public class EventDetailFragment extends Fragment {
         });
 
         leaveButton.setOnClickListener(v -> {
-            Entrant e = new Entrant(userId, args.getString("eventName"));
+            Entrant e = new Entrant(userId, args.getString("eventName"), null);
 
             e.leaveWaitingList();
             Toast.makeText(getContext(),
@@ -238,16 +251,40 @@ public class EventDetailFragment extends Fragment {
 
         return waitingListService.getReference().child(eventId).get().continueWith(task -> {
             Log.i("browaiting", "in waiting");
+
+            // reset flags
+            isWaiting = false;
+            isNotChosen = false;
+
+            if (!task.isSuccessful() || task.getResult() == null) {
+                return false;
+            }
+
             for (DataSnapshot obj : task.getResult().getChildren()) {
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("WAITING")) {
-                        return true;
+                String sectionKey = obj.getKey(); // e.g. "WAITING" or "NOT_CHOSEN"
+                if (sectionKey == null) continue;
+
+                // obj.getValue() is expected to be a map of userId -> some value
+                Object val = obj.getValue();
+                if (!(val instanceof HashMap)) continue;
+
+                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) val).entrySet()) {
+                    String key = entry.getKey();
+                    if (userId.equals(key)) {
+                        if (sectionKey.equals("WAITING")) {
+                            isWaiting = true;
+                        } else if (sectionKey.equals("NOT_CHOSEN")) {
+                            isNotChosen = true;
+                        }
                     }
                 }
             }
-            return false;
+
+            // return isWaiting for backward compatibility (your existing callers expect Task<Boolean>)
+            return isWaiting;
         });
     }
+
 
 
     /**

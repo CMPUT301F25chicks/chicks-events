@@ -20,6 +20,7 @@ import com.example.chicksevent.R;
 import com.example.chicksevent.adapter.UserAdapter;
 import com.example.chicksevent.databinding.FragmentWaitingListBinding;
 import com.example.chicksevent.enums.EntrantStatus;
+import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Organizer;
 import com.example.chicksevent.misc.User;
@@ -59,7 +60,7 @@ public class WaitingListFragment extends Fragment {
     private UserAdapter waitingListAdapter;
 
     /** In-memory list of users for the current bucket. */
-    private ArrayList<User> userDataList = new ArrayList<>();
+    private ArrayList<Entrant> userDataList = new ArrayList<>();
 
     /** Firebase service for interacting with the "WaitingList" root. */
     private final FirebaseService waitingListService = new FirebaseService("WaitingList");
@@ -104,7 +105,7 @@ public class WaitingListFragment extends Fragment {
 
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
-        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+        waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
         userView =  view.findViewById(R.id.recycler_notifications);
 ////
         userView.setAdapter(waitingListAdapter);
@@ -162,11 +163,11 @@ public class WaitingListFragment extends Fragment {
                         Log.i(TAG, "IN HERE bef " + status);
                         userDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            userDataList.add(new User(childSnap.getKey()));
+                            userDataList.add(new Entrant(childSnap.getKey(), eventId, EntrantStatus.WAITING));
 //                            Log.i(TAG, "child key: " + childSnap.getKey());
                         }
 
-                        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+                        waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
 ////
                         userView.setAdapter(waitingListAdapter);
                     }

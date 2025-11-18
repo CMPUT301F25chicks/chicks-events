@@ -255,6 +255,46 @@
                         android:textColor="#FFFFFF" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_not_chosen_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_notification_item"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_not_chosen_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="Status: Not Chosen"
+                        android:textColor="@color/purpleText"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sorry, You are not chosen to join this event. You can rejoin the waiting list for another chance to be chosen"
+                        android:textColor="@color/dateBox"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <Button
+                        android:id="@+id/btn_rejoin_waiting_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/purpleText"
+                        android:text="Rejoin Waiting List"
+                        android:textColor="@color/darkPurple" />
+
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

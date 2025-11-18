@@ -144,6 +144,10 @@ public class User {
         return userId;
     }
 
+    public String getName() {
+        return name;
+    }
+
     /**
      * Logs all events to Logcat (diagnostic utility).
      */
