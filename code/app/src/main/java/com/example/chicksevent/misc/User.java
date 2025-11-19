@@ -144,6 +144,21 @@ public class User {
         return userId;
     }
 
+    public Task<String> getName() {
+        return userService.getReference()
+                .child(userId)
+                .get()
+                .continueWith(task -> {
+                    if (task.getResult().exists()) {
+                        return ((HashMap<String, String>) task.getResult().getValue()).get("name");
+
+                    } else {
+                        return "couldn't find name";
+                    }
+                });
+    }
+
+
     /**
      * Logs all events to Logcat (diagnostic utility).
      */

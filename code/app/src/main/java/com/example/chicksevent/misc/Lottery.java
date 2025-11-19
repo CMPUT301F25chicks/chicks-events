@@ -161,4 +161,65 @@ public class Lottery {
                     }
                 });
     }
+    /**
+     * Draws up to {@code numReplacements} entrants from the WAITING list and moves them to INVITED.
+     *
+     * @param numReplacements the number of new entrants to invite (or all if waiting < numReplacements)
+     */
+    public void poolReplacement(int numReplacements) {
+        Log.i(TAG, "Pooling replacement up to " + numReplacements + " for eventId=" + eventId);
+
+        waitingListService.getReference()
+                .child(eventId)
+                .child(WAITING_NODE)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot waitSnap) {
+                        List<String> waiting = new ArrayList<>();
+                        if (waitSnap != null && waitSnap.exists()) {
+                            for (DataSnapshot ch : waitSnap.getChildren()) {
+                                waiting.add(ch.getKey());
+                            }
+                        }
+
+                        if (waiting.isEmpty()) {
+                            Log.i(TAG, "No waiting entrants to pool.");
+                            return;
+                        }
+
+                        // Determine how many we can actually invite
+                        int actualPool = Math.min(waiting.size(), numReplacements);
+                        Collections.shuffle(waiting);
+                        List<String> newInvited = waiting.subList(0, actualPool);
+
+                        Map<String, Object> updates = new HashMap<>();
+                        final String base = eventId + "/";
+
+                        for (String uid : newInvited) {
+                            updates.put(base + INVITED_NODE + "/" + uid, Boolean.TRUE);
+                            updates.put(base + WAITING_NODE + "/" + uid, null); // remove from waiting
+                        }
+
+                        if (updates.isEmpty()) {
+                            Log.i(TAG, "Nothing to update for replacement pool.");
+                            return;
+                        }
+
+                        waitingListService.getReference().updateChildren(updates, (error, ref) -> {
+                            if (error != null) {
+                                Log.e(TAG, "Replacement pool failed: " + error.getMessage());
+                            } else {
+                                Log.i(TAG, "Replacement pool succeeded. New invited: " + newInvited.size());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.e(TAG, "Error reading WAITING: " + error.getMessage());
+                    }
+                });
+    }
+
+
 }
