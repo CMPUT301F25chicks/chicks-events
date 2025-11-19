@@ -60,7 +60,7 @@ public class EventDetailFragment extends Fragment {
     /** Firebase service wrapper for accessing event data. */
     private FirebaseService eventService;
 
-    /** Unique identifier for the current user, derived from device Android ID. */
+    /** Unique identifier for the current user, derived from the device Android ID. */
     String userId;
     String eventId;
 
@@ -75,7 +75,7 @@ public class EventDetailFragment extends Fragment {
      * Default constructor required for Fragment instantiation.
      */
     public EventDetailFragment() {
-        // You can keep the constructor-empty and inflate via binding below
+        // You can keep the constructor empty and inflate via binding below
     }
 
     /**
@@ -149,14 +149,37 @@ public class EventDetailFragment extends Fragment {
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
         LinearLayout waitingStatus = view.findViewById(R.id.layout_waiting_status);
         TextView waitingCount = view.findViewById(R.id.tv_waiting_count);
+        Button acceptButton = view.findViewById(R.id.btn_accept);
+        Button declineButton = view.findViewById(R.id.btn_decline);
+        LinearLayout invitedStatus = view.findViewById(R.id.layout_chosen_status);
+        Button rejoinButton = view.findViewById(R.id.btn_rejoin_waiting_list);
+        LinearLayout uninvitedStatus = view.findViewById(R.id.layout_not_chosen_status);
+        LinearLayout acceptedStatus = view.findViewById(R.id.layout_accepted_status);
+        LinearLayout declinedStatus = view.findViewById(R.id.layout_declined_status);
 
         getEventDetail().addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
-            if (t.getResult()) {
+            if (t.getResult()==1) {
                 waitingStatus.setVisibility(View.VISIBLE);
+                waitingCount.setText("Number of Entrants: " + waitingListCount);
+                joinButton.setVisibility(View.INVISIBLE);
             }
-
-            waitingCount.setText("Number of Entrants: " + waitingListCount);
+            if (t.getResult()==2) {
+                invitedStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
+            }
+            if (t.getResult()==3) {
+                uninvitedStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
+            }
+            if (t.getResult()==4) {
+                acceptedStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
+            }
+            if (t.getResult()==5) {
+                declinedStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
+            }
         });
 
         joinButton.setOnClickListener(v -> {
@@ -168,14 +191,12 @@ public class EventDetailFragment extends Fragment {
                             "Joined waiting list :)",
                             Toast.LENGTH_SHORT).show();
                     waitingStatus.setVisibility(View.VISIBLE);
-
+                    joinButton.setVisibility(View.INVISIBLE);
                 } else {
                     Toast.makeText(getContext(),
-                            "You need to create profile to join waiting list",
+                            "You need to create a profile to join the waiting list.",
                             Toast.LENGTH_SHORT).show();
                 }
-
-
             });
         });
 
@@ -184,13 +205,48 @@ public class EventDetailFragment extends Fragment {
 
             e.leaveWaitingList();
             Toast.makeText(getContext(),
-                    "You left the waiting list",
+                    "You left the waiting list.",
                     Toast.LENGTH_SHORT).show();
-
-
             waitingStatus.setVisibility(View.INVISIBLE);
+            joinButton.setVisibility(View.VISIBLE);
 
         });
+
+        acceptButton.setOnClickListener(v -> {
+            Entrant e = new Entrant(userId, args.getString("eventName"));
+
+            e.acceptWaitingList();
+            Toast.makeText(getContext(),
+                    "You accept the invitation. Yah!!!.",
+                    Toast.LENGTH_SHORT).show();
+            invitedStatus.setVisibility(View.INVISIBLE);
+            acceptedStatus.setVisibility(View.VISIBLE);
+        });
+
+        declineButton.setOnClickListener(v -> {
+            Entrant e = new Entrant(userId, args.getString("eventName"));
+
+            e.declineWaitingList();
+            Toast.makeText(getContext(),
+                    "You decline the invitation :(((",
+                    Toast.LENGTH_SHORT).show();
+            invitedStatus.setVisibility(View.INVISIBLE);
+            declinedStatus.setVisibility(View.VISIBLE);
+        });
+
+        rejoinButton.setOnClickListener(v -> {
+            Entrant e = new Entrant(userId, args.getString("eventName"));
+
+            e.joinWaitingList();
+            waitingListService.deleteSubCollectionEntry(eventId, "UNINVITED", e.getEntrantId());
+            Toast.makeText(getContext(),
+                    "You rejoin the waiting list.",
+                    Toast.LENGTH_SHORT).show();
+            uninvitedStatus.setVisibility(View.INVISIBLE);
+            waitingStatus.setVisibility(View.VISIBLE);
+            joinButton.setVisibility(View.INVISIBLE);
+        });
+
     }
 
 
@@ -210,7 +266,7 @@ public class EventDetailFragment extends Fragment {
             return total;
         });
     }
-    public Task<Boolean> getEventDetail() {
+    public Task<Integer> getEventDetail() {
         return eventService.getReference().get().continueWithTask(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
 
@@ -229,23 +285,35 @@ public class EventDetailFragment extends Fragment {
             }
 
             // No matching event found, return a completed Task with 'false'
-            return Tasks.forResult(false);
+            return Tasks.forResult(0);
         });
     }
 
-    public Task<Boolean> lookWaitingList() {
-        Log.i("browaiting", "out waiting " + eventId);
+    public Task<Integer> lookWaitingList() {
+        Log.i("checking", "out waiting " + eventId);
 
         return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
+            Log.i("checking", "in waiting");
             for (DataSnapshot obj : task.getResult().getChildren()) {
                 for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
                     if (userId.equals(entry.getKey()) && obj.getKey().equals("WAITING")) {
-                        return true;
+                        return 1;
+                    }
+                    if (userId.equals(entry.getKey()) && obj.getKey().equals("INVITED")) {
+                        return 2;
+                    }
+                    if (userId.equals(entry.getKey()) && obj.getKey().equals("UNINVITED")) {
+                        return 3;
+                    }
+                    if (userId.equals(entry.getKey()) && obj.getKey().equals("ACCEPTED")) {
+                        return 4;
+                    }
+                    if (userId.equals(entry.getKey()) && obj.getKey().equals("DECLINED")) {
+                        return 5;
                     }
                 }
             }
-            return false;
+            return 0;
         });
     }
 

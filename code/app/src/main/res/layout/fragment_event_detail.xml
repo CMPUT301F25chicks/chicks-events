@@ -217,44 +217,195 @@
                     android:textColor="@color/black"
                     android:layout_marginBottom="8dp" />
 
-                <LinearLayout
-                    android:id="@+id/layout_waiting_status"
+                <FrameLayout
+                    android:id="@+id/status_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:background="@drawable/bg_notification_item"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone">
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/tv_waiting_status"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/layout_waiting_status"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="Status: Joined Waiting List"
-                        android:textColor="@color/purpleText"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_notification_item"
+                        android:visibility="gone">
 
-                    <TextView
-                        android:id="@+id/tv_waiting_count"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_waiting_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="Status: Joined Waiting List"
+                            android:textColor="@color/purpleText"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_waiting_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Number of People: 40"
+                            android:textColor="@color/dateBox"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <Button
+                            android:id="@+id/btn_leave_waiting_list"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#FF4444"
+                            android:text="Leave Waiting List"
+                            android:textColor="#FFFFFF" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_chosen_status"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Number of People: 40"
-                        android:textColor="@color/dateBox"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="8dp"/>
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_notification_item"
+                        android:visibility="gone">
 
-                    <Button
-                        android:id="@+id/btn_leave_waiting_list"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tv_chosen_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="Status: Chosen"
+                            android:textColor="@color/purpleText"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+
+                        <LinearLayout
+                            android:id="@+id/acc_decl_event"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/btn_accept"
+                                android:layout_width="266dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_weight="1"
+                                android:backgroundTint="@color/purpleText"
+                                android:text="Accept"
+                                android:textColor="#000000" />
+
+                            <Button
+                                android:id="@+id/btn_decline"
+                                android:layout_width="266dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:backgroundTint="#FF4444"
+                                android:text="Decline"
+                                android:textColor="#FFFFFF" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_not_chosen_status"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#FF4444"
-                        android:text="Leave Waiting List"
-                        android:textColor="#FFFFFF" />
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_notification_item"
+                        android:visibility="gone">
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_not_chosen_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="Status: Not Chosen"
+                            android:textColor="@color/purpleText"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sorry, you are not chosen to join this event. You can rejoin the waiting list for another chance to be chosen"
+                            android:textColor="@color/dateBox"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp"/>
+
+                        <Button
+                            android:id="@+id/btn_rejoin_waiting_list"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/purpleText"
+                            android:text="Rejoin Waiting List"
+                            android:textColor="@color/darkPurple" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_accepted_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_notification_item"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_accepted_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="Status: Accepted"
+                            android:textColor="@color/purpleText"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_accepted_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="You are in this event"
+                            android:textColor="@color/dateBox"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_declined_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_notification_item"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_declined_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="Status: Declined"
+                            android:textColor="@color/purpleText"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_declined_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="You are no longer in this event"
+                            android:textColor="@color/dateBox"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp"/>
+                    </LinearLayout>
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

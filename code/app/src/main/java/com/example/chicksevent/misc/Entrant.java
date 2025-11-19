@@ -90,12 +90,26 @@ public class Entrant extends User {
     }
 
     /**
+     * Add this entrant to the waiting list under default {@link EntrantStatus#DECLINED}.
+     */
+    public void declineWaitingList() {
+        declineWaitingList(EntrantStatus.DECLINED);
+    }
+
+    /**
+     * Add this entrant to the waiting list under default {@link EntrantStatus#ACCEPTED}.
+     */
+    public void acceptWaitingList() {
+        acceptWaitingList(EntrantStatus.ACCEPTED);
+    }
+
+    /**
      * Adds this entrant to a waiting list node in Firebase under a specific status.
      *
      * @param status the {@link EntrantStatus} to register under (e.g., WAITING, INVITED).
      */
     public void joinWaitingList(EntrantStatus status) {
-        Log.i("RTD8", "hi wtf is " + eventId);
+        Log.i("RTD8", "hi join " + eventId);
 
         String statusString = status.toString();
         this.status = status;
@@ -119,6 +133,43 @@ public class Entrant extends User {
 
         waitingListService.deleteSubCollectionEntry(eventId, status.toString(), entrantId);
     }
+
+    /**
+     * Adds this entrant to a waiting list node in Firebase under a specific status.
+     *
+     * @param status the {@link EntrantStatus} to register under (e.g., WAITING, INVITED).
+     */
+    public void acceptWaitingList(EntrantStatus status) {
+        Log.i("RTD8", "hi accept " + eventId);
+
+        String statusString = status.toString();
+        this.status = status;
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put(" ", "");
+
+        waitingListService.updateSubCollectionEntry(eventId, status.toString(), entrantId, data);
+        waitingListService.deleteSubCollectionEntry(eventId, "INVITED", entrantId);
+    }
+
+    /**
+     * Adds this entrant to a waiting list node in Firebase under a specific status.
+     *
+     * @param status the {@link EntrantStatus} to register under (e.g., WAITING, INVITED).
+     */
+    public void declineWaitingList(EntrantStatus status) {
+        Log.i("RTD8", "hi decline" + eventId);
+
+        String statusString = status.toString();
+        this.status = status;
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put(" ", "");
+
+        waitingListService.updateSubCollectionEntry(eventId, status.toString(), entrantId, data);
+        waitingListService.deleteSubCollectionEntry(eventId, "INVITED", entrantId);
+    }
+
 
     /**
      * Switches this entrant's waiting list status by first removing them from their current
