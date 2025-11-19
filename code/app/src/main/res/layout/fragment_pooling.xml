@@ -10,19 +10,6 @@
 
     <!-- Scrollable content -->
 
-    <ImageButton
-        android:id="@+id/btn_check"
-        android:layout_width="29dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/baseline_arrow_back_24"
-        app:layout_constraintEnd_toStartOf="@+id/header_title"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/purpleText" />
-
     <TextView
         android:id="@+id/header_title"
         android:layout_width="wrap_content"
@@ -33,7 +20,6 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.187"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

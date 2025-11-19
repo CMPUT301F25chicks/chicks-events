@@ -92,47 +92,74 @@ public class PoolingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Bundle args = getArguments();
-        if (args != null) {
-            eventId = args.getString("eventName");
-            // Use it to populate UI
-        }
+        if (args != null) eventId = args.getString("eventName");
 
+        // Buttons
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button poolingButton = view.findViewById(R.id.btn_pool);
+
+        userView = view.findViewById(R.id.rv_selected_entrants);
         waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
-        userView =  view.findViewById(R.id.rv_selected_entrants);
-////
         userView.setAdapter(waitingListAdapter);
-//
-        notificationButton.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(PoolingFragment.this)
-                            .navigate(R.id.action_PoolingFragment_to_NotificationFragment);
-                }
-//
-        );
 
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_PoolingFragment_to_EventFragment);
-        });
+        // Navigation
+        eventButton.setOnClickListener(v -> NavHostFragment.findNavController(this)
+                .navigate(R.id.action_PoolingFragment_to_EventFragment));
+        createEventButton.setOnClickListener(v -> NavHostFragment.findNavController(this)
+                .navigate(R.id.action_PoolingFragment_to_CreateEventFragment));
+        notificationButton.setOnClickListener(v -> NavHostFragment.findNavController(this)
+                .navigate(R.id.action_PoolingFragment_to_NotificationFragment));
 
-        createEventButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
+        // Pool button click
+        poolingButton.setOnClickListener(v -> poolReplacementIfNeeded());
 
-            NavHostFragment.findNavController(PoolingFragment.this).navigate(R.id.action_PoolingFragment_to_CreateEventFragment);
-        });
-
-        poolingButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
-            Lottery l = new Lottery(eventId);
-            l.runLottery();
-            listEntrants(EntrantStatus.INVITED);
-        });
-
-
-//        eventName
+        // Initially list invited users
+        listEntrants(EntrantStatus.INVITED);
+        updateCounters();
     }
+
+    /**
+     * Pools replacement entrants if current chosen < target.
+     */
+    private void poolReplacementIfNeeded() {
+        int target = getTargetEntrants();
+        int current = getCurrentChosen();
+
+        int toPool = target - current;
+        if (toPool <= 0) return; // nothing to pool
+
+        Lottery lottery = new Lottery(eventId);
+        lottery.poolReplacement(toPool);
+
+        // Refresh list and counters after a small delay to allow Firebase update
+        userView.postDelayed(() -> {
+            listEntrants(EntrantStatus.INVITED);
+            updateCounters();
+        }, 500); // 500ms delay (adjust if needed)
+    }
+
+    /** Reads target entrants from tv_target_entrants (parses "Target Entrants: N"). */
+    private int getTargetEntrants() {
+        String text = binding.tvTargetEntrants.getText().toString();
+        String[] parts = text.split(":");
+        if (parts.length < 2) return 0;
+        try { return Integer.parseInt(parts[1].trim()); } catch (NumberFormatException e) { return 0; }
+    }
+
+    /** Reads current chosen from userDataList size or tv_current_chosen text. */
+    private int getCurrentChosen() {
+        return userDataList.size(); // or parse text if you want
+    }
+
+    /** Updates tv_current_chosen based on current userDataList and target. */
+    private void updateCounters() {
+        int target = getTargetEntrants();
+        int current = getCurrentChosen();
+        binding.tvCurrentChosen.setText("Current Chosen: " + current + " / " + target);
+    }
+
     /** Convenience wrapper to list entrants in the WAITING bucket. */
     public void listEntrants() {
         listEntrants(EntrantStatus.WAITING);
@@ -144,22 +171,28 @@ public class PoolingFragment extends Fragment {
      * @param status the {@link EntrantStatus} bucket to display
      */
     public void listEntrants(EntrantStatus status) {
+        Log.i(TAG, "Loading entrants for event=" + eventId + " status=" + status);
 
-        Log.i(TAG, "in here " + eventId + " " + status);
-        waitingListService.getReference().child(eventId).child(status.toString())
+        waitingListService.getReference()
+                .child(eventId)
+                .child(status.toString())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i(TAG, "IN HERE bef " + status);
                         userDataList = new ArrayList<>();
-                        for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            userDataList.add(new Entrant(childSnap.getKey(), eventId, EntrantStatus.INVITED));
-//                            Log.i(TAG, "child key: " + childSnap.getKey());
+
+                        if (dataSnapshot != null && dataSnapshot.exists()) {
+                            for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
+                                userDataList.add(new Entrant(childSnap.getKey(), eventId, status));
+                            }
                         }
 
+                        // Update adapter
                         waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
-////
                         userView.setAdapter(waitingListAdapter);
+
+                        // Update the counter TextView
+                        updateCounters();
                     }
 
                     @Override
@@ -168,6 +201,8 @@ public class PoolingFragment extends Fragment {
                     }
                 });
     }
+
+
 
     /** Clears binding references when the view is destroyed. */
     @Override
