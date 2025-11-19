@@ -28,14 +28,67 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment displaying a list of chosen entrants for a specific event, allowing the organizer
+ * to view entrants by status and send notifications.
+ *
+ * <p>
+ * Users (organizers) can:
+ * <ul>
+ *   <li>View the list of chosen entrants filtered by {@link EntrantStatus}.</li>
+ *   <li>Navigate to event listing, event creation, and notification screens.</li>
+ *   <li>Send notifications to invited or uninvited entrants for the current event.</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Firebase roots used:</b>
+ * <ul>
+ *   <li><code>WaitingList</code> — stores the entrants grouped by status for each event.</li>
+ * </ul>
+ * </p>
+ *
+ * <p><b>Arguments:</b> If a {@link Bundle} argument contains a string under the key
+ * <code>"eventName"</code>, the fragment loads entrants for that event.</p>
+ *
+ * <p><b>UI Components:</b>
+ * <ul>
+ *   <li>{@link ListView} userView — displays the list of entrants.</li>
+ *   <li>Buttons for navigation and sending notifications:
+ *       <ul>
+ *           <li>Event list</li>
+ *           <li>Create event</li>
+ *           <li>Notification screen</li>
+ *           <li>Send chosen/un-chosen notifications</li>
+ *       </ul>
+ *   </li>
+ * </ul>
+ * </p>
+ *
+ * @see EntrantAdapter
+ * @see EntrantStatus
+ * @see FirebaseService
+ */
 public class ChosenListFragment extends Fragment {
 
+    /** View binding for the fragment layout. */
     private FragmentChosenListBinding binding;
+
+    /** ListView displaying chosen entrants. */
     private ListView userView;
+
+    /** Adapter binding entrant data to the ListView. */
     private EntrantAdapter entrantAdapter;
+
+    /** Data source for the adapter containing entrants for the event. */
     private ArrayList<Entrant> entrantDataList = new ArrayList<>();
+
+    /** Firebase service pointing to the WaitingList root node. */
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
+
+    /** Tag used for logging. */
     private static final String TAG = "RTD8";
+
+    /** ID of the current event loaded in this fragment. */
     private String eventId;
 
     @Override
@@ -60,7 +113,6 @@ public class ChosenListFragment extends Fragment {
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
         entrantAdapter = new EntrantAdapter(getContext(), entrantDataList);
-
         userView.setAdapter(entrantAdapter);
 
         // Navigation
@@ -71,9 +123,10 @@ public class ChosenListFragment extends Fragment {
         notificationButton.setOnClickListener(v -> NavHostFragment.findNavController(this)
                 .navigate(R.id.action_ChosenListFragment_to_NotificationFragment));
 
-        // Load invited entrants
+        // Load invited entrants by default
         listEntrants(EntrantStatus.INVITED);
 
+        // Send notifications to invited/uninvited entrants
         sendNotificationButton.setOnClickListener(v -> {
             Organizer organizer = new Organizer(Settings.Secure.getString(
                     getContext().getContentResolver(), Settings.Secure.ANDROID_ID), eventId);
@@ -84,7 +137,13 @@ public class ChosenListFragment extends Fragment {
     }
 
     /**
-     * Load entrants by status
+     * Loads entrants for the current event filtered by the provided status.
+     *
+     * <p>The entrant data is fetched from Firebase under
+     * <code>WaitingList/{eventId}/{status}</code> and bound to {@link #userView} via
+     * {@link EntrantAdapter}.</p>
+     *
+     * @param status the {@link EntrantStatus} to filter entrants by
      */
     private void listEntrants(EntrantStatus status) {
         waitingListService.getReference()
