@@ -255,7 +255,7 @@ public class EventDetailFragment extends Fragment {
                 return getWaitingCount();
             }).addOnCompleteListener(t -> {
                 Log.i("RTD9", "" + t.getResult());
-                waitingCount.setText("Number of Entrantwerwers: " + t.getResult());
+                waitingCount.setText("Number of Entrants: " + t.getResult());
             });
         });
 
@@ -276,11 +276,11 @@ public class EventDetailFragment extends Fragment {
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.acceptWaitingList();
-//            Toast.makeText(getContext(),
-//                    "You accept the invitation. Yah!!!.",
-//                    Toast.LENGTH_SHORT).show();
-//            invitedStatus.setVisibility(View.INVISIBLE);
-//            acceptedStatus.setVisibility(View.VISIBLE);
+            Toast.makeText(getContext(),
+                    "You accept the invitation. Yah!!!.",
+                    Toast.LENGTH_SHORT).show();
+            invitedStatus.setVisibility(View.INVISIBLE);
+            acceptedStatus.setVisibility(View.VISIBLE);
         });
 
         declineButton.setOnClickListener(v -> {
@@ -574,7 +574,7 @@ public class EventDetailFragment extends Fragment {
 
                 getWaitingCount().addOnCompleteListener(t -> {
                     Log.i("RTD9", "" + t.getResult());
-                    ((TextView) getView().findViewById(R.id.tv_waiting_count)).setText("Number of Entrantwerwers: " + t.getResult());
+                    ((TextView) getView().findViewById(R.id.tv_waiting_count)).setText("Number of Entrants: " + t.getResult());
                 });
 
                 // Update UI

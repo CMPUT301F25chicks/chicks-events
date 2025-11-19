@@ -169,6 +169,7 @@ public class ChosenListFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.i(TAG, "IN HERE bef " + status);
+                        if (getContext() == null) return;
                         entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
                             entrantDataList.add(new Entrant(childSnap.getKey(), eventId));

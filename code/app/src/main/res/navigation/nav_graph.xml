@@ -296,28 +296,38 @@
         app:destination="@id/EventDetailOrgFragment" />
 
         <action
+            android:id="@+id/action_EventDetailOrgFragment_to_EntrantLocationMapFragment"
+            app:destination="@id/EntrantLocationMapFragment" />
+
+        <action
             android:id="@+id/action_EventDetailOrgFragment_to_WaitingListFragment"
             app:destination="@id/WaitingListFragment" />
         <action
             android:id="@+id/action_EventDetailOrgFragment_to_ChosenListFragment"
             app:destination="@id/ChosenListFragment" />
         <action
-            android:id="@+id/action_EventDetailOrgFragment_to_NotificationFragment"
-            app:destination="@id/NotificationFragment" />
+            android:id="@+id/action_EventDetailOrgFragment_to_CancelledListFragment"
+            app:destination="@id/CancelledListFragment" />
         <action
-            android:id="@+id/action_EventDetailOrgFragment_to_EventFragment"
-            app:destination="@id/EventFragment" />
-        <action
-            android:id="@+id/action_EventDetailOrgFragment_to_CreateEventFragment"
-            app:destination="@id/CreateEventFragment" />
-        <action
-            android:id="@+id/action_EventDetailOrgFragment_to_EntrantLocationMapFragment"
-            app:destination="@id/EntrantLocationMapFragment" />
+            android:id="@+id/action_EventDetailOrgFragment_to_FinalListFragment"
+            app:destination="@id/FinalListFragment" />
 
         <action
         android:id="@+id/action_EventDetailOrgFragment_to_QRCodeDisplayFragment"
         app:destination="@id/QRCodeDisplayFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/CancelledListFragment"
+        android:name="com.example.chicksevent.fragment.CancelledListFragment"
+        android:label="Cancelled List"
+        tools:layout="@layout/fragment_cancelled_list"></fragment>
+
+    <fragment
+        android:id="@+id/FinalListFragment"
+        android:name="com.example.chicksevent.fragment.FinalListFragment"
+        android:label="Final List"
+        tools:layout="@layout/fragment_final_list"></fragment>
 
     <fragment
         android:id="@+id/UpdateEventFragment"
