@@ -45,6 +45,7 @@ public class QRCodeScannerFragment extends Fragment {
     private ActivityResultLauncher<ScanOptions> scanLauncher;
     private ActivityResultLauncher<String> permissionLauncher;
     private FirebaseService eventService;
+    private int cameraAttempt = 0; // Track which camera to try
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class QRCodeScannerFragment extends Fragment {
         
         setupNavigationButtons(view);
         
-        // Manual start button
+        // Manual start button (still available for manual restart)
         Button startScanButton = view.findViewById(R.id.btn_start_scan);
         if (startScanButton != null) {
             startScanButton.setOnClickListener(v -> {
@@ -113,6 +114,13 @@ public class QRCodeScannerFragment extends Fragment {
                     requestCameraPermission();
                 }
             });
+        }
+        
+        // Auto-start scanning when fragment opens
+        if (hasCameraPermission()) {
+            startScanning();
+        } else {
+            requestCameraPermission();
         }
     }
 
@@ -132,8 +140,6 @@ public class QRCodeScannerFragment extends Fragment {
     private void requestCameraPermission() {
         permissionLauncher.launch(Manifest.permission.CAMERA);
     }
-
-    private int cameraAttempt = 0; // Track which camera to try
     
     /**
      * Starts the QR code scanner.
