@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.adapter.EntrantAdapter;
+import com.example.chicksevent.adapter.UserAdapter;
 import com.example.chicksevent.databinding.FragmentPoolingBinding;
 import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
@@ -36,9 +37,9 @@ import java.util.ArrayList;
  *
  * <p><b>Responsibilities:</b>
  * <ul>
- *   <li>Resolve the current event id from fragment arguments (key: {@code "eventId"}).</li>
+ *   <li>Resolve the current event id from fragment arguments (key: {@code "eventName"}).</li>
  *   <li>Run the lottery and display the updated entrant list.</li>
- *   <li>Bind a {@link ListView} via {@link EntrantAdapter} to render user ids.</li>
+ *   <li>Bind a {@link ListView} via {@link UserAdapter} to render user ids.</li>
  * </ul>
  * </p>
  *
@@ -90,29 +91,74 @@ public class PoolingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Bundle args = getArguments();
-        if (args != null) {
-            eventId = args.getString("eventId");
-            // Use it to populate UI
+        if (args != null) eventId = args.getString("eventId");
+
+        userView = view.findViewById(R.id.rv_selected_entrants);
+
+        Button poolingButton = view.findViewById(R.id.btn_pool);
+
+
+        if (!isAdded()) {
+            Log.e(TAG, "Fragment not attached — skipping adapter update");
+            return;
         }
 
-        
-        
-        
-        Button poolingButton = view.findViewById(R.id.btn_pool);
-        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
-        userView =  view.findViewById(R.id.rv_selected_entrants);
+        if (getContext() == null) {
+            Log.e(TAG, "Context is null — skipping adapter update");
+            return;
+        }
+
+        waitingListAdapter = new EntrantAdapter(requireContext(), entrantDataList);
         userView.setAdapter(waitingListAdapter);
 
-        poolingButton.setOnClickListener(v -> {
-//            NavHostFragment.findNavController(UpdateEventFragment.this).navigate(R.id.action_SecondFragment_to_CreateEventFragment);
-            Lottery l = new Lottery(eventId);
-            l.runLottery();
-            listEntrants(EntrantStatus.INVITED);
-        });
+        // Pool button click
+        poolingButton.setOnClickListener(v -> poolReplacementIfNeeded());
 
-
-//        eventName
+        // Initially list invited users
+        listEntrants(EntrantStatus.INVITED);
+        updateCounters();
     }
+
+    /**
+     * Pools replacement entrants if current chosen < target.
+     */
+    private void poolReplacementIfNeeded() {
+        int target = getTargetEntrants();
+        int current = getCurrentChosen();
+
+        int toPool = target - current;
+        if (toPool <= 0) return; // nothing to pool
+
+        Lottery lottery = new Lottery(eventId);
+        lottery.poolReplacement(toPool);
+
+        // Refresh list and counters after a small delay to allow Firebase update
+        userView.postDelayed(() -> {
+            listEntrants(EntrantStatus.INVITED);
+            updateCounters();
+        }, 500); // 500ms delay (adjust if needed)
+    }
+
+    /** Reads target entrants from tv_target_entrants (parses "Target Entrants: N"). */
+    private int getTargetEntrants() {
+        String text = binding.tvTargetEntrants.getText().toString();
+        String[] parts = text.split(":");
+        if (parts.length < 2) return 0;
+        try { return Integer.parseInt(parts[1].trim()); } catch (NumberFormatException e) { return 0; }
+    }
+
+    /** Reads current chosen from userDataList size or tv_current_chosen text. */
+    private int getCurrentChosen() {
+        return entrantDataList.size(); // or parse text if you want
+    }
+
+    /** Updates tv_current_chosen based on current userDataList and target. */
+    private void updateCounters() {
+        int target = getTargetEntrants();
+        int current = getCurrentChosen();
+        binding.tvCurrentChosen.setText("Current Chosen: " + current + " / " + target);
+    }
+
     /** Convenience wrapper to list entrants in the WAITING bucket. */
     public void listEntrants() {
         listEntrants(EntrantStatus.WAITING);
@@ -124,22 +170,28 @@ public class PoolingFragment extends Fragment {
      * @param status the {@link EntrantStatus} bucket to display
      */
     public void listEntrants(EntrantStatus status) {
+        Log.i(TAG, "Loading entrants for event=" + eventId + " status=" + status);
 
-        Log.i(TAG, "in here " + eventId + " " + status);
-        waitingListService.getReference().child(eventId).child(status.toString())
+        waitingListService.getReference()
+                .child(eventId)
+                .child(status.toString())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.i(TAG, "IN HERE bef " + status);
                         entrantDataList = new ArrayList<>();
-                        for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
-//                            Log.i(TAG, "child key: " + childSnap.getKey());
+
+                        if (dataSnapshot != null && dataSnapshot.exists()) {
+                            for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
+                                entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
+                            }
                         }
-                        if (getContext() == null) return;
+
+                        // Update adapter
                         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
-////
                         userView.setAdapter(waitingListAdapter);
+
+                        // Update the counter TextView
+                        updateCounters();
                     }
 
                     @Override
@@ -148,6 +200,8 @@ public class PoolingFragment extends Fragment {
                     }
                 });
     }
+
+
 
     /** Clears binding references when the view is destroyed. */
     @Override
