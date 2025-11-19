@@ -116,6 +116,9 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
 
 
         if (convertView == null) {
+//            if (getContext() == null) {
+//                return view;
+//            }
             view = LayoutInflater.from(getContext()).inflate(R.layout.item_hosted_event, parent, false);
             holder = new HostedEventAdapter.ViewHolder();
             holder.posterImageView = view.findViewById(R.id.img_event);

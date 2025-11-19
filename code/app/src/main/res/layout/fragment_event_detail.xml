@@ -56,18 +56,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageButton
-                    android:id="@+id/help_button"
-                    android:layout_width="60dp"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="264dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/sample_image"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
                 <TextView
                     android:id="@+id/tv_date"
                     android:layout_width="71dp"
@@ -229,57 +217,220 @@
                     android:textColor="@color/black"
                     android:layout_marginBottom="8dp" />
 
-                <ProgressBar
-                    android:id="@+id/progress_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:id="@+id/layout_waiting_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:background="@drawable/bg_notification_item"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/tv_waiting_status"
+                 <ProgressBar
+                        android:id="@+id/progress_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="Status: Joined Waiting List"
-                        android:textColor="@color/purpleText"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/tv_waiting_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Number of Entrants: LOADING..."
-                        android:textColor="@color/dateBox"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="8dp"/>
+                    <FrameLayout
+                        android:id="@+id/status_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <Button
-                        android:id="@+id/btn_leave_waiting_list"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#FF4444"
-                        android:text="Leave Waiting List"
-                        android:textColor="#FFFFFF" />
+                        <LinearLayout
+                            android:id="@+id/layout_waiting_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:background="@drawable/bg_notification_item"
+                            android:visibility="gone">
 
+                            <TextView
+                                android:id="@+id/tv_waiting_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:text="Status: Joined Waiting List"
+                                android:textColor="@color/purpleText"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_waiting_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Number of People: 40"
+                                android:textColor="@color/dateBox"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="8dp"/>
+
+                            <Button
+                                android:id="@+id/btn_leave_waiting_list"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#FF4444"
+                                android:text="Leave Waiting List"
+                                android:textColor="#FFFFFF" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_chosen_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:background="@drawable/bg_notification_item"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tv_chosen_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:text="Status: Chosen"
+                                android:textColor="@color/purpleText"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+
+                            <LinearLayout
+                                android:id="@+id/acc_decl_event"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="16dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <Button
+                                    android:id="@+id/btn_accept"
+                                    android:layout_width="266dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:backgroundTint="@color/purpleText"
+                                    android:text="Accept"
+                                    android:textColor="#000000" />
+
+                                <Button
+                                    android:id="@+id/btn_decline"
+                                    android:layout_width="266dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:backgroundTint="#FF4444"
+                                    android:text="Decline"
+                                    android:textColor="#FFFFFF" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <ImageButton
+                                            android:id="@+id/help_button"
+                                            android:layout_width="60dp"
+                                            android:layout_height="48dp"
+                                            android:layout_marginTop="264dp"
+                                            android:scaleType="centerCrop"
+                                            android:src="@drawable/sample_image"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintHorizontal_bias="1.0"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_not_chosen_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:background="@drawable/bg_notification_item"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tv_not_chosen_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:text="Status: Not Chosen"
+                                android:textColor="@color/purpleText"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_message"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sorry, you are not chosen to join this event. You can rejoin the waiting list for another chance to be chosen"
+                                android:textColor="@color/dateBox"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="8dp"/>
+
+                            <Button
+                                android:id="@+id/btn_rejoin_waiting_list"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="@color/purpleText"
+                                android:text="Rejoin Waiting List"
+                                android:textColor="@color/darkPurple" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_accepted_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:background="@drawable/bg_notification_item"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tv_accepted_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:text="Status: Accepted"
+                                android:textColor="@color/purpleText"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_accepted_message"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You are in this event"
+                                android:textColor="@color/dateBox"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="8dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_declined_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:background="@drawable/bg_notification_item"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tv_declined_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:text="Status: Declined"
+                                android:textColor="@color/purpleText"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_declined_message"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You are no longer in this event"
+                                android:textColor="@color/dateBox"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="8dp"/>
+                        </LinearLayout>
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-    <!-- Fixed bottom navigation -->
+        <!-- Fixed bottom navigation -->
     <LinearLayout
         android:id="@+id/bottom_buttons_layout"
         android:layout_width="0dp"
@@ -291,6 +442,363 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <Button
+            android:id="@+id/btn_notification"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_events"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_events"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_scan"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_addEvent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_addevents"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_profile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_profile"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<androidx.constraintlayout.widget.ConstraintLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="#000000"-->
+<!--    tools:context=".fragment.EventDetailFragment">-->
+
+<!--    &lt;!&ndash; Scrollable content &ndash;&gt;-->
+<!--    <androidx.core.widget.NestedScrollView-->
+<!--        android:id="@+id/scroll_content"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:fillViewport="true"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="16dp">-->
+
+<!--            &lt;!&ndash; Header &ndash;&gt;-->
+<!--            <TextView-->
+<!--                android:id="@+id/header_title"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:fontFamily="@font/michroma"-->
+<!--                android:text="Event Detail"-->
+<!--                android:textColor="@color/purpleText"-->
+<!--                android:textSize="25sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginBottom="16dp" />-->
+
+<!--            &lt;!&ndash; Event Box &ndash;&gt;-->
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:id="@+id/event_box"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@drawable/bg_notification_item"-->
+<!--                android:padding="8dp">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/img_event"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="168dp"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    android:src="@drawable/sample_image"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--                <ImageButton-->
+<!--                    android:id="@+id/help_button"-->
+<!--                    android:layout_width="60dp"-->
+<!--                    android:layout_height="48dp"-->
+<!--                    android:layout_marginTop="264dp"-->
+<!--                    android:scaleType="centerCrop"-->
+<!--                    android:src="@drawable/sample_image"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="1.0"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_date"-->
+<!--                    android:layout_width="71dp"-->
+<!--                    android:layout_height="52dp"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:background="@drawable/bg_date_box"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="OCT\n30"-->
+<!--                    android:textColor="@color/darkPurple"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/img_event" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_event_name"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:text="Halloween Party"-->
+<!--                    android:textColor="@color/purpleText"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintStart_toEndOf="@id/tv_date"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/img_event" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_time"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="6:00 PM - 9:00 PM"-->
+<!--                    android:textColor="@color/purpleText"-->
+<!--                    android:textSize="14sp"-->
+<!--                    app:layout_constraintStart_toEndOf="@id/tv_date"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tv_event_name" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/textView"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    android:text="Registration Open:"-->
+<!--                    android:textColor="@color/purpleText"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tv_time" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_registration_open"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="Oct 2nd"-->
+<!--                    android:textColor="@color/dateBox"-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/textView" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/textView7"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="Registration Deadline:"-->
+<!--                    android:textColor="@color/purpleText"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tv_registration_open" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_registration_deadline"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="Oct 15th"-->
+<!--                    android:textColor="@color/dateBox"-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/textView7" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/textView8"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="Entrants (Current / Limit):"-->
+<!--                    android:textColor="@color/purpleText"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tv_registration_deadline" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_entrants_count"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="0 / 3"-->
+<!--                    android:textColor="@color/dateBox"-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/textView8" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/textView9"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="Description:"-->
+<!--                    android:textColor="@color/purpleText"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tv_entrants_count" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_event_details"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:layout_marginEnd="16dp"-->
+<!--                    android:lineSpacingExtra="4dp"-->
+<!--                    android:text="Loading..."-->
+<!--                    android:textColor="@color/dateBox"-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/textView9"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent" />-->
+
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--            &lt;!&ndash; Action Buttons &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/action_buttons_container"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:paddingTop="16dp">-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/btn_qr_code"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="View QR Code"-->
+<!--                    android:backgroundTint="@color/purpleText"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:layout_marginBottom="8dp" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/btn_waiting_list"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Join Waiting List"-->
+<!--                    android:backgroundTint="@color/purpleText"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:layout_marginBottom="8dp" />-->
+
+<!--                <ProgressBar-->
+<!--                    android:id="@+id/progress_location"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:visibility="gone" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/layout_waiting_status"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="12dp"-->
+<!--                    android:background="@drawable/bg_notification_item"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:visibility="gone">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_waiting_status"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginBottom="4dp"-->
+<!--                        android:text="Status: Joined Waiting List"-->
+<!--                        android:textColor="@color/purpleText"-->
+<!--                        android:textSize="16sp"-->
+<!--                        android:textStyle="bold" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_waiting_count"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Number of Entrants: LOADING..."-->
+<!--                        android:textColor="@color/dateBox"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:layout_marginBottom="8dp"/>-->
+
+<!--                    <Button-->
+<!--                        android:id="@+id/btn_leave_waiting_list"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:backgroundTint="#FF4444"-->
+<!--                        android:text="Leave Waiting List"-->
+<!--                        android:textColor="#FFFFFF" />-->
+
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+<!--        </LinearLayout>-->
+<!--    </androidx.core.widget.NestedScrollView>-->
+
+<!--    &lt;!&ndash; Fixed bottom navigation &ndash;&gt;-->
+<!--    <LinearLayout-->
+<!--        android:id="@+id/bottom_buttons_layout"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="65dp"-->
+<!--        android:gravity="center"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:weightSum="5"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent">-->
+
+<!--    </LinearLayout>-->
+
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->

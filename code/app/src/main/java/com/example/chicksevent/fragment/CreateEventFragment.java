@@ -192,9 +192,13 @@ public class CreateEventFragment extends Fragment {
                 geolocationRequired
         );
 
+        toast("Event created 🎉");
+
         // Push to Firebase
         String id = e.createEvent();
         Bitmap bitmap = null;
+
+        if (imageUri == null) return;
 //
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -214,9 +218,9 @@ public class CreateEventFragment extends Fragment {
         imageService.addEntry(urlData, id);
 
 
-        toast("Event created 🎉");
+
         // Optionally navigate back:
-        requireActivity().onBackPressed();
+//        requireActivity().onBackPressed();
     }
 
     private void openImageChooser() {

@@ -136,7 +136,7 @@ public class PoolingFragment extends Fragment {
                             entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
 //                            Log.i(TAG, "child key: " + childSnap.getKey());
                         }
-
+                        if (getContext() == null) return;
                         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
 ////
                         userView.setAdapter(waitingListAdapter);

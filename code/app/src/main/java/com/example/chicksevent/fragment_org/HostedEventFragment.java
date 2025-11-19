@@ -150,7 +150,8 @@ public class HostedEventFragment extends Fragment {
 
                     Log.d(TAG, "---");
                 }
-                HostedEventAdapter eventAdapter = new HostedEventAdapter(getContext(), eventDataList, (item, type) -> {
+                    if (getContext() == null) return;
+                    HostedEventAdapter eventAdapter = new HostedEventAdapter(getContext(), eventDataList, (item, type) -> {
                     NavController navController = NavHostFragment.findNavController(HostedEventFragment.this);
 
                     Bundle bundle = new Bundle();
