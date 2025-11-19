@@ -123,7 +123,7 @@ public class EntrantLocationMapFragment extends Fragment {
         mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setMultiTouchControls(true);
         mapController = mapView.getController();
-        mapController.setZoom(10.0);
+        mapController.setZoom(8.0); // Start more zoomed out to show broader area
 
         // Setup filter radio buttons
         RadioGroup statusFilter = view.findViewById(R.id.radio_status_filter);
@@ -347,10 +347,47 @@ public class EntrantLocationMapFragment extends Fragment {
             entrant.marker = marker;
         }
 
-        // Auto-fit map to show all markers
+        // Auto-fit map to show all markers with broader view
         if (!points.isEmpty()) {
+            // Calculate bounding box
             BoundingBox boundingBox = BoundingBox.fromGeoPoints(points);
-            mapView.zoomToBoundingBox(boundingBox, true, 100);
+            
+            // Expand the bounding box by a factor to show more area
+            double latCenter = (boundingBox.getLatNorth() + boundingBox.getLatSouth()) / 2.0;
+            double lonCenter = (boundingBox.getLonEast() + boundingBox.getLonWest()) / 2.0;
+            double latSpan = boundingBox.getLatNorth() - boundingBox.getLatSouth();
+            double lonSpan = boundingBox.getLonEast() - boundingBox.getLonWest();
+            
+            // Determine expansion factor based on how close together entrants are
+            // If entrants are close together (small span), expand more (4x)
+            // If entrants are spread out (large span), expand less (2x)
+            double maxSpan = Math.max(latSpan, lonSpan);
+            double expansionFactor;
+            
+            if (maxSpan < 0.01) {
+                // Very close together (< ~1km), expand by 4x
+                expansionFactor = 4.0;
+            } else if (maxSpan < 0.05) {
+                // Close together (< ~5km), expand by 3x
+                expansionFactor = 3.0;
+            } else {
+                // Spread out (>= ~5km), expand by 2x
+                expansionFactor = 2.0;
+            }
+            
+            // Expand the bounding box
+            double expandedLatSpan = Math.max(latSpan * expansionFactor, 0.1); // Minimum 0.1 degrees
+            double expandedLonSpan = Math.max(lonSpan * expansionFactor, 0.1); // Minimum 0.1 degrees
+            
+            BoundingBox expandedBox = new BoundingBox(
+                latCenter + expandedLatSpan / 2.0,
+                lonCenter + expandedLonSpan / 2.0,
+                latCenter - expandedLatSpan / 2.0,
+                lonCenter - expandedLonSpan / 2.0
+            );
+            
+            // Zoom to expanded bounding box with padding
+            mapView.zoomToBoundingBox(expandedBox, true, 200);
         }
     }
 
