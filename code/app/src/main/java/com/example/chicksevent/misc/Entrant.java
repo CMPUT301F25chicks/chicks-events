@@ -65,9 +65,8 @@ public class Entrant extends User {
      *
      * @param id       the entrant's unique identifier (user ID)
      * @param eventId  the ID of the event this entrant is associated with
-     * @param status   the current participation status of the entrant
      */
-    public Entrant(String id, String eventId, EntrantStatus status) {
+    public Entrant(String id, String eventId) {
         super(id);
         this.entrantId = id;
         this.eventId = eventId;

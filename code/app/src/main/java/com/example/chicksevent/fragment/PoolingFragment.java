@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
+import com.example.chicksevent.adapter.EntrantAdapter;
 import com.example.chicksevent.adapter.UserAdapter;
 import com.example.chicksevent.databinding.FragmentPoolingBinding;
 import com.example.chicksevent.enums.EntrantStatus;
@@ -55,10 +56,10 @@ public class PoolingFragment extends Fragment {
     private ListView userView;
 
     /** Adapter bridging entrant user ids to the list. */
-    private UserAdapter waitingListAdapter;
+    private EntrantAdapter waitingListAdapter;
 
     /** Backing list of users in the chosen status bucket. */
-    private ArrayList<Entrant> userDataList = new ArrayList<>();
+    private ArrayList<Entrant> entrantDataList = new ArrayList<>();
 
     /** Firebase service for reading/writing waiting-list buckets. */
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
@@ -101,7 +102,7 @@ public class PoolingFragment extends Fragment {
         Button poolingButton = view.findViewById(R.id.btn_pool);
 
         userView = view.findViewById(R.id.rv_selected_entrants);
-        waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
+        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView.setAdapter(waitingListAdapter);
 
         // Navigation
@@ -150,7 +151,7 @@ public class PoolingFragment extends Fragment {
 
     /** Reads current chosen from userDataList size or tv_current_chosen text. */
     private int getCurrentChosen() {
-        return userDataList.size(); // or parse text if you want
+        return entrantDataList.size(); // or parse text if you want
     }
 
     /** Updates tv_current_chosen based on current userDataList and target. */
@@ -179,16 +180,16 @@ public class PoolingFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        userDataList = new ArrayList<>();
+                        entrantDataList = new ArrayList<>();
 
                         if (dataSnapshot != null && dataSnapshot.exists()) {
                             for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                                userDataList.add(new Entrant(childSnap.getKey(), eventId, status));
+                                entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
                             }
                         }
 
                         // Update adapter
-                        waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
+                        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
                         userView.setAdapter(waitingListAdapter);
 
                         // Update the counter TextView

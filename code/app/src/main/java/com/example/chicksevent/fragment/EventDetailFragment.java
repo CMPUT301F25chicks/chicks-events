@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
+import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.google.android.gms.tasks.Task;
