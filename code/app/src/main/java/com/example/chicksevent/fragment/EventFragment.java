@@ -151,6 +151,7 @@ public class EventFragment extends Fragment {
         if (filterApplied) {
             listFilteredEvents();
         } else {
+            Log.i("im printing events", "hi");
             listEvents();
         }
 
@@ -276,6 +277,8 @@ public class EventFragment extends Fragment {
 
                     Log.d(TAG, "---");
                 }
+
+                Log.i("im printing events", "" + eventDataList.size());
                 EventAdapter eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
 

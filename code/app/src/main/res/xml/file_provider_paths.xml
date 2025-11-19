@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cache directory for sharing QR codes -->
+    <cache-path name="qr_codes_share" path="qr_codes_share/" />
+    <!-- Files directory for QR codes -->
+    <files-path name="qr_codes" path="qr_codes/" />
+    <!-- External cache directory (if needed) -->
+    <external-cache-path name="external_qr_codes" path="qr_codes/" />
+</paths>

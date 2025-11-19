@@ -78,6 +78,8 @@
     </LinearLayout>
 
     <!-- Scrollable ListView -->
+
+    <!-- Bottom navigation bar -->
     <ListView
         android:id="@+id/recycler_notifications"
         android:layout_width="0dp"
@@ -96,12 +98,12 @@
 
     <LinearLayout
         android:id="@+id/bottom_buttons_layout"
-        android:layout_width="match_parent"
+        android:layout_width="375dp"
         android:layout_height="58dp"
-        android:layout_gravity="bottom"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

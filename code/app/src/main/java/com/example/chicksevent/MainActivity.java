@@ -61,10 +61,15 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+        Button scanButton = findViewById(R.id.btn_scan);
         Button eventButton = findViewById(R.id.btn_events);
         Button createEventButton = findViewById(R.id.btn_addEvent);
         Button profileButton = findViewById(R.id.btn_profile);
         Button notificationButton = findViewById(R.id.btn_notification);
+
+        scanButton.setOnClickListener(v -> {
+            navController.navigate(R.id.QRCodeScannerFragment);
+        });
 
         notificationButton.setOnClickListener(v -> {
             Log.i("listing events", "eee");

@@ -134,6 +134,38 @@ public class EventDetailOrgFragment extends Fragment {
             navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
         });
 
+        Button viewQRCodeButton = view.findViewById(R.id.btn_qr_code);
+
+        viewQRCodeButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
+
+            // Get eventId from Firebase (eventName is the Firebase key, but we need the id field)
+            String eventIdKey = args.getString("eventId");
+            eventService.getReference().child(eventIdKey).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    DataSnapshot snapshot = task.getResult();
+                    Object idObj = snapshot.child("id").getValue();
+                    Object nameObj = snapshot.child("name").getValue();
+
+                    String eventId = idObj != null ? idObj.toString() : eventIdKey;
+                    String eventNameValue = nameObj != null ? nameObj.toString() : eventIdKey;
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventId", eventId);
+                    bundle.putString("eventName", eventNameValue);
+
+                    navController.navigate(R.id.action_EventDetailOrgFragment_to_QRCodeDisplayFragment, bundle);
+                } else {
+                    // Fallback: use eventName as eventId
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventId", eventIdKey);
+                    bundle.putString("eventName", eventIdKey);
+                    navController.navigate(R.id.action_EventDetailOrgFragment_to_QRCodeDisplayFragment, bundle);
+                }
+            });
+        });
+
+
         viewMapButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 

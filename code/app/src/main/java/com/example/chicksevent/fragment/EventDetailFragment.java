@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
@@ -161,6 +162,45 @@ public class EventDetailFragment extends Fragment {
 
         if (locationProgressBar != null) {
             locationProgressBar.setVisibility(View.GONE);
+        }
+
+        // QR scanner button
+        Button scanButton = view.findViewById(R.id.btn_scan);
+        if (scanButton != null) {
+            scanButton.setOnClickListener(v -> {
+                NavHostFragment.findNavController(EventDetailFragment.this)
+                        .navigate(R.id.action_EventDetailFragment_to_QRCodeScannerFragment);
+            });
+        }
+
+        // QR code button (for viewing QR code if user is organizer)
+        Button qrCodeButton = view.findViewById(R.id.btn_qr_code);
+        if (qrCodeButton != null) {
+//            Log.i("checking event");
+            qrCodeButton.setOnClickListener(v -> {
+                // Get eventId from Firebase
+                eventService.getReference().get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DataSnapshot ds : task.getResult().getChildren()) {
+                            if (ds.getKey().equals(eventNameString)) {
+                                Object idObj = ds.child("id").getValue();
+                                Object nameObj = ds.child("name").getValue();
+
+                                String eventId = idObj != null ? idObj.toString() : eventNameString;
+                                String eventNameValue = nameObj != null ? nameObj.toString() : eventNameString;
+
+                                Bundle bundle = new Bundle();
+                                bundle.putString("eventId", eventId);
+                                bundle.putString("eventName", eventNameValue);
+
+                                NavHostFragment.findNavController(EventDetailFragment.this)
+                                        .navigate(R.id.action_EventDetailFragment_to_QRCodeDisplayFragment, bundle);
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
         }
 
         getEventDetail().addOnCompleteListener(t -> {
