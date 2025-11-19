@@ -143,7 +143,7 @@ public class HostedEventFragment extends Fragment {
                     Log.d(TAG, "Value: " + value);
                     if (value.get("organizer").equals(androidId)) {
                         Log.d("sigma", "yes success " + key);
-                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                         eventDataList.add(e);
                     }
 

@@ -158,6 +158,14 @@
     </fragment>
 
     <fragment
+        android:id="@+id/EntrantLocationMapFragment"
+        android:name="com.example.chicksevent.fragment_org.EntrantLocationMapFragment"
+        android:label="Entrant Locations Map"
+        tools:layout="@layout/fragment_entrant_location_map">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/ProfileFragment"
         android:name="com.example.chicksevent.fragment.ProfileFragment"
         android:label="@string/profile_fragment_label"
@@ -246,6 +254,9 @@
         <action
             android:id="@+id/action_EventDetailOrgFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_EntrantLocationMapFragment"
+            app:destination="@id/EntrantLocationMapFragment" />
     </fragment>
 
     <fragment

@@ -186,7 +186,8 @@ public class Admin extends User {
                                 "f", // placeholder
                                 3,   // placeholder capacity
                                 "v", // placeholder
-                                "sa" // placeholder
+                                "sa", // placeholder
+                                false // geolocationRequired
                         ));
                     }
                 }

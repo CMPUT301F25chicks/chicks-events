@@ -1,6 +1,5 @@
 package com.example.chicksevent.fragment;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -172,11 +171,12 @@ public class EventFragment extends Fragment {
                         String uid = entry2.getKey();
                         if (androidId.compareTo(uid) == 0) {
                             arr.add(ds.getKey());
-                            Log.i(TAG, "found event " + ds.getKey());
+                            Log.i("RTD10", "found event " + ds.getKey());
                         }
                     }
                 }
             }
+
 
             ArrayList<Event> newEventDataList = new ArrayList<>();
             for (Event e : eventDataList) {
@@ -192,10 +192,8 @@ public class EventFragment extends Fragment {
 
             }
 
-            eventDataList = newEventDataList;
-            eventAdapter.notifyDataSetChanged();
-//            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
-//            eventView.setAdapter(eventAdapter);
+            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
+            eventView.setAdapter(eventAdapter);
 
             return null;
         });
@@ -223,7 +221,7 @@ public class EventFragment extends Fragment {
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
                     if (eventFilterList.contains(key)) {
-                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                         eventDataList.add(e);
                     }
 
@@ -273,7 +271,7 @@ public class EventFragment extends Fragment {
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                     eventDataList.add(e);
 
                     Log.d(TAG, "---");

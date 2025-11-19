@@ -163,6 +163,8 @@ public class CreateEventFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
+        boolean geolocationRequired = binding.switchGeo.isChecked();
+
         // Your Event model also has eventStartDate / eventEndDate.
         // If you don’t have those fields on this screen yet, pass nulls (Firebase will omit).
         String eventStartDate = null; // TODO: add UI if needed
@@ -186,7 +188,8 @@ public class CreateEventFragment extends Fragment {
                 regEnd,
                 entrantLimit,
                 poster,
-                tag
+                tag,
+                geolocationRequired
         );
 
         // Push to Firebase
