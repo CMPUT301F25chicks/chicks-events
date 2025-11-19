@@ -1,5 +1,6 @@
 package com.example.chicksevent.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -81,6 +82,7 @@ public class EventFragment extends Fragment {
     /** The Android device ID (used to correlate joined events). */
     private String androidId;
 
+
     /**
      * Inflates the fragment layout using ViewBinding.
      */
@@ -119,8 +121,8 @@ public class EventFragment extends Fragment {
 
         eventView =  view.findViewById(R.id.recycler_notifications);;
 //
-        eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
-        eventView.setAdapter(eventAdapter);
+//        eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
+//        eventView.setAdapter(eventAdapter);
 
 
         Button joinedEvents = view.findViewById(R.id.btn_joined_events);
@@ -189,8 +191,11 @@ public class EventFragment extends Fragment {
                 }
 
             }
-            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
-            eventView.setAdapter(eventAdapter);
+
+            eventDataList = newEventDataList;
+            eventAdapter.notifyDataSetChanged();
+//            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
+//            eventView.setAdapter(eventAdapter);
 
             return null;
         });

@@ -54,6 +54,8 @@ import java.util.HashMap;
 public class HostedEventAdapter extends ArrayAdapter<Event> {
     /** Listener interface for responding to per-item button clicks. */
     OnItemButtonClickListener listener;
+    private final HashMap<String, Bitmap> imageCache = new HashMap<>();
+
 
 
     FirebaseService imageService = new FirebaseService("Image");
@@ -148,19 +150,34 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
         holder.eventId = event.getId();
 //        Log.i("what event", event.getId() + " | " + holder.eventId);
 
-        imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
+        if (imageCache.containsKey(event.getId())) {
+            holder.posterImageView.setImageBitmap(imageCache.get(event.getId()));
 
-            Log.i("what event", event.getId() + " | " + holder.eventId);
-//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
-            if (!event.getId().equals(holder.eventId) || task.getValue() == null) return;
+        } else {
 
-            String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
-            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            holder.posterImageView.setImageBitmap(bitmap);
-        }).addOnFailureListener(e -> {Log.i("errorerror", e.getMessage());});
 
-//
+            imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
+
+                Log.i("what event", event.getId() + " | " + holder.eventId);
+                //            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+                if (!event.getId().equals(holder.eventId)) return;
+
+                if (task.getValue() == null) {
+                    // clearn image if does not exist
+                    holder.posterImageView.setImageResource(R.drawable.sample_image);
+                    return;
+                }
+
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.posterImageView.setImageBitmap(bitmap);
+                imageCache.put(event.getId(), bitmap);
+            }).addOnFailureListener(e -> {
+                Log.i("errorerror", e.getMessage());
+                holder.posterImageView.setImageResource(R.drawable.sample_image);
+            });
+        }
 
 
         return view;

@@ -40,6 +40,7 @@ import java.util.ArrayList;
  */
 public class EventAdminFragment extends Fragment {
 
+
     /**
      * RecyclerView that displays the list of events.
      * Uses a {@link LinearLayoutManager} and {@link EventAdminAdapter}.

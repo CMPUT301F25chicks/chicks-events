@@ -29,6 +29,8 @@ public class EventAdapter extends ArrayAdapter<Event> {
     FirebaseService imageService = new FirebaseService("Image");
 
     HostedEventAdapter.ViewHolder holder;
+    private final HashMap<String, Bitmap> imageCache = new HashMap<>();
+
 
     /**
      * Interface defining a callback when a button inside a list item is clicked.
@@ -99,15 +101,22 @@ public class EventAdapter extends ArrayAdapter<Event> {
         holder.posterImageView.setImageResource(R.drawable.sample_image);
         holder.eventId = event.getId();
 
-        imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
-//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
-            if (!event.getId().equals(holder.eventId) || task.getValue() == null) return;
+        if (imageCache.containsKey(event.getId())) {
+            holder.posterImageView.setImageBitmap(imageCache.get(event.getId()));
 
-            String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
-            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            holder.posterImageView.setImageBitmap(bitmap);
-        });
+        } else {
+            imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
+//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+                if (!event.getId().equals(holder.eventId) || task.getValue() == null) return;
+
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.posterImageView.setImageBitmap(bitmap);
+                imageCache.put(event.getId(), bitmap);
+            });
+        }
+
 
         event_name.setText(event.getName());
         tv_time.setText(event.getTag());
