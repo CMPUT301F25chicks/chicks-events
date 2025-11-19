@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -180,8 +181,14 @@ public class NotificationFragment extends Fragment {
             });
         }
 
-        // QR scanner button - removed for now, will be reimplemented
-        // scanButton click handler removed
+        // QR scanner button
+        Button scanButton = view.findViewById(R.id.btn_scan);
+        if (scanButton != null) {
+            scanButton.setOnClickListener(v -> {
+                NavHostFragment.findNavController(NotificationFragment.this)
+                        .navigate(R.id.action_NotificationFragment_to_QRCodeScannerFragment);
+            });
+        }
     }
 
     /**

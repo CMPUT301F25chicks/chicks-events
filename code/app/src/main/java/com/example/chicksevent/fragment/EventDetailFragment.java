@@ -165,7 +165,14 @@ public class EventDetailFragment extends Fragment {
                     .navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
         });
 
-        // QR scanner button - removed for now, will be reimplemented
+        // QR scanner button
+        Button scanButton = view.findViewById(R.id.btn_scan);
+        if (scanButton != null) {
+            scanButton.setOnClickListener(v -> {
+                NavHostFragment.findNavController(EventDetailFragment.this)
+                        .navigate(R.id.action_EventDetailFragment_to_QRCodeScannerFragment);
+            });
+        }
 
         // QR code button (for viewing QR code if user is organizer)
         Button qrCodeButton = view.findViewById(R.id.btn_qr_code);
