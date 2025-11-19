@@ -1,5 +1,11 @@
 package com.example.chicksevent.fragment;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -13,6 +19,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -70,6 +78,10 @@ public class EventDetailFragment extends Fragment {
     private TextView eventDetails;
     private TextView eventNameReal;
     private Integer waitingListCount;
+    private boolean geolocationRequired = false;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     /**
      * Default constructor required for Fragment instantiation.
@@ -162,20 +174,23 @@ public class EventDetailFragment extends Fragment {
         joinButton.setOnClickListener(v -> {
             userExists().addOnSuccessListener(boole -> {
                 if (boole) {
-                    Entrant e = new Entrant(userId, args.getString("eventName"));
-                    e.joinWaitingList();
-                    Toast.makeText(getContext(),
-                            "Joined waiting list :)",
-                            Toast.LENGTH_SHORT).show();
-                    waitingStatus.setVisibility(View.VISIBLE);
-
+                    // Check if geolocation is required
+                    if (geolocationRequired) {
+                        requestLocationAndJoin();
+                    } else {
+                        // No geolocation required, join normally
+                        Entrant e = new Entrant(userId, args.getString("eventName"));
+                        e.joinWaitingList();
+                        Toast.makeText(getContext(),
+                                "Joined waiting list :)",
+                                Toast.LENGTH_SHORT).show();
+                        waitingStatus.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     Toast.makeText(getContext(),
                             "You need to create profile to join waiting list",
                             Toast.LENGTH_SHORT).show();
                 }
-
-
             });
         });
 
@@ -216,10 +231,18 @@ public class EventDetailFragment extends Fragment {
 
                 Log.i("browaiting", ds.getKey() + " : " + eventNameString + " ");
                 if (ds.getKey().equals(eventNameString)) {
-                    HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
-                    eventNameReal.setText(hash.get("name"));
-                    eventDetails.setText(hash.get("eventDetails"));
-                    eventId = hash.get("id");
+                    HashMap<String, Object> hash = (HashMap<String, Object>) ds.getValue();
+                    eventNameReal.setText((String) hash.get("name"));
+                    eventDetails.setText((String) hash.get("eventDetails"));
+                    eventId = (String) hash.get("id");
+                    
+                    // Check if geolocation is required
+                    Object geoRequired = hash.get("geolocationRequired");
+                    if (geoRequired instanceof Boolean) {
+                        geolocationRequired = (Boolean) geoRequired;
+                    } else {
+                        geolocationRequired = false; // Default to false if not set
+                    }
 
                     getWaitingCount();
 
@@ -279,11 +302,125 @@ public class EventDetailFragment extends Fragment {
     }
 
     /**
-     * Cleans up the View Binding reference to prevent memory leaks.
+     * Requests location permission and gets location, then joins the waiting list.
+     * If permission is denied or location cannot be obtained, joining is blocked.
+     */
+    private void requestLocationAndJoin() {
+        // Check if permission is already granted
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Permission already granted, get location
+            getLocationAndJoin();
+        } else {
+            // Request permission
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    /**
+     * Handles the result of the location permission request.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, get location
+                getLocationAndJoin();
+            } else {
+                // Permission denied, block joining
+                Toast.makeText(getContext(),
+                        "Location permission is required to join this event",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * Gets the current location and joins the waiting list with location data.
+     * Requests a fresh location update instead of using cached location.
+     */
+    private void getLocationAndJoin() {
+        locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+        
+        // Check if location services are enabled
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
+            !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            Toast.makeText(getContext(),
+                    "Location services are disabled. Please enable location services to join this event",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        // Request fresh location update
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                // Got fresh location, join with it
+                Bundle args = getArguments();
+                Entrant e = new Entrant(userId, args != null ? args.getString("eventName") : eventId);
+                e.joinWaitingList(location.getLatitude(), location.getLongitude());
+                Toast.makeText(getContext(),
+                        "Joined waiting list with location :)",
+                        Toast.LENGTH_SHORT).show();
+                
+                // Update UI
+                LinearLayout waitingStatus = getView().findViewById(R.id.layout_waiting_status);
+                if (waitingStatus != null) {
+                    waitingStatus.setVisibility(View.VISIBLE);
+                }
+                
+                // Remove location listener to stop updates
+                if (locationManager != null && locationListener != null) {
+                    locationManager.removeUpdates(locationListener);
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {}
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {}
+        };
+
+        // Try GPS first (more accurate)
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        } 
+        // Fallback to network if GPS not available
+        else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        } else {
+            Toast.makeText(getContext(),
+                    "Could not obtain location. Please enable location services and try again",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Cleans up the View Binding reference and location listener to prevent memory leaks.
      */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Remove location listener if still active
+        if (locationManager != null && locationListener != null) {
+            try {
+                locationManager.removeUpdates(locationListener);
+            } catch (SecurityException e) {
+                // Permission might have been revoked
+            }
+        }
         binding = null;
     }
 }

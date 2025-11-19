@@ -79,7 +79,17 @@ public class Entrant extends User {
      * Adds this entrant to the waiting list with default status {@link EntrantStatus#WAITING}.
      */
     public void joinWaitingList() {
-        joinWaitingList(EntrantStatus.WAITING);
+        joinWaitingList(EntrantStatus.WAITING, null, null);
+    }
+
+    /**
+     * Adds this entrant to the waiting list with default status {@link EntrantStatus#WAITING} and location.
+     *
+     * @param latitude the latitude of the entrant's location when joining (nullable).
+     * @param longitude the longitude of the entrant's location when joining (nullable).
+     */
+    public void joinWaitingList(Double latitude, Double longitude) {
+        joinWaitingList(EntrantStatus.WAITING, latitude, longitude);
     }
 
     /**
@@ -95,13 +105,30 @@ public class Entrant extends User {
      * @param status the {@link EntrantStatus} to register under (e.g., WAITING, INVITED).
      */
     public void joinWaitingList(EntrantStatus status) {
+        joinWaitingList(status, null, null);
+    }
+
+    /**
+     * Adds this entrant to a waiting list node in Firebase under a specific status with optional location.
+     *
+     * @param status the {@link EntrantStatus} to register under (e.g., WAITING, INVITED).
+     * @param latitude the latitude of the entrant's location when joining (nullable).
+     * @param longitude the longitude of the entrant's location when joining (nullable).
+     */
+    public void joinWaitingList(EntrantStatus status, Double latitude, Double longitude) {
         Log.i("RTD8", "hi wtf is " + eventId);
 
         String statusString = status.toString();
         this.status = status;
 
         HashMap<String, Object> data = new HashMap<>();
-        data.put(" ", "");
+        data.put(" ", ""); // Keep existing placeholder for backward compatibility
+        
+        // Add location data if provided
+        if (latitude != null && longitude != null) {
+            data.put("latitude", latitude);
+            data.put("longitude", longitude);
+        }
 
         waitingListService.updateSubCollectionEntry(eventId, status.toString(), entrantId, data);
     }
@@ -123,13 +150,14 @@ public class Entrant extends User {
     /**
      * Switches this entrant's waiting list status by first removing them from their current
      * {@link EntrantStatus} node and re-adding them under a new one.
+     * Note: Location data is not preserved when swapping status.
      *
      * @param newStatus the new status to apply (e.g., from WAITING to INVITED).
      */
     public void swapStatus(EntrantStatus newStatus) {
         Log.i("RTD8", "output");
         leaveWaitingList(status);
-        joinWaitingList(newStatus);
+        joinWaitingList(newStatus, null, null);
     }
 
     /**

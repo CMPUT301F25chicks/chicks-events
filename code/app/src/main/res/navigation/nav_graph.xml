@@ -236,6 +236,9 @@
         <action
             android:id="@+id/action_EventDetailOrgFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_EntrantLocationMapFragment"
+            app:destination="@id/EntrantLocationMapFragment" />
     </fragment>
 
     <fragment
@@ -319,6 +322,27 @@
         <action
             android:id="@+id/action_PoolingFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/EntrantLocationMapFragment"
+        android:name="com.example.chicksevent.fragment_org.EntrantLocationMapFragment"
+        android:label="Entrant Locations Map"
+        tools:layout="@layout/fragment_entrant_location_map">
+
+        <action
+            android:id="@+id/action_EntrantLocationMapFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+        <action
+            android:id="@+id/action_EntrantLocationMapFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
+        <action
+            android:id="@+id/action_EntrantLocationMapFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_EntrantLocationMapFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
 
     </fragment>
 

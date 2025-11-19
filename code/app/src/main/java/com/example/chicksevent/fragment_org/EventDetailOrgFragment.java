@@ -92,6 +92,7 @@ public class EventDetailOrgFragment extends Fragment {
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
         Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
+        Button viewMapButton = view.findViewById(R.id.btn_map);
         TextView eventDetails = view.findViewById(R.id.tv_event_details);
         TextView eventNameReal = view.findViewById(R.id.tv_time);
 
@@ -124,6 +125,16 @@ public class EventDetailOrgFragment extends Fragment {
             bundle.putString("eventName", args.getString("eventName"));
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
+        });
+
+        viewMapButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("eventName", args.getString("eventName"));
+            bundle.putString("eventId", args.getString("eventName")); // Using eventName as eventId
+
+            navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
         });
 
         notificationButton.setOnClickListener(v -> {

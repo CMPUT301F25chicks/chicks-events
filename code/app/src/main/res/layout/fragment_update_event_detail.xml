@@ -236,9 +236,41 @@
                     android:textColor="@color/dateBox"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    app:layout_constraintTop_toBottomOf="@+id/switch_geo_layout"
                     app:layout_constraintVertical_bias="0.0"
                     tools:layout_editor_absoluteX="33dp" />
+
+                <!-- Geolocation Requirement Toggle -->
+                <LinearLayout
+                    android:id="@+id/switch_geo_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    tools:layout_editor_absoluteX="33dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Require Geolocation for Entrants"
+                        android:textColor="@color/purpleText"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_geo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:showText="false"
+                        android:switchMinWidth="55dp"
+                        android:thumbTint="@color/purpleText"
+                        android:trackTint="@color/dateBox" />
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

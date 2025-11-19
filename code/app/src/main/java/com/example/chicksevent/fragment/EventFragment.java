@@ -234,7 +234,7 @@ public class EventFragment extends Fragment {
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
                     if (eventFilterList.contains(key)) {
-                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                         eventDataList.add(e);
                     }
 
@@ -284,7 +284,7 @@ public class EventFragment extends Fragment {
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                     eventDataList.add(e);
 
                     Log.d(TAG, "---");

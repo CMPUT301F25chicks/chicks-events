@@ -190,7 +190,8 @@ public class NotificationFragment extends Fragment {
                 "2025-12-30",                       // registrationEndDate
                 30,                                 // entrantLimit
                 null,                               // poster
-                "sports kids swimming"              // tag
+                "sports kids swimming",             // tag
+                false                               // geolocationRequired
         );
 
         event.createEvent();
