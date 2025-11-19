@@ -74,6 +74,13 @@ dependencies {
     // OpenStreetMap (OSMDroid) - Free, no API key required
     implementation("org.osmdroid:osmdroid-android:6.1.18")
     implementation("org.osmdroid:osmdroid-wms:6.1.18")
+    
+    // ZXing for QR code generation and scanning
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    
+    // Firebase Storage for QR code image storage
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 //
 
 //    implementation(files("C:\\Users\\jorda\\AppData\\Local\\Android\\Sdk\\platforms\\android-36\\android.jar"));

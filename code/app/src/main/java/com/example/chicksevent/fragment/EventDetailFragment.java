@@ -165,6 +165,41 @@ public class EventDetailFragment extends Fragment {
                     .navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
         });
 
+        Button scanButton = view.findViewById(R.id.btn_scan);
+        scanButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(EventDetailFragment.this)
+                    .navigate(R.id.action_EventDetailFragment_to_QRCodeScannerFragment);
+        });
+
+        // QR code button (for viewing QR code if user is organizer)
+        Button qrCodeButton = view.findViewById(R.id.btn_qr_code);
+        if (qrCodeButton != null) {
+            qrCodeButton.setOnClickListener(v -> {
+                // Get eventId from Firebase
+                eventService.getReference().get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DataSnapshot ds : task.getResult().getChildren()) {
+                            if (ds.getKey().equals(eventNameString)) {
+                                Object idObj = ds.child("id").getValue();
+                                Object nameObj = ds.child("name").getValue();
+                                
+                                String eventId = idObj != null ? idObj.toString() : eventNameString;
+                                String eventNameValue = nameObj != null ? nameObj.toString() : eventNameString;
+                                
+                                Bundle bundle = new Bundle();
+                                bundle.putString("eventId", eventId);
+                                bundle.putString("eventName", eventNameValue);
+                                
+                                NavHostFragment.findNavController(EventDetailFragment.this)
+                                        .navigate(R.id.action_EventDetailFragment_to_QRCodeDisplayFragment, bundle);
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
         LinearLayout waitingStatus = view.findViewById(R.id.layout_waiting_status);

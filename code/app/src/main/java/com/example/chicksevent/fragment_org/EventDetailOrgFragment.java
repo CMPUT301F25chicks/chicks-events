@@ -93,6 +93,7 @@ public class EventDetailOrgFragment extends Fragment {
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
         Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
         Button viewMapButton = view.findViewById(R.id.btn_map);
+        Button viewQRCodeButton = view.findViewById(R.id.btn_qr_code);
         TextView eventDetails = view.findViewById(R.id.tv_event_details);
         TextView eventNameReal = view.findViewById(R.id.tv_time);
 
@@ -135,6 +136,35 @@ public class EventDetailOrgFragment extends Fragment {
             bundle.putString("eventId", args.getString("eventName")); // Using eventName as eventId
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
+        });
+
+        viewQRCodeButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
+            
+            // Get eventId from Firebase (eventName is the Firebase key, but we need the id field)
+            String eventNameKey = args.getString("eventName");
+            eventService.getReference().child(eventNameKey).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    DataSnapshot snapshot = task.getResult();
+                    Object idObj = snapshot.child("id").getValue();
+                    Object nameObj = snapshot.child("name").getValue();
+                    
+                    String eventId = idObj != null ? idObj.toString() : eventNameKey;
+                    String eventNameValue = nameObj != null ? nameObj.toString() : eventNameKey;
+                    
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventId", eventId);
+                    bundle.putString("eventName", eventNameValue);
+                    
+                    navController.navigate(R.id.action_EventDetailOrgFragment_to_QRCodeDisplayFragment, bundle);
+                } else {
+                    // Fallback: use eventName as eventId
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventId", eventNameKey);
+                    bundle.putString("eventName", eventNameKey);
+                    navController.navigate(R.id.action_EventDetailOrgFragment_to_QRCodeDisplayFragment, bundle);
+                }
+            });
         });
 
         notificationButton.setOnClickListener(v -> {

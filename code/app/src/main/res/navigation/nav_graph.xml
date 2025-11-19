@@ -71,6 +71,10 @@
         <action
             android:id="@+id/action_NotificationFragment_to_ProfileFragment"
             app:destination="@id/ProfileFragment" />
+        
+        <action
+            android:id="@+id/action_NotificationFragment_to_QRCodeScannerFragment"
+            app:destination="@id/QRCodeScannerFragment" />
     </fragment>
 
     <fragment
@@ -97,6 +101,13 @@
         <action
             android:id="@+id/action_EventDetailFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+        
+        <action
+            android:id="@+id/action_EventDetailFragment_to_QRCodeScannerFragment"
+            app:destination="@id/QRCodeScannerFragment" />
+        <action
+            android:id="@+id/action_EventDetailFragment_to_QRCodeDisplayFragment"
+            app:destination="@id/QRCodeDisplayFragment" />
     </fragment>
 
     <fragment
@@ -132,6 +143,10 @@
         <action
             android:id="@+id/action_EventFragment_to_EventDetailFragment"
             app:destination="@id/EventDetailFragment" />
+        
+        <action
+            android:id="@+id/action_EventFragment_to_QRCodeScannerFragment"
+            app:destination="@id/QRCodeScannerFragment" />
 
         <action
             android:id="@+id/action_EventFragment_to_CreateEventFragment"
@@ -239,6 +254,9 @@
         <action
             android:id="@+id/action_EventDetailOrgFragment_to_EntrantLocationMapFragment"
             app:destination="@id/EntrantLocationMapFragment" />
+        <action
+            android:id="@+id/action_EventDetailOrgFragment_to_QRCodeDisplayFragment"
+            app:destination="@id/QRCodeDisplayFragment" />
     </fragment>
 
     <fragment
@@ -342,6 +360,62 @@
             app:destination="@id/CreateEventFragment" />
         <action
             android:id="@+id/action_EntrantLocationMapFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/QRCodeDisplayFragment"
+        android:name="com.example.chicksevent.fragment.QRCodeDisplayFragment"
+        android:label="QR Code"
+        tools:layout="@layout/fragment_qr_code_display">
+
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+        <argument
+            android:name="eventName"
+            app:argType="string"
+            android:defaultValue="Event" />
+
+        <action
+            android:id="@+id/action_QRCodeDisplayFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+        <action
+            android:id="@+id/action_QRCodeDisplayFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
+        <action
+            android:id="@+id/action_QRCodeDisplayFragment_to_QRCodeScannerFragment"
+            app:destination="@id/QRCodeScannerFragment" />
+        <action
+            android:id="@+id/action_QRCodeDisplayFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_QRCodeDisplayFragment_to_ProfileFragment"
+            app:destination="@id/ProfileFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/QRCodeScannerFragment"
+        android:name="com.example.chicksevent.fragment.QRCodeScannerFragment"
+        android:label="Scan QR Code"
+        tools:layout="@layout/fragment_qr_code_scanner">
+
+        <action
+            android:id="@+id/action_QRCodeScannerFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+        <action
+            android:id="@+id/action_QRCodeScannerFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
+        <action
+            android:id="@+id/action_QRCodeScannerFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+        <action
+            android:id="@+id/action_QRCodeScannerFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_QRCodeScannerFragment_to_ProfileFragment"
             app:destination="@id/ProfileFragment" />
 
     </fragment>

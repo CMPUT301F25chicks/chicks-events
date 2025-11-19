@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -160,6 +161,7 @@ public class NotificationFragment extends Fragment {
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button profileButton = view.findViewById(R.id.btn_profile);
+        Button scanButton = view.findViewById(R.id.btn_scan);
 
         eventButton.setOnClickListener(v -> {
             NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_EventFragment);
@@ -172,6 +174,20 @@ public class NotificationFragment extends Fragment {
         profileButton.setOnClickListener(v -> {
             NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_ProfileFragment);
         });
+
+        if (scanButton != null) {
+            scanButton.setOnClickListener(v -> {
+                try {
+                    NavHostFragment.findNavController(NotificationFragment.this)
+                            .navigate(R.id.action_NotificationFragment_to_QRCodeScannerFragment);
+                } catch (Exception e) {
+                    android.util.Log.e("NotificationFragment", "Error navigating to QR scanner", e);
+                    Toast.makeText(getContext(), "Error opening scanner", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            android.util.Log.e("NotificationFragment", "btn_scan button not found!");
+        }
     }
 
     /**

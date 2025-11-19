@@ -1,8 +1,11 @@
 package com.example.chicksevent.fragment;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.misc.Event;
+import com.example.chicksevent.util.FirebaseStorageHelper;
+import com.example.chicksevent.util.QRCodeGenerator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.File;
 
 /**
  * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
@@ -167,9 +176,73 @@ public class CreateEventFragment extends Fragment {
 
         // Push to Firebase
         e.createEvent();
+        String eventId = e.getId();
+        String eventName = e.getName();
+        
+        // Generate and save QR code
+        generateAndSaveQRCode(eventId, eventName);
+        
         toast("Event created 🎉");
         // Optionally navigate back:
         requireActivity().onBackPressed();
+    }
+
+    /**
+     * Generates a QR code for the event and saves it to local storage and Firebase Storage.
+     *
+     * @param eventId the event ID to encode in the QR code
+     * @param eventName the event name to include in the filename
+     */
+    private void generateAndSaveQRCode(String eventId, String eventName) {
+        if (eventId == null || eventId.isEmpty()) {
+            Log.e("CreateEvent", "Cannot generate QR code: eventId is null or empty");
+            return;
+        }
+
+        // Generate deep link URL
+        String deepLink = QRCodeGenerator.generateEventDeepLink(eventId);
+        
+        // Generate QR code bitmap
+        Bitmap qrBitmap = QRCodeGenerator.generateQRCode(deepLink);
+        if (qrBitmap == null) {
+            Log.e("CreateEvent", "Failed to generate QR code bitmap");
+            return;
+        }
+
+        // Save to local storage
+        File qrCodeDir = new File(requireContext().getFilesDir(), "qr_codes");
+        if (!qrCodeDir.exists()) {
+            qrCodeDir.mkdirs();
+        }
+        
+        // Use event ID for filename (sanitize event name for filename)
+        String sanitizedName = eventName != null ? eventName.replaceAll("[^a-zA-Z0-9]", "_") : eventId;
+        File qrCodeFile = new File(qrCodeDir, "QR_" + eventId + "_" + sanitizedName + ".png");
+        
+        boolean saved = QRCodeGenerator.saveQRCodeToFile(qrBitmap, qrCodeFile);
+        if (saved) {
+            Log.d("CreateEvent", "QR code saved to local storage: " + qrCodeFile.getAbsolutePath());
+        } else {
+            Log.e("CreateEvent", "Failed to save QR code to local storage");
+        }
+
+        // Upload to Firebase Storage
+        FirebaseStorageHelper.uploadQRCode(
+            qrBitmap,
+            eventId,
+            new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Log.d("CreateEvent", "QR code uploaded to Firebase Storage: " + uri.toString());
+                }
+            },
+            new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("CreateEvent", "Failed to upload QR code to Firebase Storage", e);
+                }
+            }
+        );
     }
 
     /**
