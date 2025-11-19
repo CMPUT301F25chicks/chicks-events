@@ -82,6 +82,9 @@ public class Event {
     /** Optional space-separated tags to aid filtering/search. */
     private String tag;      // space-separated tags
 
+    /** Whether geolocation is required for entrants to join the waiting list. Defaults to false. */
+    private boolean geolocationRequired;
+
     /** The user id of the account that created/owns this event (organizer). */
     private String entrantId;
 
@@ -104,11 +107,12 @@ public class Event {
      * @param entrantLimit maximum number of entrants allowed (0 or negative for no limit as per caller policy).
      * @param poster optional poster URL; may be {@code null}.
      * @param tag optional space-separated tags; may be {@code null}.
+     * @param geolocationRequired whether geolocation is required for entrants to join.
      */
     public Event(String entrantId, String id, String name, String eventDetails,
                  String eventStartDate, String eventEndDate,
                  String registrationStartDate, String registrationEndDate,
-                 int entrantLimit, String poster, String tag) {
+                 int entrantLimit, String poster, String tag, boolean geolocationRequired) {
         this.entrantId = entrantId;
         this.id = id;
         this.name = name;
@@ -121,6 +125,7 @@ public class Event {
 
         this.poster = poster == null ? "" : tag;
         this.tag = tag == null ? "" : tag;
+        this.geolocationRequired = geolocationRequired;
 
         this.organizer = new Organizer(entrantId, id);
 
@@ -142,6 +147,7 @@ public class Event {
         map.put("organizer", getOrganizer().getOrganizerId());
         map.put("poster", getPoster());              // null is fine; it will simply be omitted
         map.put("tag", getTag());
+        map.put("geolocationRequired", isGeolocationRequired());
         id = eventService.addEntry(map, id);
 
         this.organizer = new Organizer(entrantId, id);
@@ -214,6 +220,12 @@ public class Event {
 
     /** @param tag sets the space-separated tag string. */
     public void setTag(String tag) { this.tag = tag; }
+
+    /** @return whether geolocation is required for entrants to join. */
+    public boolean isGeolocationRequired() { return geolocationRequired; }
+
+    /** @param geolocationRequired sets whether geolocation is required. */
+    public void setGeolocationRequired(boolean geolocationRequired) { this.geolocationRequired = geolocationRequired; }
 
     // Generate QR for chicks://event/{eventId}
     //try {

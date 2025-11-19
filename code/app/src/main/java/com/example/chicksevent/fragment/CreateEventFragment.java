@@ -144,6 +144,9 @@ public class CreateEventFragment extends Fragment {
         String poster = null;
         String tag    = null;
 
+        // Get geolocation requirement from toggle (defaults to false)
+        boolean geolocationRequired = binding.switchGeo.isChecked();
+
         // id will be generated in createEvent(), pass a placeholder for constructor param
         String placeholderId = null;
 
@@ -158,7 +161,8 @@ public class CreateEventFragment extends Fragment {
                 regEnd,
                 entrantLimit,
                 poster,
-                tag
+                tag,
+                geolocationRequired
         );
 
         // Push to Firebase

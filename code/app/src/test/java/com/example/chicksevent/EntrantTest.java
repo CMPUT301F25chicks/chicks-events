@@ -124,7 +124,33 @@ public class EntrantTest {
     // ---------------------- swapStatus ----------------------
 
     @Test
-    public void swapStatus_fromWaitingToInvited_deletesOld_thenAddsNew_andUpdatesStatus() {
+    public void swapStatus_fromWaitingToInvited_deletesOld_thenAddsNew_andUpdatesStatus() throws Exception {
+        // Mock the Firebase chain for async swapStatus
+        com.google.firebase.database.DatabaseReference mockRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.firebase.database.DatabaseReference mockEventRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.firebase.database.DatabaseReference mockStatusRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.firebase.database.DatabaseReference mockEntrantRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.android.gms.tasks.Task<com.google.firebase.database.DataSnapshot> mockTask = mock(com.google.android.gms.tasks.Task.class);
+        com.google.firebase.database.DataSnapshot mockSnapshot = mock(com.google.firebase.database.DataSnapshot.class);
+        
+        when(mockWaitingSvc.getReference()).thenReturn(mockRef);
+        when(mockRef.child(EVENT_ID)).thenReturn(mockEventRef);
+        when(mockEventRef.child("WAITING")).thenReturn(mockStatusRef);
+        when(mockStatusRef.child(ENTRANT_ID)).thenReturn(mockEntrantRef);
+        when(mockEntrantRef.get()).thenReturn(mockTask);
+        when(mockTask.isSuccessful()).thenReturn(true);
+        when(mockTask.getResult()).thenReturn(mockSnapshot);
+        when(mockSnapshot.child("latitude")).thenReturn(mock(com.google.firebase.database.DataSnapshot.class));
+        when(mockSnapshot.child("longitude")).thenReturn(mock(com.google.firebase.database.DataSnapshot.class));
+        
+        // Make the task complete immediately so callback executes synchronously
+        when(mockTask.addOnCompleteListener(any())).thenAnswer(invocation -> {
+            com.google.android.gms.tasks.OnCompleteListener<com.google.firebase.database.DataSnapshot> listener = 
+                invocation.getArgument(0);
+            listener.onComplete(mockTask);
+            return mockTask;
+        });
+        
         entrant.swapStatus(EntrantStatus.INVITED);
 
         InOrder inOrder = inOrder(mockWaitingSvc);
