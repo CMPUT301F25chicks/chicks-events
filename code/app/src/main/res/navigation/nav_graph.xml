@@ -228,6 +228,9 @@
             android:id="@+id/action_EventDetailOrgFragment_to_CancelledListFragment"
             app:destination="@id/CancelledListFragment" />
         <action
+            android:id="@+id/action_EventDetailOrgFragment_to_FinalListFragment"
+            app:destination="@id/FinalListFragment" />
+        <action
             android:id="@+id/action_EventDetailOrgFragment_to_NotificationFragment"
             app:destination="@id/NotificationFragment" />
         <action
@@ -321,6 +324,26 @@
             app:destination="@id/EventFragment" />
         <action
             android:id="@+id/action_CancelledListFragment_to_CreateEventFragment"
+            app:destination="@id/CreateEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FinalListFragment"
+        android:name="com.example.chicksevent.fragment.FinalListFragment"
+        android:label="Final List"
+        tools:layout="@layout/fragment_final_list">
+
+        <action
+            android:id="@+id/action_FinalListFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+        <action
+            android:id="@+id/action_FinalListFragment_to_NotificationFragment"
+            app:destination="@id/NotificationFragment" />
+        <action
+            android:id="@+id/action_FinalListFragment_to_EventFragment"
+            app:destination="@id/EventFragment" />
+        <action
+            android:id="@+id/action_FinalListFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
     </fragment>
 
