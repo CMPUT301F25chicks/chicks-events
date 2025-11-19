@@ -84,6 +84,7 @@ public class AdminHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Admin management buttons
+        Button btnNotification = view.findViewById(R.id.btn_admin_notification);
         Button btnEvents = view.findViewById(R.id.btn_admin_event);
         Button btnOrganizers = view.findViewById(R.id.btn_admin_org);
         Button btnProfiles = view.findViewById(R.id.btn_admin_profile);
@@ -140,6 +141,9 @@ public class AdminHomeFragment extends Fragment {
         btnProfiles.setOnClickListener(v ->
                 NavHostFragment.findNavController(AdminHomeFragment.this)
                         .navigate(R.id.action_adminHome_to_profileAdminFragment));
+
+        btnNotification.setOnClickListener(v -> NavHostFragment.findNavController(AdminHomeFragment.this)
+                .navigate(R.id.action_adminHome_to_notificationAdminFragment));
     }
 
     /**
