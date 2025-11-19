@@ -1,5 +1,6 @@
 package com.example.chicksevent.fragment;
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -74,6 +76,8 @@ public class EventDetailFragment extends Fragment {
     private TextView eventNameReal;
     private Integer waitingListCount;
 
+    private ImageButton helpButton;
+
     /**
      * Default constructor required for Fragment instantiation.
      */
@@ -116,6 +120,7 @@ public class EventDetailFragment extends Fragment {
         TextView eventName = view.findViewById(R.id.tv_event_name);
         eventDetails = view.findViewById(R.id.tv_event_details);
         eventNameReal = view.findViewById(R.id.tv_time);
+        helpButton = view.findViewById(R.id.help_button);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -135,6 +140,7 @@ public class EventDetailFragment extends Fragment {
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
         LinearLayout waitingStatus = view.findViewById(R.id.layout_waiting_status);
         TextView waitingCount = view.findViewById(R.id.tv_waiting_count);
+        ImageView posterImageView = view.findViewById(R.id.img_event);
 
         getEventDetail().continueWithTask(t -> {
 //            Log.i("browaiting", t.getResult().toString());
@@ -146,6 +152,14 @@ public class EventDetailFragment extends Fragment {
             return getWaitingCount();
         }).addOnCompleteListener(t -> {
             waitingCount.setText("Number of Entrants: " + t.getResult());
+        });
+
+        helpButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Lottery Info")
+                    .setMessage("you join waiting list. wait for organizer to draw entrants. accept the invitation. that's it :)")
+                    .setNegativeButton("OK", null)
+                    .show();
         });
 
         joinButton.setOnClickListener(v -> {
@@ -186,7 +200,7 @@ public class EventDetailFragment extends Fragment {
 
         });
 
-        ImageView posterImageView = view.findViewById(R.id.img_event);
+
 
         new FirebaseService("Image").getReference().child(args.getString("eventId")).get().addOnCompleteListener(task -> {
             if (task.getResult().getValue() == null) return;
