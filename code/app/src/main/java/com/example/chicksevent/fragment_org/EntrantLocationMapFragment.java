@@ -5,17 +5,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEntrantLocationMapBinding;
@@ -25,11 +22,10 @@ import com.google.firebase.database.DataSnapshot;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Overlay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,37 +158,8 @@ public class EntrantLocationMapFragment extends Fragment {
             public void afterTextChanged(android.text.Editable s) {}
         });
 
-        // Setup navigation buttons
-        setupNavigationButtons(view);
-
         // Load entrant data
         loadEntrantLocations();
-    }
-
-    /**
-     * Sets up navigation button click listeners.
-     */
-    private void setupNavigationButtons(View view) {
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button profileButton = view.findViewById(R.id.btn_profile);
-
-        notificationButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_EntrantLocationMapFragment_to_NotificationFragment));
-
-        eventButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_EntrantLocationMapFragment_to_EventFragment));
-
-        createEventButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_EntrantLocationMapFragment_to_CreateEventFragment));
-
-        profileButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_EntrantLocationMapFragment_to_ProfileFragment));
     }
 
     /**

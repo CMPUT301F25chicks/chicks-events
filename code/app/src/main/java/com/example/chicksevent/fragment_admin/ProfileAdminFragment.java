@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.R;
-import com.example.chicksevent.adapter.EntrantListAdapter;
+import com.example.chicksevent.adapter.UserAdapter;
 import com.example.chicksevent.misc.Admin;
-import com.example.chicksevent.misc.EntrantDisplay;
+import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.User;
 
 import java.util.ArrayList;
@@ -25,14 +25,14 @@ import java.util.List;
 /**
  * Fragment that displays and manages a list of entrants for an admin user.
  * <p>
- * This fragment allows the admin to view all entrants using {@link Admin#browseEntrants()},
- * and to delete entrants through {@link Admin#deleteEntrantProfile(String)}.
- * The data is displayed in a {@link RecyclerView} using {@link EntrantListAdapter}.
+ * This fragment allows the admin to view all entrants using {@link Admin#browseUsers()},
+ * and to delete entrants through {@link Admin#deleteUserProfile(String)}.
+ * The data is displayed in a {@link RecyclerView} using {@link UserAdapter}.
  */
 public class ProfileAdminFragment extends Fragment {
     private RecyclerView recyclerView;
-    private EntrantListAdapter adapter;
-    private List<EntrantDisplay> entrantList;
+    private UserAdapter adapter;
+    private List<User> userList;
     private Admin admin;
 
     /**
@@ -54,8 +54,8 @@ public class ProfileAdminFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_chosenUser);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        entrantList = new ArrayList<>();
-        adapter = new EntrantListAdapter(entrantList, this::deleteEntrant);
+        userList = new ArrayList<>();
+        adapter = new UserAdapter(userList, this::deleteUser);
         recyclerView.setAdapter(adapter);
 
         admin = new Admin(Settings.Secure.getString(
@@ -71,17 +71,17 @@ public class ProfileAdminFragment extends Fragment {
     /**
      * Loads all entrants associated with the admin account.
      * <p>
-     * Retrieves entrants asynchronously using {@link Admin#browseEntrants()}.
+     * Retrieves entrants asynchronously using {@link Admin#browseUsers()}.
      * When the data is loaded, it updates the {@link RecyclerView} adapter to display the entrants.
      */
     private void loadEntrants() {
-        admin.browseEntrants()
+        admin.browseUsers()
                 .addOnCompleteListener(entrants -> {
-                    entrantList.clear();
+                    userList.clear();
                     Log.i("friedchick", entrants.getResult().toString());
 
                     for (User user : entrants.getResult()) {
-                        entrantList.add(new EntrantDisplay(user.getUserId(), "Active"));
+                        userList.add(new Entrant(user.getUserId(), "Active"));
                     }
                     adapter.notifyDataSetChanged();
                 })
@@ -96,10 +96,10 @@ public class ProfileAdminFragment extends Fragment {
      *
      * @param entrant The entrant to be deleted.
      */
-    private void deleteEntrant(EntrantDisplay entrant) {
-        Log.i("friedchicken", "Deleting entrant: " + entrant.getEntrantId());
+    private void deleteUser(User entrant) {
+        Log.i("friedchicken", "Deleting entrant: " + entrant.getUserId());
 
-        admin.deleteEntrantProfile(entrant.getEntrantId());
+        admin.deleteUserProfile(entrant.getUserId());
         loadEntrants();
     }
 }

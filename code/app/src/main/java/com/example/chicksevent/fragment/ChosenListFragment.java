@@ -13,12 +13,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
-import com.example.chicksevent.adapter.UserAdapter;
+import com.example.chicksevent.adapter.EntrantAdapter;
 import com.example.chicksevent.databinding.FragmentChosenListBinding;
 import com.example.chicksevent.enums.EntrantStatus;
+import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Organizer;
 import com.example.chicksevent.misc.User;
@@ -47,13 +47,12 @@ import java.util.ArrayList;
  * <p>
  * Data is loaded from Firebase under:
  * {@code /WaitingList/{eventId}/INVITED}
- * Each child key is treated as a user ID and displayed using {@link UserAdapter}.
+ * Each child key is treated as a user ID and displayed using {@link EntrantAdapter}.
  * </p>
  *
  * @author ChicksEvent Team
  * @see Organizer
  * @see EntrantStatus
- * @see UserAdapter
  */
 public class ChosenListFragment extends Fragment {
 
@@ -64,10 +63,10 @@ public class ChosenListFragment extends Fragment {
     private ListView userView;
 
     /** Adapter that binds user data to the ListView. */
-    private UserAdapter waitingListAdapter;
+    private EntrantAdapter waitingListAdapter;
 
     /** List holding all {@link User} objects currently in the invited list. */
-    private ArrayList<User> userDataList = new ArrayList<>();
+    private ArrayList<Entrant> entrantDataList = new ArrayList<>();
 
     /** Firebase service wrapper scoped to the "WaitingList" root node. */
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
@@ -114,32 +113,18 @@ public class ChosenListFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+        
+        
+        
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
-        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView = view.findViewById(R.id.recycler_chosenUser);
         userView.setAdapter(waitingListAdapter);
 
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ChosenListFragment.this)
-                    .navigate(R.id.action_ChosenListFragment_to_NotificationFragment);
-        });
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ChosenListFragment.this)
-                    .navigate(R.id.action_ChosenListFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(ChosenListFragment.this)
-                    .navigate(R.id.action_ChosenListFragment_to_CreateEventFragment);
-        });
 
         listEntrants(EntrantStatus.INVITED);
 
@@ -171,7 +156,7 @@ public class ChosenListFragment extends Fragment {
      * <p>
      * Listens to:
      * {@code /WaitingList/{eventId}/{status}}
-     * Each child key is converted to a {@link User} and added to {@link #userDataList}.
+     * Each child key is converted to a {@link User} and added to {@link #entrantDataList}.
      * The adapter is recreated and set on every data change.
      * </p>
      *
@@ -184,12 +169,12 @@ public class ChosenListFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.i(TAG, "IN HERE bef " + status);
-                        userDataList = new ArrayList<>();
+                        entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            userDataList.add(new User(childSnap.getKey()));
+                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
                         }
 
-                        waitingListAdapter = new UserAdapter(getContext(), userDataList);
+                        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
                         userView.setAdapter(waitingListAdapter);
                     }
 

@@ -26,7 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
@@ -136,7 +135,7 @@ public class EventDetailFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventNameString = args.getString("eventName");
+            eventNameString = args.getString("eventId");
             eventName.setText(eventNameString);
         }
 
@@ -146,24 +145,6 @@ public class EventDetailFragment extends Fragment {
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
-
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_NotificationFragment);
-        });
-
-        Button eventButton = view.findViewById(R.id.btn_events);
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_EventFragment);
-        });
-
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
-        });
 
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
@@ -178,41 +159,51 @@ public class EventDetailFragment extends Fragment {
 //            Log.i("browaiting", t.getResult().toString());
             if (t.getResult()) {
                 waitingStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
             }
 
             waitingCount.setText("Number of Entrants: " + waitingListCount);
         });
 
         joinButton.setOnClickListener(v -> {
-            userExists().addOnSuccessListener(boole -> {
-                if (boole) {
+            userExists().continueWithTask(boole -> {
+                if (boole.getResult()) {
                     // Check if geolocation is required
                     if (geolocationRequired) {
                         requestLocationAndJoin();
                     } else {
                         // No geolocation required, join normally
-                        Entrant e = new Entrant(userId, args.getString("eventName"));
+                        Entrant e = new Entrant(userId, args.getString("eventId"));
                         e.joinWaitingList();
                         Toast.makeText(getContext(),
                                 "Joined waiting list :)",
                                 Toast.LENGTH_SHORT).show();
                         waitingStatus.setVisibility(View.VISIBLE);
+                        joinButton.setVisibility(View.INVISIBLE);
                     }
                 } else {
                     Toast.makeText(getContext(),
                             "You need to create profile to join waiting list",
                             Toast.LENGTH_SHORT).show();
                 }
+
+                return getWaitingCount();
+            }).addOnCompleteListener(t -> {
+                Log.i("RTD9", "" + t.getResult());
+                waitingCount.setText("Number of Entrantwerwers: " + t.getResult());
             });
         });
 
         leaveButton.setOnClickListener(v -> {
-            Entrant e = new Entrant(userId, args.getString("eventName"));
+            Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.leaveWaitingList();
             Toast.makeText(getContext(),
                     "You left the waiting list",
                     Toast.LENGTH_SHORT).show();
+
+            joinButton.setVisibility(View.VISIBLE);
+
 
 
             waitingStatus.setVisibility(View.INVISIBLE);
@@ -247,7 +238,7 @@ public class EventDetailFragment extends Fragment {
                     eventNameReal.setText((String) hash.get("name"));
                     eventDetails.setText((String) hash.get("eventDetails"));
                     eventId = (String) hash.get("id");
-                    
+
                     // Check if geolocation is required
                     Object geoRequired = hash.get("geolocationRequired");
                     if (geoRequired instanceof Boolean) {
@@ -379,10 +370,10 @@ public class EventDetailFragment extends Fragment {
      */
     private void getLocationAndJoin() {
         locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-        
+
         // Check if location services are enabled
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
-            !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             Toast.makeText(getContext(),
                     "Location services are disabled. Please enable location services to join this event",
                     Toast.LENGTH_LONG).show();
@@ -411,15 +402,15 @@ public class EventDetailFragment extends Fragment {
                     Log.e("EventDetail", "Security exception removing location updates", e);
                 }
             }
-            
+
             if (locationProgressBar != null) {
                 locationProgressBar.setVisibility(View.GONE);
             }
-            
+
             Toast.makeText(getContext(),
                     "Location request timed out. Please check your location settings and try again.",
                     Toast.LENGTH_LONG).show();
-            
+
             Log.w("EventDetail", "Location request timed out after " + LOCATION_TIMEOUT_MS + "ms");
         };
 
@@ -441,11 +432,11 @@ public class EventDetailFragment extends Fragment {
                     Toast.makeText(getContext(),
                             "Invalid location received. Please try again.",
                             Toast.LENGTH_LONG).show();
-                    
+
                     if (locationProgressBar != null) {
                         locationProgressBar.setVisibility(View.GONE);
                     }
-                    
+
                     // Remove location listener
                     if (locationManager != null && locationListener != null) {
                         try {
@@ -458,28 +449,34 @@ public class EventDetailFragment extends Fragment {
                 }
 
                 // Log location for debugging
-                Log.i("EventDetail", "Location obtained: " + location.getLatitude() + ", " + location.getLongitude() + 
-                      " (Accuracy: " + location.getAccuracy() + "m, Provider: " + location.getProvider() + ")");
+                Log.i("EventDetail", "Location obtained: " + location.getLatitude() + ", " + location.getLongitude() +
+                        " (Accuracy: " + location.getAccuracy() + "m, Provider: " + location.getProvider() + ")");
 
                 // Got valid location, join with it
                 Bundle args = getArguments();
-                Entrant e = new Entrant(userId, args != null ? args.getString("eventName") : eventId);
+                Log.i("printing stuff", args.getString("eventId"));
+                Entrant e = new Entrant(userId, args != null ? args.getString("eventId") : eventId);
                 e.joinWaitingList(location.getLatitude(), location.getLongitude());
                 Toast.makeText(getContext(),
                         "Joined waiting list with location :)",
                         Toast.LENGTH_SHORT).show();
-                
+
+                getWaitingCount().addOnCompleteListener(t -> {
+                    Log.i("RTD9", "" + t.getResult());
+                    ((TextView) getView().findViewById(R.id.tv_waiting_count)).setText("Number of Entrantwerwers: " + t.getResult());
+                });
+
                 // Update UI
                 LinearLayout waitingStatus = getView().findViewById(R.id.layout_waiting_status);
                 if (waitingStatus != null) {
                     waitingStatus.setVisibility(View.VISIBLE);
                 }
-                
+
                 // Hide loading indicator
                 if (locationProgressBar != null) {
                     locationProgressBar.setVisibility(View.GONE);
                 }
-                
+
                 // Remove location listener to stop updates
                 if (locationManager != null && locationListener != null) {
                     try {
@@ -513,7 +510,7 @@ public class EventDetailFragment extends Fragment {
                 Log.e("EventDetail", "Security exception requesting GPS location", e);
                 handleLocationError();
             }
-        } 
+        }
         // Fallback to network if GPS not available
         else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             Log.i("EventDetail", "Requesting location from Network provider");
@@ -530,7 +527,7 @@ public class EventDetailFragment extends Fragment {
 
     /**
      * Validates that a location is reasonable (not 0,0 and within valid ranges).
-     * 
+     *
      * @param location the location to validate
      * @return true if location is valid, false otherwise
      */
@@ -538,20 +535,20 @@ public class EventDetailFragment extends Fragment {
         if (location == null) {
             return false;
         }
-        
+
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-        
+
         // Check if coordinates are 0,0 (likely invalid)
         if (lat == 0.0 && lon == 0.0) {
             return false;
         }
-        
+
         // Check valid ranges: latitude -90 to 90, longitude -180 to 180
         if (lat < -90.0 || lat > 90.0 || lon < -180.0 || lon > 180.0) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -562,7 +559,7 @@ public class EventDetailFragment extends Fragment {
         if (locationProgressBar != null) {
             locationProgressBar.setVisibility(View.GONE);
         }
-        
+
         Toast.makeText(getContext(),
                 "Could not obtain location. Please enable location services and try again",
                 Toast.LENGTH_LONG).show();
@@ -578,7 +575,7 @@ public class EventDetailFragment extends Fragment {
         if (locationTimeoutHandler != null && locationTimeoutRunnable != null) {
             locationTimeoutHandler.removeCallbacks(locationTimeoutRunnable);
         }
-        
+
         // Remove location listener if still active
         if (locationManager != null && locationListener != null) {
             try {

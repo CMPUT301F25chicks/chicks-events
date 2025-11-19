@@ -131,6 +131,8 @@ public class Entrant extends User {
             data.put("longitude", longitude);
         }
 
+        Log.i("printing stuff", eventId + " | " + status + " | " + entrantId);
+
         waitingListService.updateSubCollectionEntry(eventId, status.toString(), entrantId, data);
     }
 

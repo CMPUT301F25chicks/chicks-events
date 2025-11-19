@@ -130,7 +130,7 @@ public class Event {
         this.organizer = new Organizer(entrantId, id);
 
     } // Required by Firebase
-    public void createEvent(){
+    public String createEvent(){
         Log.i("filtering", "creating event");
         HashMap<String, Object> map = new HashMap<>();
         id = eventService.getReference().push().getKey();
@@ -151,6 +151,8 @@ public class Event {
         id = eventService.addEntry(map, id);
 
         this.organizer = new Organizer(entrantId, id);
+
+        return id;
     }
 
     // --- Getters and setters ---

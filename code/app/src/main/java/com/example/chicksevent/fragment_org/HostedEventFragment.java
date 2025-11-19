@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -111,24 +110,6 @@ public class HostedEventFragment extends Fragment {
 ////
         eventView.setAdapter(hostedEventAdapter);
 
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-
-        notificationButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(HostedEventFragment.this)
-                        .navigate(R.id.action_HostedEventFragment_to_NotificationFragment)
-        );
-//
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(HostedEventFragment.this).navigate(R.id.action_HostedEventFragment_to_CreateEventFragment);
-        });
-
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(HostedEventFragment.this).navigate(R.id.action_HostedEventFragment_to_EventFragment);
-        });
-
         Log.i("sigma", "wtf");
         listEvents();
     }
@@ -173,7 +154,7 @@ public class HostedEventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(HostedEventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 //                    bundle.putString("organizerId", item.getId());
 
                     if (type == 0) {
@@ -186,6 +167,7 @@ public class HostedEventFragment extends Fragment {
                 });
 
                 eventView.setAdapter(eventAdapter);
+
 
 
 //                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());

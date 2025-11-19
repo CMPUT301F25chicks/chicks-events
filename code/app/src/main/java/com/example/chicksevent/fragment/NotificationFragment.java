@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -157,21 +156,7 @@ public class NotificationFragment extends Fragment {
 
         });
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button profileButton = view.findViewById(R.id.btn_profile);
 
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_CreateEventFragment);
-        });
-
-        profileButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_ProfileFragment);
-        });
     }
 
     /**
@@ -190,8 +175,8 @@ public class NotificationFragment extends Fragment {
                 "2025-12-30",                       // registrationEndDate
                 30,                                 // entrantLimit
                 null,                               // poster
-                "sports kids swimming",             // tag
-                false                               // geolocationRequired
+                "sports kids swimming",              // tag
+                false
         );
 
         event.createEvent();

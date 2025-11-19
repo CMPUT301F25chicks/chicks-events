@@ -1,10 +1,14 @@
 package com.example.chicksevent.fragment_org;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,6 +54,7 @@ public class EventDetailOrgFragment extends Fragment {
 
     private FirebaseService eventService;
 
+
     /**
      * Inflates the layout for the organizer event detail fragment.
      *
@@ -82,13 +87,13 @@ public class EventDetailOrgFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventName.setText(args.getString("eventName"));
+            eventName.setText(args.getString("eventId"));
             // Use it to populate UI
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+        
+        
+        
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
         Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
@@ -96,10 +101,12 @@ public class EventDetailOrgFragment extends Fragment {
         TextView eventDetails = view.findViewById(R.id.tv_event_details);
         TextView eventNameReal = view.findViewById(R.id.tv_time);
 
+
+
         eventService.getReference().get().continueWith(task -> {
 //            eventName =
             for (DataSnapshot ds : task.getResult().getChildren()) {
-                if (ds.getKey().equals(args.getString("eventName"))) {
+                if (ds.getKey().equals(args.getString("eventId"))) {
                     HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
                     eventNameReal.setText(hash.get("name"));
                     eventDetails.setText(hash.get("eventDetails"));
@@ -112,7 +119,7 @@ public class EventDetailOrgFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 
             Bundle bundle = new Bundle();
-            bundle.putString("eventName", args.getString("eventName"));
+            bundle.putString("eventId", args.getString("eventId"));
 
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_WaitingListFragment, bundle);
@@ -122,7 +129,7 @@ public class EventDetailOrgFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 
             Bundle bundle = new Bundle();
-            bundle.putString("eventName", args.getString("eventName"));
+            bundle.putString("eventId", args.getString("eventId"));
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_ChosenListFragment, bundle);
         });
@@ -131,30 +138,24 @@ public class EventDetailOrgFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 
             Bundle bundle = new Bundle();
-            bundle.putString("eventName", args.getString("eventName"));
-            bundle.putString("eventId", args.getString("eventName")); // Using eventName as eventId
+            bundle.putString("eventId", args.getString("eventId"));
+            bundle.putString("eventId", args.getString("eventId")); // Using eventName as eventId
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
         });
 
-        notificationButton.setOnClickListener(v -> {
-                    NavHostFragment.findNavController(EventDetailOrgFragment.this)
-                            .navigate(R.id.action_EventDetailOrgFragment_to_NotificationFragment);
-                }
-        );
+        ImageView posterImageView = view.findViewById(R.id.img_event);
 
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailOrgFragment.this).navigate(R.id.action_EventDetailOrgFragment_to_CreateEventFragment);
+        new FirebaseService("Image").getReference().child(args.getString("eventId")).get().addOnCompleteListener(task -> {
+            if (task.getResult().getValue() == null) return;
+            String base64Image = ((HashMap<String, String>) task.getResult().getValue()).get("url");
+            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            posterImageView.setImageBitmap(bitmap);
         });
     }
+
+
 
     @Override
     public void onDestroyView() {
