@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -57,6 +58,7 @@ public class EntrantLocationMapFragment extends Fragment {
     private IMapController mapController;
     private FirebaseService waitingListService;
     private FirebaseService userService;
+    private ProgressBar mapProgressBar;
     
     private String eventId;
     private List<EntrantMarkerData> allEntrants = new ArrayList<>();
@@ -124,6 +126,12 @@ public class EntrantLocationMapFragment extends Fragment {
         mapView.setMultiTouchControls(true);
         mapController = mapView.getController();
         mapController.setZoom(8.0); // Start more zoomed out to show broader area
+        
+        // Initialize progress bar
+        mapProgressBar = view.findViewById(R.id.progress_map);
+        if (mapProgressBar != null) {
+            mapProgressBar.setVisibility(View.VISIBLE);
+        }
 
         // Setup filter radio buttons
         RadioGroup statusFilter = view.findViewById(R.id.radio_status_filter);
@@ -191,10 +199,20 @@ public class EntrantLocationMapFragment extends Fragment {
      * Loads entrant location data from Firebase for WAITING and INVITED statuses.
      */
     private void loadEntrantLocations() {
+        // Show loading indicator
+        if (mapProgressBar != null) {
+            mapProgressBar.setVisibility(View.VISIBLE);
+        }
+        
         waitingListService.getReference().child(eventId).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult() == null) {
                 Log.e(TAG, "Failed to load waiting list data");
                 Toast.makeText(requireContext(), "Failed to load entrant data", Toast.LENGTH_SHORT).show();
+                
+                // Hide loading indicator on error
+                if (mapProgressBar != null) {
+                    mapProgressBar.setVisibility(View.GONE);
+                }
                 return;
             }
 
@@ -268,12 +286,22 @@ public class EntrantLocationMapFragment extends Fragment {
 
                 // Apply filters and update map
                 applyFilters();
+                
+                // Hide loading indicator
+                if (mapProgressBar != null) {
+                    mapProgressBar.setVisibility(View.GONE);
+                }
             } else {
                 // If user names can't be loaded, use IDs
                 for (EntrantMarkerData entrant : allEntrants) {
                     entrant.userName = entrant.entrantId;
                 }
                 applyFilters();
+                
+                // Hide loading indicator
+                if (mapProgressBar != null) {
+                    mapProgressBar.setVisibility(View.GONE);
+                }
             }
         });
     }

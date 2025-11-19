@@ -102,6 +102,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progress_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintStart_toStartOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="@+id/map" />
+
     <!-- Bottom Navigation -->
     <LinearLayout
         android:id="@+id/bottom_buttons_layout"

@@ -3,6 +3,7 @@ package com.example.chicksevent.misc;
 import android.util.Log;
 
 import com.example.chicksevent.enums.EntrantStatus;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 
@@ -150,14 +151,48 @@ public class Entrant extends User {
     /**
      * Switches this entrant's waiting list status by first removing them from their current
      * {@link EntrantStatus} node and re-adding them under a new one.
-     * Note: Location data is not preserved when swapping status.
+     * Location data is preserved when swapping status.
      *
      * @param newStatus the new status to apply (e.g., from WAITING to INVITED).
      */
     public void swapStatus(EntrantStatus newStatus) {
         Log.i("RTD8", "output");
-        leaveWaitingList(status);
-        joinWaitingList(newStatus, null, null);
+        
+        // Read current location from Firebase before leaving old status
+        String currentStatusString = status != null ? status.toString() : "WAITING";
+        waitingListService.getReference()
+                .child(eventId)
+                .child(currentStatusString)
+                .child(entrantId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    Double latitude = null;
+                    Double longitude = null;
+                    
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DataSnapshot snapshot = task.getResult();
+                        Object latObj = snapshot.child("latitude").getValue();
+                        Object lngObj = snapshot.child("longitude").getValue();
+                        
+                        if (latObj != null && lngObj != null) {
+                            try {
+                                latitude = latObj instanceof Number ? 
+                                    ((Number) latObj).doubleValue() : 
+                                    Double.parseDouble(latObj.toString());
+                                longitude = lngObj instanceof Number ? 
+                                    ((Number) lngObj).doubleValue() : 
+                                    Double.parseDouble(lngObj.toString());
+                                Log.i("Entrant", "Preserving location: " + latitude + ", " + longitude);
+                            } catch (NumberFormatException e) {
+                                Log.w("Entrant", "Invalid location data when swapping status", e);
+                            }
+                        }
+                    }
+                    
+                    // Now perform the swap with preserved location
+                    leaveWaitingList(status);
+                    joinWaitingList(newStatus, latitude, longitude);
+                });
     }
 
     /**

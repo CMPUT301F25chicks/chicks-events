@@ -154,22 +154,19 @@ public class EntrantLocationTest {
     }
 
     @Test
-    public void swapStatus_withLocation_doesNotPreserveLocation() {
+    public void swapStatus_attemptsToReadLocationFromFirebase() {
         // First join with location
         entrant.joinWaitingList(EntrantStatus.WAITING, 53.5461, -113.4938);
         
-        // Swap status - location should not be preserved (as per implementation)
+        // Swap status - this should attempt to read location from Firebase
+        // Note: This test verifies that swapStatus attempts to read from Firebase.
+        // Full async testing would require more complex setup with Tasks API.
         entrant.swapStatus(EntrantStatus.INVITED);
 
-        // Verify that when swapping, location is not included (null values passed)
-        ArgumentCaptor<HashMap> mapCaptor = ArgumentCaptor.forClass(HashMap.class);
-        verify(mockWaitingSvc, atLeastOnce()).updateSubCollectionEntry(
-                eq(EVENT_ID), eq("INVITED"), eq(ENTRANT_ID), mapCaptor.capture());
-
-        HashMap<String, Object> data = mapCaptor.getValue();
-        // Location should not be included when swapping status
-        assertFalse("Location should not be preserved when swapping status", 
-                   data.containsKey("latitude"));
+        // Verify that getReference is called (indicating Firebase read attempt)
+        // The actual location preservation happens asynchronously, so we just verify
+        // that the method attempts to read from Firebase
+        verify(mockWaitingSvc, atLeastOnce()).getReference();
     }
 
     private static void setPrivate(Object target, String fieldName, Object value) throws Exception {
