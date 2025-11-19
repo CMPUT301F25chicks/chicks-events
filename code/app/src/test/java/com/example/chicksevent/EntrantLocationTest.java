@@ -154,18 +154,44 @@ public class EntrantLocationTest {
     }
 
     @Test
-    public void swapStatus_attemptsToReadLocationFromFirebase() {
+    public void swapStatus_attemptsToReadLocationFromFirebase() throws Exception {
         // First join with location
         entrant.joinWaitingList(EntrantStatus.WAITING, 53.5461, -113.4938);
         
+        // Mock the Firebase chain for async swapStatus
+        com.google.firebase.database.DatabaseReference mockRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.firebase.database.DatabaseReference mockEventRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.firebase.database.DatabaseReference mockStatusRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.firebase.database.DatabaseReference mockEntrantRef = mock(com.google.firebase.database.DatabaseReference.class);
+        com.google.android.gms.tasks.Task<com.google.firebase.database.DataSnapshot> mockTask = mock(com.google.android.gms.tasks.Task.class);
+        com.google.firebase.database.DataSnapshot mockSnapshot = mock(com.google.firebase.database.DataSnapshot.class);
+        com.google.firebase.database.DataSnapshot mockLatSnapshot = mock(com.google.firebase.database.DataSnapshot.class);
+        com.google.firebase.database.DataSnapshot mockLngSnapshot = mock(com.google.firebase.database.DataSnapshot.class);
+        
+        when(mockWaitingSvc.getReference()).thenReturn(mockRef);
+        when(mockRef.child(EVENT_ID)).thenReturn(mockEventRef);
+        when(mockEventRef.child("WAITING")).thenReturn(mockStatusRef);
+        when(mockStatusRef.child(ENTRANT_ID)).thenReturn(mockEntrantRef);
+        when(mockEntrantRef.get()).thenReturn(mockTask);
+        when(mockTask.isSuccessful()).thenReturn(true);
+        when(mockTask.getResult()).thenReturn(mockSnapshot);
+        when(mockSnapshot.child("latitude")).thenReturn(mockLatSnapshot);
+        when(mockSnapshot.child("longitude")).thenReturn(mockLngSnapshot);
+        when(mockLatSnapshot.getValue()).thenReturn(53.5461);
+        when(mockLngSnapshot.getValue()).thenReturn(-113.4938);
+        
+        // Make the task complete immediately
+        when(mockTask.addOnCompleteListener(any())).thenAnswer(invocation -> {
+            com.google.android.gms.tasks.OnCompleteListener<com.google.firebase.database.DataSnapshot> listener = 
+                invocation.getArgument(0);
+            listener.onComplete(mockTask);
+            return mockTask;
+        });
+        
         // Swap status - this should attempt to read location from Firebase
-        // Note: This test verifies that swapStatus attempts to read from Firebase.
-        // Full async testing would require more complex setup with Tasks API.
         entrant.swapStatus(EntrantStatus.INVITED);
 
         // Verify that getReference is called (indicating Firebase read attempt)
-        // The actual location preservation happens asynchronously, so we just verify
-        // that the method attempts to read from Firebase
         verify(mockWaitingSvc, atLeastOnce()).getReference();
     }
 
