@@ -49,25 +49,34 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
 
         deleteBtn.setOnClickListener(v -> {
             String uid = entrant.getEntrantId();
-            String eventId = entrant.getEventId();   // ⭐ using your getter
+            String eventId = entrant.getEventId();   // using your getter
 
             if (eventId == null || eventId.isEmpty()) {
                 Toast.makeText(getContext(), "Missing eventId!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            DatabaseReference root = FirebaseDatabase.getInstance()
-                    .getReference("WaitingList")
-                    .child(eventId);
+            // Show confirmation dialog
+            new androidx.appcompat.app.AlertDialog.Builder(getContext())
+                    .setTitle("Cancel Entrant")
+                    .setMessage("Are you sure you want to cancel " + userName.getText() + "?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        DatabaseReference root = FirebaseDatabase.getInstance()
+                                .getReference("WaitingList")
+                                .child(eventId);
 
-            // Build update map
-            root.child("INVITED").child(uid).removeValue();
-            root.child("CANCELLED").child(uid).setValue(true);
+                        // Move user from INVITED to CANCELLED
+                        root.child("INVITED").child(uid).removeValue();
+                        root.child("CANCELLED").child(uid).setValue(true);
 
-            Toast.makeText(getContext(),
-                    "Cancelled entrant " + uid,
-                    Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),
+                                "Cancelled entrant " + uid,
+                                Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .show();
         });
+
 
         return view;
     }
