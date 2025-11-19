@@ -105,7 +105,7 @@
                     android:id="@+id/tv_event_details"
                     android:layout_width="297dp"
                     android:layout_height="46dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="32dp"
                     android:layout_marginTop="4dp"
                     android:lineSpacingExtra="4dp"
                     android:text="Loading..."
@@ -240,12 +240,12 @@
                         android:textColor="@color/black" />
 
                     <Button
-                        android:id="@+id/btn_delete_entrants"
+                        android:id="@+id/btn_cancelled_entrants"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:backgroundTint="@color/purpleText"
-                        android:text="View Deleted Entrants"
+                        android:text="View Cancelled Entrants"
                         android:textColor="@color/black" />
 
                     <Button
