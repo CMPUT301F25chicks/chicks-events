@@ -13,15 +13,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
-import com.example.chicksevent.adapter.UserAdapter;
+import com.example.chicksevent.adapter.EntrantAdapter;
 import com.example.chicksevent.databinding.FragmentChosenListBinding;
 import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Organizer;
+import com.example.chicksevent.misc.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -29,65 +29,68 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 /**
- * Fragment responsible for displaying and managing the "chosen list" (INVITED entrants)
- * associated with a specific event.
- *
+ * Fragment displaying the list of entrants who have been selected (invited) for an event.
  * <p>
- * This screen allows organizers to:
- * <ul>
- *   <li>View the list of invited entrants fetched from Firebase</li>
- *   <li>Navigate to event management, creation, or notification screens</li>
- *   <li>Send bulk notifications to invited and uninvited entrants</li>
- * </ul>
- * Firebase data is retrieved through {@link FirebaseService}, and all list data is rendered
- * using a {@link com.example.chicksevent.adapter.UserAdapter}.
+ * This screen shows users in the "INVITED" status from the event's waiting list.
+ * It allows the organizer to send a notification to all invited users via
+ * {@link Organizer#sendWaitingListNotification}.
  * </p>
  *
- * <p><b>Firebase roots used:</b></p>
+ * <p><b>Key Features:</b>
  * <ul>
- *   <li><code>WaitingList/{eventId}/INVITED</code> — load invited entrants</li>
- *   <li><code>WaitingList/{eventId}/UNINVITED</code> — send “not chosen” notifications</li>
+ *   <li>Real-time display of invited entrants using {@link ValueEventListener}</li>
+ *   <li>Send bulk notification to all invited users</li>
+ *   <li>Navigation to Events, Create Event, and Notifications</li>
  * </ul>
+ * </p>
  *
  * <p>
- * This fragment does not perform access control checks; callers must ensure that the current
- * user is authorized to view or modify event-related data before navigating to this screen.
+ * Data is loaded from Firebase under:
+ * {@code /WaitingList/{eventId}/INVITED}
+ * Each child key is treated as a user ID and displayed using {@link EntrantAdapter}.
  * </p>
+ *
+ * @author ChicksEvent Team
+ * @see Organizer
+ * @see EntrantStatus
  */
-
 public class ChosenListFragment extends Fragment {
 
-    /** View binding object for the fragment layout. */
+    /** View binding for the chosen list layout. */
     private FragmentChosenListBinding binding;
 
-    /** ListView used to display invited entrants. */
+    /** ListView displaying the list of invited users. */
     private ListView userView;
 
-    /** Adapter that binds entrant data to the ListView. */
-    private UserAdapter waitingListAdapter;
+    /** Adapter that binds user data to the ListView. */
+    private EntrantAdapter waitingListAdapter;
 
-    /** List of entrant data to display in the chosen list. */
-    private ArrayList<Entrant> userDataList = new ArrayList<>();
+    /** List holding all {@link User} objects currently in the invited list. */
+    private ArrayList<Entrant> entrantDataList = new ArrayList<>();
 
-    /** Firebase service referencing the "WaitingList" node. */
+    /** Firebase service wrapper scoped to the "WaitingList" root node. */
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
 
-    /** Tag used for logging. */
-    private final String TAG = "ChosenList";
+    /** Log tag used for debugging and logging within this fragment. */
+    private String TAG = "RTD8";
 
-    /** ID of the event whose chosen list is displayed. */
-    private String eventId;
-
-    /** Required empty public constructor. */
-    public ChosenListFragment() {}
+    /** The ID of the current event, passed via fragment arguments. */
+    String eventId;
 
     /**
-     * Inflates the fragment layout and initializes view binding.
+     * Default constructor required for Fragment instantiation.
+     */
+    public ChosenListFragment() {
+        // You can keep the constructor-empty and inflate via binding below
+    }
+
+    /**
+     * Inflates the fragment layout using View Binding.
      *
-     * @param inflater  LayoutInflater used to inflate the view.
-     * @param container Parent view group.
-     * @param savedInstanceState Previous state bundle.
-     * @return The root view for this fragment.
+     * @param inflater           the LayoutInflater to inflate the view
+     * @param container          parent view that the fragment UI should attach to
+     * @param savedInstanceState previous saved state (not used)
+     * @return the root view of the fragment
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -98,11 +101,11 @@ public class ChosenListFragment extends Fragment {
     }
 
     /**
-     * Called after the view is created. Initializes UI components,
-     * sets up button navigation, loads invited entrants, and handles notifications.
+     * Called after the view is created. Initializes UI components, sets up navigation,
+     * configures the ListView and adapter, and loads the list of invited entrants.
      *
-     * @param view The fragment's root view.
-     * @param savedInstanceState Previously saved instance state.
+     * @param view               the root view returned by {@link #onCreateView}
+     * @param savedInstanceState previous saved state (not used)
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -110,89 +113,71 @@ public class ChosenListFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button notificationButton = view.findViewById(R.id.btn_notification);
+        
+        
+        
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
+        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView = view.findViewById(R.id.recycler_chosenUser);
-
-        waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
         userView.setAdapter(waitingListAdapter);
 
-        notificationButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(ChosenListFragment.this)
-                        .navigate(R.id.action_ChosenListFragment_to_NotificationFragment)
-        );
 
-        eventButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(ChosenListFragment.this)
-                        .navigate(R.id.action_ChosenListFragment_to_EventFragment)
-        );
-
-        createEventButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(ChosenListFragment.this)
-                        .navigate(R.id.action_ChosenListFragment_to_CreateEventFragment)
-        );
-
-        // Load INVITED entrants
         listEntrants(EntrantStatus.INVITED);
 
         sendNotificationButton.setOnClickListener(v -> {
-            Organizer organizer = new Organizer(
-                    Settings.Secure.getString(
-                            getContext().getContentResolver(),
-                            Settings.Secure.ANDROID_ID
-                    ),
-                    eventId
-            );
-
+            Log.i("notification", "sending notif");
+            Organizer organizer = new Organizer(Settings.Secure.getString(
+                    getContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            ), eventId);
             organizer.sendWaitingListNotification(EntrantStatus.INVITED, "chosen list notification");
-            organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "not chosen notification");
+            organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
 
-            Toast.makeText(getContext(), "Notifications sent.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "chosen list notfication sent", Toast.LENGTH_SHORT).show();
         });
     }
 
     /**
-     * Loads entrants from Firebase under the specified status (e.g., INVITED)
-     * and updates the ListView with the retrieved data.
+     * Overloaded method to list entrants with a default status of {@link EntrantStatus#WAITING}.
+     * <p>
+     * Delegates to {@link #listEntrants(EntrantStatus)} with {@code WAITING}.
+     * </p>
+     */
+    public void listEntrants() {
+        listEntrants(EntrantStatus.WAITING);
+    }
+
+    /**
+     * Attaches a real-time listener to Firebase to load entrants with the specified status.
+     * <p>
+     * Listens to:
+     * {@code /WaitingList/{eventId}/{status}}
+     * Each child key is converted to a {@link User} and added to {@link #entrantDataList}.
+     * The adapter is recreated and set on every data change.
+     * </p>
      *
-     * @param status The status category to query from Firebase.
+     * @param status the {@link EntrantStatus} to filter entrants by (e.g., INVITED, WAITING)
      */
     public void listEntrants(EntrantStatus status) {
+        Log.i(TAG, "in here " + eventId + " " + status);
         waitingListService.getReference().child(eventId).child(status.toString())
                 .addValueEventListener(new ValueEventListener() {
-
-                    /**
-                     * Called when Firebase data is successfully retrieved.
-                     * Rebuilds the entrant list and refreshes the adapter.
-                     *
-                     * @param dataSnapshot Snapshot of Firebase data.
-                     */
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        userDataList = new ArrayList<>();
-
+                        Log.i(TAG, "IN HERE bef " + status);
+                        entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            String entrantId = childSnap.getKey();
-                            String name = childSnap.child("name").getValue(String.class);
-                            Entrant entrant = new Entrant(entrantId, name, status);
-                            userDataList.add(entrant);
+                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
                         }
 
-                        waitingListAdapter = new UserAdapter(getContext(), userDataList, eventId);
+                        waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
                         userView.setAdapter(waitingListAdapter);
                     }
 
-                    /**
-                     * Called when a Firebase database read fails.
-                     *
-                     * @param databaseError Error from Firebase.
-                     */
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.e(TAG, "Error reading data: " + databaseError.getMessage());
@@ -201,7 +186,26 @@ public class ChosenListFragment extends Fragment {
     }
 
     /**
-     * Clears the binding reference when the view is destroyed to prevent memory leaks.
+     * Utility method to safely convert a {@link CharSequence} to a trimmed string.
+     *
+     * @param cs the input character sequence
+     * @return trimmed string, or empty string if input is {@code null}
+     */
+    private static String s(CharSequence cs) {
+        return cs == null ? "" : cs.toString().trim();
+    }
+
+    /**
+     * Convenience method to display a short toast message.
+     *
+     * @param msg the message to display
+     */
+    private void toast(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Cleans up the View Binding reference to prevent memory leaks.
      */
     @Override
     public void onDestroyView() {

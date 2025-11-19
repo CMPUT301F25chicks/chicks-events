@@ -1,19 +1,26 @@
 package com.example.chicksevent.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.R;
+import com.example.chicksevent.misc.Event;
+import com.example.chicksevent.misc.FirebaseService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Custom {@link ../ArrayAdapter} for displaying {@link Event} objects within a ListView or GridView.
@@ -37,16 +44,40 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
 
     private ArrayList<Event> events;
     private OnDeleteClickListener listener;
+    private OnDeleteClickPosterListener listenerPoster;
     private Context context;
+
+    private FirebaseService imageService = new FirebaseService("Image");
 
     public interface OnDeleteClickListener {
         void onDeleteClick(Event event);
+
     }
 
-    public EventAdminAdapter(Context context, ArrayList<Event> events, OnDeleteClickListener listener) {
+    public interface OnDeleteClickPosterListener {
+        void onDeletePosterClick(Event event);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView eventName;
+        ImageButton btnDelete;
+
+        ImageButton posterImageView;
+        String eventId; // track which event this view belongs to
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            eventName = itemView.findViewById(R.id.tv_event_name);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
+            posterImageView = itemView.findViewById(R.id.img_event);
+        }
+    }
+
+    public EventAdminAdapter(Context context, ArrayList<Event> events, OnDeleteClickListener listener, OnDeleteClickPosterListener listenerPoster) {
         this.context = context;
         this.events = events;
         this.listener = listener;
+        this.listenerPoster = listenerPoster;
     }
 
     @NonNull
@@ -64,6 +95,37 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
         holder.btnDelete.setOnClickListener(v -> {
             if (listener != null) listener.onDeleteClick(event);
         });
+
+        holder.eventId = event.getId();
+
+        imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
+
+            Log.i("what event", event.getId() + " | " + holder.eventId);
+//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+            if (!event.getId().equals(holder.eventId)) return;
+
+            if (task.getValue() == null) {
+                // clearn image if does not exist
+                holder.posterImageView.setImageResource(R.drawable.sample_image);
+                return;
+            }
+
+            String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            holder.posterImageView.setImageBitmap(bitmap);
+        }).addOnFailureListener(e -> {Log.i("errorerror", e.getMessage()); holder.posterImageView.setImageResource(R.drawable.sample_image);});
+
+//
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) listener.onDeleteClick(event);
+        });
+
+        holder.posterImageView.setOnClickListener(v -> {
+            if (listener != null) listenerPoster.onDeletePosterClick(event);
+
+        });
+
     }
 
     @Override
@@ -71,14 +133,5 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
         return events.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView eventName;
-        ImageButton btnDelete;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            eventName = itemView.findViewById(R.id.tv_event_name);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
-        }
-    }
 }

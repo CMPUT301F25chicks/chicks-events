@@ -83,27 +83,8 @@ public class AdminHomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Navigation buttons for main sections
-        Button eventButton = view.findViewById(R.id.btn_events);
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        Button profileButton = view.findViewById(R.id.btn_profile);
-
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(AdminHomeFragment.this)
-                    .navigate(R.id.action_AdminHomeFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(AdminHomeFragment.this)
-                    .navigate(R.id.action_AdminHomeFragment_to_CreateEventFragment);
-        });
-
-        profileButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(AdminHomeFragment.this)
-                    .navigate(R.id.action_AdminHomeFragment_to_ProfileFragment);
-        });
-
         // Admin management buttons
+        Button btnNotification = view.findViewById(R.id.btn_admin_notification);
         Button btnEvents = view.findViewById(R.id.btn_admin_event);
         Button btnOrganizers = view.findViewById(R.id.btn_admin_org);
         Button btnProfiles = view.findViewById(R.id.btn_admin_profile);
@@ -160,6 +141,9 @@ public class AdminHomeFragment extends Fragment {
         btnProfiles.setOnClickListener(v ->
                 NavHostFragment.findNavController(AdminHomeFragment.this)
                         .navigate(R.id.action_adminHome_to_profileAdminFragment));
+
+        btnNotification.setOnClickListener(v -> NavHostFragment.findNavController(AdminHomeFragment.this)
+                .navigate(R.id.action_adminHome_to_notificationAdminFragment));
     }
 
     /**

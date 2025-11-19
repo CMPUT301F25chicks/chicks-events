@@ -56,6 +56,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <ImageButton
+                    android:id="@+id/help_button"
+                    android:layout_width="60dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="264dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/sample_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/tv_date"
                     android:layout_width="71dp"
@@ -241,7 +253,7 @@
                         android:id="@+id/tv_waiting_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Number of People: 40"
+                        android:text="Number of Entrants: LOADING..."
                         android:textColor="@color/dateBox"
                         android:textSize="14sp"
                         android:layout_marginBottom="8dp"/>
@@ -311,65 +323,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
-            android:id="@+id/btn_notification"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_notification"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_events"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_events"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_scan"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_addEvent"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_addevents"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
-
-        <Button
-            android:id="@+id/btn_profile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:drawableTop="@drawable/ic_profile"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/purpleText"
-            android:padding="8dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,12 +1,18 @@
 package com.example.chicksevent.fragment;
 
+import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,11 +20,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailBinding;
-import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.google.android.gms.tasks.Task;
@@ -71,12 +75,8 @@ public class EventDetailFragment extends Fragment {
     private TextView eventDetails;
     private TextView eventNameReal;
     private Integer waitingListCount;
-    private LinearLayout waitingStatus;
-    private LinearLayout notChosenStatus;
 
-    // state flags filled by lookWaitingList()
-    private boolean isWaiting = false;
-    private boolean isNotChosen = false;
+    private ImageButton helpButton;
 
     /**
      * Default constructor required for Fragment instantiation.
@@ -120,10 +120,11 @@ public class EventDetailFragment extends Fragment {
         TextView eventName = view.findViewById(R.id.tv_event_name);
         eventDetails = view.findViewById(R.id.tv_event_details);
         eventNameReal = view.findViewById(R.id.tv_time);
+        helpButton = view.findViewById(R.id.help_button);
 
         Bundle args = getArguments();
         if (args != null) {
-            eventNameString = args.getString("eventName");
+            eventNameString = args.getString("eventId");
             eventName.setText(eventNameString);
         }
 
@@ -134,66 +135,59 @@ public class EventDetailFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-        Button notificationButton = view.findViewById(R.id.btn_notification);
-        notificationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_NotificationFragment);
-        });
-
-        Button eventButton = view.findViewById(R.id.btn_events);
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_EventFragment);
-        });
-
-        Button createEventButton = view.findViewById(R.id.btn_addEvent);
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventDetailFragment.this)
-                    .navigate(R.id.action_EventDetailFragment_to_CreateEventFragment);
-        });
 
         Button joinButton = view.findViewById(R.id.btn_waiting_list);
         Button leaveButton = view.findViewById(R.id.btn_leave_waiting_list);
-
-        // assign to fragment fields so other methods can see them
-        waitingStatus = view.findViewById(R.id.layout_waiting_status);
-        notChosenStatus = view.findViewById(R.id.layout_not_chosen_status);
+        LinearLayout waitingStatus = view.findViewById(R.id.layout_waiting_status);
         TextView waitingCount = view.findViewById(R.id.tv_waiting_count);
+        ImageView posterImageView = view.findViewById(R.id.img_event);
 
-        Button rejoinButton = view.findViewById(R.id.btn_rejoin_waiting_list);
-
-
-        getEventDetail().addOnCompleteListener(t -> {
+        getEventDetail().continueWithTask(t -> {
 //            Log.i("browaiting", t.getResult().toString());
             if (t.getResult()) {
                 waitingStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
             }
 
-            waitingCount.setText("Number of Entrants: " + waitingListCount);
+            return getWaitingCount();
+        }).addOnCompleteListener(t -> {
+            waitingCount.setText("Number of Entrants: " + t.getResult());
+        });
+
+        helpButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Lottery Info")
+                    .setMessage("you join waiting list. wait for organizer to draw entrants. accept the invitation. that's it :)")
+                    .setNegativeButton("OK", null)
+                    .show();
         });
 
         joinButton.setOnClickListener(v -> {
-            userExists().addOnSuccessListener(boole -> {
-                if (boole) {
-                    Entrant e = new Entrant(userId, args.getString("eventName"), EntrantStatus.WAITING);
+            userExists().continueWithTask(boole -> {
+                if (boole.getResult()) {
+                    Entrant e = new Entrant(userId, args.getString("eventId"));
                     e.joinWaitingList();
                     Toast.makeText(getContext(),
                             "Joined waiting list :)",
                             Toast.LENGTH_SHORT).show();
                     waitingStatus.setVisibility(View.VISIBLE);
 
+
+                    joinButton.setVisibility(View.INVISIBLE);
                 } else {
                     Toast.makeText(getContext(),
                             "You need to create profile to join waiting list",
                             Toast.LENGTH_SHORT).show();
                 }
 
-
+                return getWaitingCount();
+            }).addOnCompleteListener(task -> {
+                waitingCount.setText("Number of Entrants: " + task.getResult());
             });
         });
 
         leaveButton.setOnClickListener(v -> {
-            Entrant e = new Entrant(userId, args.getString("eventName"), null);
+            Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.leaveWaitingList();
             Toast.makeText(getContext(),
@@ -202,7 +196,18 @@ public class EventDetailFragment extends Fragment {
 
 
             waitingStatus.setVisibility(View.INVISIBLE);
+            joinButton.setVisibility(View.VISIBLE);
 
+        });
+
+
+
+        new FirebaseService("Image").getReference().child(args.getString("eventId")).get().addOnCompleteListener(task -> {
+            if (task.getResult().getValue() == null) return;
+            String base64Image = ((HashMap<String, String>) task.getResult().getValue()).get("url");
+            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            posterImageView.setImageBitmap(bitmap);
         });
     }
 
@@ -234,8 +239,6 @@ public class EventDetailFragment extends Fragment {
                     eventDetails.setText(hash.get("eventDetails"));
                     eventId = hash.get("id");
 
-                    getWaitingCount();
-
                     // Return Task<Boolean> directly (no extra wrapping)
                     return lookWaitingList();
                 }
@@ -249,42 +252,8 @@ public class EventDetailFragment extends Fragment {
     public Task<Boolean> lookWaitingList() {
         Log.i("browaiting", "out waiting " + eventId);
 
-        return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
-
-            // reset flags
-            isWaiting = false;
-            isNotChosen = false;
-
-            if (!task.isSuccessful() || task.getResult() == null) {
-                return false;
-            }
-
-            for (DataSnapshot obj : task.getResult().getChildren()) {
-                String sectionKey = obj.getKey(); // e.g. "WAITING" or "NOT_CHOSEN"
-                if (sectionKey == null) continue;
-
-                // obj.getValue() is expected to be a map of userId -> some value
-                Object val = obj.getValue();
-                if (!(val instanceof HashMap)) continue;
-
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) val).entrySet()) {
-                    String key = entry.getKey();
-                    if (userId.equals(key)) {
-                        if (sectionKey.equals("WAITING")) {
-                            isWaiting = true;
-                        } else if (sectionKey.equals("NOT_CHOSEN")) {
-                            isNotChosen = true;
-                        }
-                    }
-                }
-            }
-
-            // return isWaiting for backward compatibility (your existing callers expect Task<Boolean>)
-            return isWaiting;
-        });
+        return waitingListService.getReference().child(eventId).child("WAITING").child(userId).get().continueWith(task -> task.getResult().exists());
     }
-
 
 
     /**
@@ -298,21 +267,7 @@ public class EventDetailFragment extends Fragment {
      *         {@code false} if not
      */
     public Task<Boolean> userExists() {
-        return userService.getReference().get().continueWith(ds -> {
-            boolean userExists = false;
-            for (DataSnapshot d : ds.getResult().getChildren()) {
-                Log.i("TAGwerw", d.getKey());
-                try {
-                    HashMap<String, Object> userHash = (HashMap<String, Object>) d.getValue();
-                    if (userId.equals(d.getKey())) {
-                        return true;
-                    }
-                } catch(Exception e) {
-                    Log.e("ERROR", "weird error " + e);
-                }
-            }
-            return false;
-        });
+        return userService.getReference().child(userId).get().continueWith(task -> task.getResult().exists());
     }
 
     /**

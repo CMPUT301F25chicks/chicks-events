@@ -1,107 +1,120 @@
 package com.example.chicksevent.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.R;
-import com.example.chicksevent.misc.Entrant;
-import com.example.chicksevent.misc.FirebaseService;
-import com.google.firebase.database.DatabaseReference;
+import com.example.chicksevent.misc.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
- * Adapter that binds {@link Entrant} objects to a list for the organizer UI.
- *
- * <p><b>Displays:</b></p>
- * <ul>
- *     <li>Entrant name</li>
- *     <li>Entrant status (WAITING, INVITED, ACCEPTED, CANCELLED, etc.)</li>
- *     <li>A delete/cancel button to remove an invited entrant</li>
- * </ul>
- *
- * <p>
- * Used when the organizer needs to manage the invited list and cancel or replace entrants.
- * </p>
+ * {@link RecyclerView.Adapter} that displays a list of {@link User} objects
+ * in a RecyclerView. Each item shows the entrant's ID, status, and includes a delete button.
+ * Clicking the delete button notifies the registered {@link OnDeleteClickListener}.
  */
-public class UserAdapter extends ArrayAdapter<Entrant> {
-
-    private final String eventId;
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     /**
-     * Creates the adapter.
-     *
-     * @param context app context
-     * @param entrantList list of entrants to display
-     * @param eventId the event whose waiting-list is being modified
+     * Callback interface for handling delete button clicks on entrant items.
      */
-    public UserAdapter(Context context, ArrayList<Entrant> entrantList, String eventId) {
-        super(context, 0, entrantList);
-        this.eventId = eventId;
+    public interface OnDeleteClickListener {
+        /**
+         * Called when the delete button is clicked for a specific entrant.
+         *
+         * @param user The {@link User} object associated with the clicked item.
+         */
+        void onDeleteClicked(User user);
     }
 
-    /** Holder pattern for performance */
-    private static class ViewHolder {
-        TextView nameView;
-        TextView statusView;
-        ImageButton deleteButton;
+    /** List of entrant data to be displayed. */
+    private List<User> entrants;
+
+    /** Listener to handle delete actions. */
+    private OnDeleteClickListener listener;
+
+    /**
+     * Constructs a new adapter with the given entrant list and delete listener.
+     *
+     * @param entrants The list of {@link User} objects to display.
+     * @param listener The {@link OnDeleteClickListener} to notify on delete clicks.
+     */
+    public UserAdapter(List<User> entrants, OnDeleteClickListener listener) {
+        this.entrants = entrants;
+        this.listener = listener;
     }
 
+    /**
+     * Inflates the item layout and creates a new {@link ViewHolder}.
+     *
+     * @param parent   The parent view group into which the new view will be added.
+     * @param viewType The view type of the new view (not used here).
+     * @return A new {@link ViewHolder} that holds the view for each list item.
+     */
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_chosen_user, parent, false);
+        return new ViewHolder(v);
+    }
 
-        ViewHolder holder;
+    /**
+     * Binds data from the specified position to the {@link ViewHolder}.
+     * Sets the user name, status text, and attaches the delete click listener.
+     *
+     * @param holder   The {@link ViewHolder} to bind data to.
+     * @param position The position of the item within the adapter's data set.
+     */
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        User user = entrants.get(position);
+        user.getName().addOnCompleteListener(task -> holder.tvUserName.setText(task.getResult()));
+        holder.tvStatus.setText(user.getUserId());
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_chosen_user, parent, false);
+        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClicked(user));
+    }
 
-            holder = new ViewHolder();
-            holder.nameView = convertView.findViewById(R.id.tv_user_name);
-            holder.statusView = convertView.findViewById(R.id.tv_status);
-            holder.deleteButton = convertView.findViewById(R.id.btn_delete);
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return Size of the {@link User} list.
+     */
+    @Override
+    public int getItemCount() {
+        return entrants.size();
+    }
 
-            convertView.setTag(holder);
+    /**
+     * {@link RecyclerView.ViewHolder} subclass that represents a single list item view.
+     * Holds references to the user name, status text, and delete button.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        /** TextView displaying the entrant's ID. */
+        TextView tvUserName;
 
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+        /** TextView displaying the entrant's status. */
+        TextView tvStatus;
+
+        /** ImageButton to trigger deletion of the entrant. */
+        ImageButton btnDelete;
+
+        /**
+         * Initializes the ViewHolder by finding and storing references to child views.
+         *
+         * @param itemView The root view of the list item.
+         */
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvUserName = itemView.findViewById(R.id.tv_user_name);
+            tvStatus = itemView.findViewById(R.id.tv_status);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
-
-        Entrant entrant = getItem(position);
-
-        if (entrant != null) {
-
-            // Show entrant name + status
-            holder.nameView.setText(entrant.getName());
-            holder.statusView.setText(entrant.getStatus().name());
-
-            // Delete / Cancel an invited entrant
-            holder.deleteButton.setOnClickListener(v -> {
-
-                String entrantId = entrant.getEntrantId();
-                DatabaseReference ref =
-                        new FirebaseService("WaitingList").getReference().child(eventId);
-
-                Map<String, Object> updates = new HashMap<>();
-                updates.put("INVITED/" + entrantId, null);       // remove from invited
-                updates.put("CANCELLED/" + entrantId, true);     // move to cancelled
-
-                ref.updateChildren(updates);
-            });
-        }
-
-        return convertView;
     }
 }

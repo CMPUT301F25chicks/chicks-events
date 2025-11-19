@@ -6,6 +6,12 @@
     app:startDestination="@id/NotificationFragment">
 
     <fragment
+        android:id="@+id/NotificationAdminFragment"
+        android:name="com.example.chicksevent.fragment_admin.NotificationAdminFragment"
+        android:label="Admin Notification Log" >
+    </fragment>
+
+    <fragment
         android:id="@+id/AdminHomeFragment"
         android:name="com.example.chicksevent.fragment_admin.AdminHomeFragment"
         android:label="Admin Home" >
@@ -18,6 +24,10 @@
         <action
             android:id="@+id/action_adminHome_to_profileAdminFragment"
             app:destination="@id/ProfileAdminFragment"/>
+
+        <action
+            android:id="@+id/action_adminHome_to_notificationAdminFragment"
+            app:destination="@id/NotificationAdminFragment"/>
 
 
         <action
@@ -36,7 +46,7 @@
 
     <fragment
         android:id="@+id/EventAdminFragment"
-        android:name="com.example.chicksevent.fragment.EventAdminFragment"
+        android:name="com.example.chicksevent.fragment_admin.EventAdminFragment"
         android:label="Events Admin"/>
     <fragment
         android:id="@+id/OrgAdminFragment"
@@ -240,7 +250,7 @@
 
     <fragment
         android:id="@+id/UpdateEventFragment"
-        android:name="com.example.chicksevent.fragment.UpdateEventFragment"
+        android:name="com.example.chicksevent.fragment_org.UpdateEventFragment"
         android:label="@string/update_event_fragment_label"
         tools:layout="@layout/fragment_update_event_detail">
 

@@ -27,6 +27,8 @@
 
     <TextView
         android:id="@+id/tv_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="52dp"
         android:layout_height="43dp"
         android:background="@drawable/bg_date_box"
@@ -36,11 +38,9 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.023"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/img_event"
-        app:layout_constraintVertical_bias="0.972" />
+        app:layout_constraintVertical_bias="0.958"
+        tools:layout_editor_absoluteX="8dp" />
 
     <LinearLayout
         android:id="@+id/info_container"

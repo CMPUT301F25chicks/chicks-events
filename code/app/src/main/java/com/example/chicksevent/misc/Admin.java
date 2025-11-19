@@ -45,6 +45,8 @@ public class Admin extends User {
     /** Service wrapper scoped to the "Organizer" collection/root in Firebase. */
     private final FirebaseService organizerService;
 
+    private final FirebaseService imageService = new FirebaseService("Image");
+
     /**
      * Constructs an {@code Admin} for the given user ID.
      *
@@ -77,6 +79,18 @@ public class Admin extends User {
     }
 
     /**
+     * Deletes a poster from the database by its ID.
+     *
+     * @param eventId the Firebase key of the event poster to delete; must be non-empty.
+     */
+    public void deletePoster(String eventId) {
+        Log.i("DEL", "gonna delete " + eventId);
+        if (eventId != null && !eventId.isEmpty()) {
+            imageService.deleteEntry(eventId);
+        }
+    }
+
+    /**
      * Retrieves all entrant profiles from the database.
      * <p>
      * Reads the entire {@code /User} node, creates a {@link User} instance for each child
@@ -85,7 +99,7 @@ public class Admin extends User {
      *
      * @return a {@link Task} that resolves to a {@link List} of {@link User} objects on success.
      */
-    public Task<List<User>> browseEntrants() {
+    public Task<List<User>> browseUsers() {
         return userService.getReference().get().continueWithTask(task -> {
             if (task.isSuccessful()) {
                 List<User> entrants = new ArrayList<>();
@@ -224,7 +238,7 @@ public class Admin extends User {
      *
      * @param entrantId the Firebase key of the entrant to delete
      */
-    public void deleteEntrantProfile(String entrantId) {
+    public void deleteUserProfile(String entrantId) {
         if (entrantId != null && !entrantId.isEmpty()) {
             userService.deleteEntry(entrantId);
         }
