@@ -276,7 +276,6 @@ public class QRCodeDisplayFragment extends Fragment {
     private void setupNavigationButtons(View view) {
         Button notificationButton = view.findViewById(R.id.btn_notification);
         Button eventButton = view.findViewById(R.id.btn_events);
-        Button scanButton = view.findViewById(R.id.btn_scan);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button profileButton = view.findViewById(R.id.btn_profile);
 
@@ -288,9 +287,7 @@ public class QRCodeDisplayFragment extends Fragment {
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_QRCodeDisplayFragment_to_EventFragment));
 
-        scanButton.setOnClickListener(v ->
-                NavHostFragment.findNavController(this)
-                        .navigate(R.id.action_QRCodeDisplayFragment_to_QRCodeScannerFragment));
+        // QR scanner button removed - will be reimplemented
 
         createEventButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)

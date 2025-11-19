@@ -134,10 +134,7 @@ public class EventFragment extends Fragment {
             NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_ProfileFragment);
         });
 
-        Button scanButton = view.findViewById(R.id.btn_scan);
-        scanButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EventFragment.this).navigate(R.id.action_EventFragment_to_QRCodeScannerFragment);
-        });
+        // QR scanner button - removed for now, will be reimplemented
 
         eventView =  view.findViewById(R.id.recycler_notifications);;
 //

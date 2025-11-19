@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -88,6 +87,7 @@ public class NotificationFragment extends Fragment {
      */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
         service = new FirebaseService("bruhmoment");
         HashMap<String, Object> data = new HashMap<>();
 
@@ -161,33 +161,27 @@ public class NotificationFragment extends Fragment {
         Button eventButton = view.findViewById(R.id.btn_events);
         Button createEventButton = view.findViewById(R.id.btn_addEvent);
         Button profileButton = view.findViewById(R.id.btn_profile);
-        Button scanButton = view.findViewById(R.id.btn_scan);
 
-        eventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_EventFragment);
-        });
-
-        createEventButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_CreateEventFragment);
-        });
-
-        profileButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_ProfileFragment);
-        });
-
-        if (scanButton != null) {
-            scanButton.setOnClickListener(v -> {
-                try {
-                    NavHostFragment.findNavController(NotificationFragment.this)
-                            .navigate(R.id.action_NotificationFragment_to_QRCodeScannerFragment);
-                } catch (Exception e) {
-                    android.util.Log.e("NotificationFragment", "Error navigating to QR scanner", e);
-                    Toast.makeText(getContext(), "Error opening scanner", Toast.LENGTH_SHORT).show();
-                }
+        if (eventButton != null) {
+            eventButton.setOnClickListener(v -> {
+                NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_EventFragment);
             });
-        } else {
-            android.util.Log.e("NotificationFragment", "btn_scan button not found!");
         }
+
+        if (createEventButton != null) {
+            createEventButton.setOnClickListener(v -> {
+                NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_CreateEventFragment);
+            });
+        }
+
+        if (profileButton != null) {
+            profileButton.setOnClickListener(v -> {
+                NavHostFragment.findNavController(NotificationFragment.this).navigate(R.id.action_NotificationFragment_to_ProfileFragment);
+            });
+        }
+
+        // QR scanner button - removed for now, will be reimplemented
+        // scanButton click handler removed
     }
 
     /**
