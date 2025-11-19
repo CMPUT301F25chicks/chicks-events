@@ -2,6 +2,8 @@ package com.example.chicksevent.misc;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -166,60 +168,76 @@ public class Lottery {
      *
      * @param numReplacements the number of new entrants to invite (or all if waiting < numReplacements)
      */
+    /**
+     * Draws up to {@code numReplacements} entrants from the WAITING list and moves them
+     * to INVITED. All remaining waiting entrants are moved to UNINVITED.
+     */
     public void poolReplacement(int numReplacements) {
         Log.i(TAG, "Pooling replacement up to " + numReplacements + " for eventId=" + eventId);
 
-        waitingListService.getReference()
+        DatabaseReference waitingRef = waitingListService.getReference()
                 .child(eventId)
-                .child(WAITING_NODE)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot waitSnap) {
-                        List<String> waiting = new ArrayList<>();
-                        if (waitSnap != null && waitSnap.exists()) {
-                            for (DataSnapshot ch : waitSnap.getChildren()) {
-                                waiting.add(ch.getKey());
-                            }
-                        }
+                .child(WAITING_NODE);
 
-                        if (waiting.isEmpty()) {
-                            Log.i(TAG, "No waiting entrants to pool.");
-                            return;
-                        }
+        DatabaseReference rootRef = waitingListService.getReference();
 
-                        // Determine how many we can actually invite
-                        int actualPool = Math.min(waiting.size(), numReplacements);
-                        Collections.shuffle(waiting);
-                        List<String> newInvited = waiting.subList(0, actualPool);
+        waitingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot waitSnap) {
 
-                        Map<String, Object> updates = new HashMap<>();
-                        final String base = eventId + "/";
+                List<String> waiting = new ArrayList<>();
+                for (DataSnapshot ch : waitSnap.getChildren()) {
+                    waiting.add(ch.getKey());
+                }
 
-                        for (String uid : newInvited) {
-                            updates.put(base + INVITED_NODE + "/" + uid, Boolean.TRUE);
-                            updates.put(base + WAITING_NODE + "/" + uid, null); // remove from waiting
-                        }
+                if (waiting.isEmpty()) {
+                    Log.i(TAG, "No waiting entrants to pool.");
+                    return;
+                }
 
-                        if (updates.isEmpty()) {
-                            Log.i(TAG, "Nothing to update for replacement pool.");
-                            return;
-                        }
+                // Shuffle and select invited
+                Collections.shuffle(waiting);
+                int actualPool = Math.min(numReplacements, waiting.size());
+                List<String> invited = waiting.subList(0, actualPool);
 
-                        waitingListService.getReference().updateChildren(updates, (error, ref) -> {
-                            if (error != null) {
-                                Log.e(TAG, "Replacement pool failed: " + error.getMessage());
-                            } else {
-                                Log.i(TAG, "Replacement pool succeeded. New invited: " + newInvited.size());
-                            }
-                        });
-                    }
+                // Everyone else becomes UNINVITED
+                List<String> uninvited = waiting.subList(actualPool, waiting.size());
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        Log.e(TAG, "Error reading WAITING: " + error.getMessage());
+                // Build atomic update map
+                Map<String, Object> updates = new HashMap<>();
+                final String base = eventId + "/";
+
+                // Set INVITED
+                for (String uid : invited) {
+                    updates.put(base + INVITED_NODE + "/" + uid, Boolean.TRUE);
+                }
+
+                // Set UNINVITED
+                for (String uid : uninvited) {
+                    updates.put(base + UNINVITED_NODE + "/" + uid, Boolean.TRUE);
+                }
+
+                // Remove all from WAITING
+                for (String uid : waiting) {
+                    updates.put(base + WAITING_NODE + "/" + uid, null);
+                }
+
+                // Apply atomic update
+                rootRef.updateChildren(updates, (error, ref) -> {
+                    if (error != null) {
+                        Log.e(TAG, "Replacement pool failed: " + error.getMessage());
+                    } else {
+                        Log.i(TAG, "Replacement pool succeeded. Invited=" +
+                                invited.size() + " Uninvited=" + uninvited.size());
                     }
                 });
-    }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error reading WAITING: " + error.getMessage());
+            }
+        });
+    }
 
 }
