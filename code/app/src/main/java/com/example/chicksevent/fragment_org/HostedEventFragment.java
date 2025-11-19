@@ -143,18 +143,19 @@ public class HostedEventFragment extends Fragment {
                     Log.d(TAG, "Value: " + value);
                     if (value.get("organizer").equals(androidId)) {
                         Log.d("sigma", "yes success " + key);
-                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                         eventDataList.add(e);
                     }
 
 
                     Log.d(TAG, "---");
                 }
-                HostedEventAdapter eventAdapter = new HostedEventAdapter(getContext(), eventDataList, (item, type) -> {
+                    if (getContext() == null) return;
+                    HostedEventAdapter eventAdapter = new HostedEventAdapter(getContext(), eventDataList, (item, type) -> {
                     NavController navController = NavHostFragment.findNavController(HostedEventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 //                    bundle.putString("organizerId", item.getId());
 
                     if (type == 0) {
@@ -167,6 +168,7 @@ public class HostedEventFragment extends Fragment {
                 });
 
                 eventView.setAdapter(eventAdapter);
+
 
 
 //                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());

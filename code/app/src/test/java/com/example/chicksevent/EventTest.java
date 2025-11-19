@@ -86,7 +86,7 @@ public class EventTest {
                 "U1", null, "Test Event", "Desc",
                 "2025-01-01", "2025-01-02",
                 "2024-12-01", "2024-12-15",
-                50, "poster.png", "fun"
+                50, "poster.png", "fun", false
         );
 
         // Prepare a mock FirebaseService and inject it into the private field
@@ -112,7 +112,7 @@ public class EventTest {
         Organizer org = new Organizer("U55", "E77");
         Event e = new Event("U55", "E77", "My Event", "Cool",
                 "2025-01-01", "2025-01-02",
-                "2024-12-01", "2024-12-10", 10, "poster.jpg", "tag1");
+                "2024-12-01", "2024-12-10", 10, "poster.jpg", "tag1", false);
 
         e.setName("Updated");
         e.setEventDetails("NewDesc");
@@ -144,7 +144,7 @@ public class EventTest {
         Event e = new Event(
                 "U1", null, "NullTest", null,
                 null, null, null, null,
-                0, null, null
+                0, null, null, false
         );
 
         FirebaseService mockService = mock(FirebaseService.class);

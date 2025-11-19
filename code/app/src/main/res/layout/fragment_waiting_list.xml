@@ -107,10 +107,20 @@
             android:backgroundTint="@color/darkPurple"
             android:text="Pooling"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layoute"
             tools:layout_editor_absoluteX="71dp" />
 
-
+        <LinearLayout
+            android:id="@+id/bottom_buttons_layoute"
+            android:layout_width="375dp"
+            android:layout_height="58dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

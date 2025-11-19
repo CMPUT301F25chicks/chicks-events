@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -80,6 +81,7 @@ public class EventFragment extends Fragment {
     /** The Android device ID (used to correlate joined events). */
     private String androidId;
 
+
     /**
      * Inflates the fragment layout using ViewBinding.
      */
@@ -116,10 +118,10 @@ public class EventFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-        eventView =  view.findViewById(R.id.recycler_notifications);
+        eventView =  view.findViewById(R.id.recycler_notifications);;
 //
-        eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
-        eventView.setAdapter(eventAdapter);
+//        eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
+//        eventView.setAdapter(eventAdapter);
 
 
         Button joinedEvents = view.findViewById(R.id.btn_joined_events);
@@ -139,6 +141,7 @@ public class EventFragment extends Fragment {
             NavHostFragment.findNavController(EventFragment.this)
                     .navigate(R.id.action_EventFragment_to_SearchEventFragment);
         });
+        ImageView posterImageView = view.findViewById(R.id.img_event);
 
 
 //            eventAdapter = new EventAdapter(getContext(), eventDataList, item -> {});
@@ -148,7 +151,6 @@ public class EventFragment extends Fragment {
         if (filterApplied) {
             listFilteredEvents();
         } else {
-            Log.i("listing events", "hi");
             listEvents();
         }
 
@@ -169,11 +171,12 @@ public class EventFragment extends Fragment {
                         String uid = entry2.getKey();
                         if (androidId.compareTo(uid) == 0) {
                             arr.add(ds.getKey());
-                            Log.i(TAG, "found event " + ds.getKey());
+                            Log.i("RTD10", "found event " + ds.getKey());
                         }
                     }
                 }
             }
+
 
             ArrayList<Event> newEventDataList = new ArrayList<>();
             for (Event e : eventDataList) {
@@ -188,6 +191,7 @@ public class EventFragment extends Fragment {
                 }
 
             }
+
             eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
             eventView.setAdapter(eventAdapter);
 
@@ -217,7 +221,7 @@ public class EventFragment extends Fragment {
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
                     if (eventFilterList.contains(key)) {
-                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                        Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                         eventDataList.add(e);
                     }
 
@@ -228,7 +232,7 @@ public class EventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
 
@@ -267,7 +271,7 @@ public class EventFragment extends Fragment {
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"));
+                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                     eventDataList.add(e);
 
                     Log.d(TAG, "---");
@@ -276,13 +280,12 @@ public class EventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(EventFragment.this);
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", item.getId());
+                    bundle.putString("eventId", item.getId());
 
                     navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
 
                 });
-                Log.i("listing events", "" + eventDataList.size());
-                Log.i("listing events", "gonna display events now");
+
                 eventView.setAdapter(eventAdapter);
 
 

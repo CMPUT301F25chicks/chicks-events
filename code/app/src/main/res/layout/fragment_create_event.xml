@@ -30,7 +30,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@+id/header_title"
-        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -45,17 +45,17 @@
 
             <!-- Event Name -->
 
-            <ImageView
+
+
+            <ImageButton
                 android:id="@+id/img_event_poster"
-                android:layout_width="120dp"
-                android:layout_height="108dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:contentDescription="Event Poster"
-                android:focusable="true"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_image"
-                app:tint="@color/purpleText" />
+                app:layout_constraintBottom_toTopOf="@+id/info_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -178,10 +178,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:clickable="true"
                         android:hint="Start Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="false"
-                        android:inputType="none"
+                        android:focusable="true"
                         android:background="@null" />
 
                     <ImageView
@@ -217,8 +217,8 @@
                         android:layout_weight="1"
                         android:hint="End Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="false"
-                        android:inputType="none"
+                        android:focusable="true"
+                        android:clickable="true"
                         android:background="@null" />
 
                     <ImageView
@@ -301,5 +301,17 @@
         </LinearLayout>
     </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layoute"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

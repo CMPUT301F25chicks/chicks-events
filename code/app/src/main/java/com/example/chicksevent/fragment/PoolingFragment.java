@@ -36,7 +36,7 @@ import java.util.ArrayList;
  *
  * <p><b>Responsibilities:</b>
  * <ul>
- *   <li>Resolve the current event id from fragment arguments (key: {@code "eventName"}).</li>
+ *   <li>Resolve the current event id from fragment arguments (key: {@code "eventId"}).</li>
  *   <li>Run the lottery and display the updated entrant list.</li>
  *   <li>Bind a {@link ListView} via {@link EntrantAdapter} to render user ids.</li>
  * </ul>
@@ -91,15 +91,16 @@ public class PoolingFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
             // Use it to populate UI
         }
 
-
+        
+        
+        
         Button poolingButton = view.findViewById(R.id.btn_pool);
         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView =  view.findViewById(R.id.rv_selected_entrants);
-////
         userView.setAdapter(waitingListAdapter);
 
         poolingButton.setOnClickListener(v -> {
@@ -135,7 +136,7 @@ public class PoolingFragment extends Fragment {
                             entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
 //                            Log.i(TAG, "child key: " + childSnap.getKey());
                         }
-
+                        if (getContext() == null) return;
                         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
 ////
                         userView.setAdapter(waitingListAdapter);

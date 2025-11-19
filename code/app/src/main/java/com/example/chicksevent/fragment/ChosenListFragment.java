@@ -113,16 +113,17 @@ public class ChosenListFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
-
+        
+        
+        
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);
         userView = view.findViewById(R.id.recycler_chosenUser);
         userView.setAdapter(waitingListAdapter);
-
 
 
         listEntrants(EntrantStatus.INVITED);

@@ -45,6 +45,8 @@ public class Admin extends User {
     /** Service wrapper scoped to the "Organizer" collection/root in Firebase. */
     private final FirebaseService organizerService;
 
+    private final FirebaseService imageService = new FirebaseService("Image");
+
     /**
      * Constructs an {@code Admin} for the given user ID.
      *
@@ -73,6 +75,18 @@ public class Admin extends User {
         Log.i("DEL", "gonna delete " + eventId);
         if (eventId != null && !eventId.isEmpty()) {
             eventsService.deleteEntry(eventId);
+        }
+    }
+
+    /**
+     * Deletes a poster from the database by its ID.
+     *
+     * @param eventId the Firebase key of the event poster to delete; must be non-empty.
+     */
+    public void deletePoster(String eventId) {
+        Log.i("DEL", "gonna delete " + eventId);
+        if (eventId != null && !eventId.isEmpty()) {
+            imageService.deleteEntry(eventId);
         }
     }
 
@@ -172,7 +186,8 @@ public class Admin extends User {
                                 "f", // placeholder
                                 3,   // placeholder capacity
                                 "v", // placeholder
-                                "sa" // placeholder
+                                "sa", // placeholder
+                                false // geolocationRequired
                         ));
                     }
                 }

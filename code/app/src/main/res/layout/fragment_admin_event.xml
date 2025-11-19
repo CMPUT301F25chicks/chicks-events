@@ -46,12 +46,12 @@
         android:paddingBottom="8dp"
         tools:listitem="@layout/item_event_deletable"
         app:layout_constraintTop_toBottomOf="@id/search_bar"
-        app:layout_constraintBottom_toTopOf="@id/admin_bottom_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/admin_bottom_buttons_layoute"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
-        android:id="@+id/admin_bottom_buttons_layout"
+        android:id="@+id/admin_bottom_buttons_layoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -60,7 +60,7 @@
         android:gravity="center"
         android:background="@drawable/bg_admin_button_box"
         android:padding="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layoute"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recycler_notifications">
@@ -136,17 +136,19 @@
 
 
     <LinearLayout
-        android:id="@+id/bottom_buttons_layout"
-        android:layout_width="match_parent"
+        android:id="@+id/bottom_buttons_layoute"
+        android:layout_width="375dp"
         android:layout_height="58dp"
-        android:layout_gravity="bottom"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+
     </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

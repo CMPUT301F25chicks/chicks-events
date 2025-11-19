@@ -56,13 +56,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-        Log.i("hehe", "reach");
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        Log.i("hehe", "reach");
-
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        Log.i("hehe", "reach3");
 
         Button eventButton = findViewById(R.id.btn_events);
         Button createEventButton = findViewById(R.id.btn_addEvent);
@@ -70,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         Button notificationButton = findViewById(R.id.btn_notification);
 
         notificationButton.setOnClickListener(v -> {
+            Log.i("listing events", "eee");
             navController.navigate(R.id.NotificationFragment);
         });
 
@@ -87,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.ProfileFragment);
 
         });
-
-        Log.i("hehe4", "checking event");
     }
 
     /**

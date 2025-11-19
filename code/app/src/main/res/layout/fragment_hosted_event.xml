@@ -23,9 +23,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-    <!-- Button row -->
-
-
     <!-- Scrollable ListView -->
     <ListView
         android:id="@+id/recycler_notifications"
@@ -36,8 +33,20 @@
         android:clipToPadding="false"
         android:paddingBottom="8dp"
         tools:listitem="@layout/item_hosted_event"
-        app:layout_constraintTop_toBottomOf="@id/button_row"
-        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+        app:layout_constraintTop_toBottomOf="@id/header_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layoute"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

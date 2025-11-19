@@ -59,7 +59,7 @@
             android:gravity="center"
             android:background="@drawable/bg_admin_button_box"
             android:padding="3dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layoute"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recycler_notifications">
@@ -135,7 +135,7 @@
 
 
         <LinearLayout
-            android:id="@+id/bottom_buttons_layout"
+            android:id="@+id/bottom_buttons_layoute"
             android:layout_width="375dp"
             android:layout_height="58dp"
             android:gravity="center"

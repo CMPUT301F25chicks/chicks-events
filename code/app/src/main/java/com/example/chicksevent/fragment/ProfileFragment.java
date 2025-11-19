@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventName");
+            eventId = args.getString("eventId");
         }
 
         userId = Settings.Secure.getString(
@@ -114,7 +114,9 @@ public class ProfileFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
 
-
+        
+        
+        
 
         editName = view.findViewById(R.id.edit_name);
         editPhone = view.findViewById(R.id.edit_phone);

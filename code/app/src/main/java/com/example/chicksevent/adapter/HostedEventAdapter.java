@@ -2,6 +2,9 @@ package com.example.chicksevent.adapter;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +12,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.R;
+import com.example.chicksevent.misc.Event;
+import com.example.chicksevent.misc.FirebaseService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Custom {@link ArrayAdapter} subclass for displaying events hosted by the current organizer.
@@ -48,6 +54,11 @@ import java.util.ArrayList;
 public class HostedEventAdapter extends ArrayAdapter<Event> {
     /** Listener interface for responding to per-item button clicks. */
     OnItemButtonClickListener listener;
+    private final HashMap<String, Bitmap> imageCache = new HashMap<>();
+
+
+
+    FirebaseService imageService = new FirebaseService("Image");
 
     /**
      * Callback interface to handle button interactions within each hosted event row.
@@ -60,6 +71,11 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
          * @param type integer flag representing the button type — typically 0 for arrow/view and 1 for update.
          */
         void onItemButtonClick(Event item, int type);
+    }
+
+    static class ViewHolder {
+        ImageView posterImageView;
+        String eventId; // track which event this view belongs to
     }
 
     /**
@@ -85,11 +101,30 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i("sigma", "sigma");
+
+        ViewHolder holder;
+
+        Log.i("sigmaerror", "sigma");
+//        View view;
+//        if (convertView == null) {
+//            view = LayoutInflater.from(getContext()).inflate(R.layout.item_hosted_event, parent, false);
+//        } else {
+//            view = convertView;
+//        }
+
         View view;
+
+
         if (convertView == null) {
+//            if (getContext() == null) {
+//                return view;
+//            }
             view = LayoutInflater.from(getContext()).inflate(R.layout.item_hosted_event, parent, false);
+            holder = new HostedEventAdapter.ViewHolder();
+            holder.posterImageView = view.findViewById(R.id.img_event);
+            view.setTag(holder);
         } else {
+            holder = (HostedEventAdapter.ViewHolder) convertView.getTag();
             view = convertView;
         }
 //
@@ -113,6 +148,39 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
         update_button.setOnClickListener(l -> {
             if (listener != null) listener.onItemButtonClick(event, 1);
         });
+
+        holder.posterImageView.setImageResource(R.drawable.sample_image);
+        holder.eventId = event.getId();
+//        Log.i("what event", event.getId() + " | " + holder.eventId);
+
+        if (imageCache.containsKey(event.getId())) {
+            holder.posterImageView.setImageBitmap(imageCache.get(event.getId()));
+
+        } else {
+
+
+            imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
+
+                Log.i("what event", event.getId() + " | " + holder.eventId);
+                //            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+                if (!event.getId().equals(holder.eventId)) return;
+
+                if (task.getValue() == null) {
+                    // clearn image if does not exist
+                    holder.posterImageView.setImageResource(R.drawable.sample_image);
+                    return;
+                }
+
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.posterImageView.setImageBitmap(bitmap);
+                imageCache.put(event.getId(), bitmap);
+            }).addOnFailureListener(e -> {
+                Log.i("errorerror", e.getMessage());
+                holder.posterImageView.setImageResource(R.drawable.sample_image);
+            });
+        }
 
 
         return view;

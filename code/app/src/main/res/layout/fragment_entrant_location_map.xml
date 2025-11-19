@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/michroma"
+        android:text="Entrant Locations"
+        android:textColor="@color/purpleText"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Filter and Search Container -->
+    <LinearLayout
+        android:id="@+id/filter_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/header_title">
+
+        <!-- Status Filter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter by Status:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
+
+            <RadioGroup
+                android:id="@+id/radio_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radio_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All"
+                    android:textColor="@color/purpleText"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radio_waiting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Waiting"
+                    android:textColor="@color/purpleText"
+                    android:layout_marginStart="16dp" />
+
+                <RadioButton
+                    android:id="@+id/radio_invited"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invited"
+                    android:textColor="@color/purpleText"
+                    android:layout_marginStart="16dp" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- Search by Name -->
+        <EditText
+            android:id="@+id/et_search_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search by entrant name/ID"
+            android:textColorHint="@color/darkPurple"
+            android:textColor="@color/purpleText"
+            android:background="@drawable/bg_date_box"
+            android:padding="8dp"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <!-- Map View (OpenStreetMap) -->
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/filter_container"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progress_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintStart_toStartOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="@+id/map" />
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layout"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/btn_notification"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_events"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_events"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_scan"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_addEvent"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_addevents"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_profile"
+            android:layout_width="2dp"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:drawableTop="@drawable/ic_profile"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/purpleText"
+            android:padding="8dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
