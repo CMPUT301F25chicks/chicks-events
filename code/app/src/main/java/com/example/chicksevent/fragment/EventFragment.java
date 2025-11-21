@@ -193,7 +193,16 @@ public class EventFragment extends Fragment {
 
             }
 
-            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
+            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {
+                NavController navController = NavHostFragment.findNavController(EventFragment.this);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("eventId", item.getId());
+
+                navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
+
+            });
+
             eventView.setAdapter(eventAdapter);
 
             return null;
