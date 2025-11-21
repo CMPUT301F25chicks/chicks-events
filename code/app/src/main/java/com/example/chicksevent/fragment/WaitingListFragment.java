@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -102,9 +103,6 @@ public class WaitingListFragment extends Fragment {
             return;
         }
 
-        
-        
-        
         Button poolingButton = view.findViewById(R.id.btn_pool);
 
         Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
@@ -113,6 +111,12 @@ public class WaitingListFragment extends Fragment {
         userView =  view.findViewById(R.id.recycler_notifications);
 ////
         userView.setAdapter(waitingListAdapter);
+
+        ImageButton back = view.findViewById(R.id.btn_check);
+
+        if (back != null) back.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).popBackStack()
+        );
 
         poolingButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(WaitingListFragment.this);

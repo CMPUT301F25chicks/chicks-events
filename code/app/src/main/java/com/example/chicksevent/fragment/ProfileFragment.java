@@ -1,5 +1,6 @@
 package com.example.chicksevent.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.chicksevent.R;
@@ -100,6 +102,7 @@ public class ProfileFragment extends Fragment {
      * @param view               the root view returned by {@link #onCreateView}
      * @param savedInstanceState previous saved state (not used)
      */
+    @SuppressLint("UseCompatLoadingForColorStateLists")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -143,6 +146,24 @@ public class ProfileFragment extends Fragment {
                 editPhone.setText("");
             }
         });
+        notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                notificationSwitch.setThumbTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchThumbOn)
+                );
+                notificationSwitch.setTrackTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchTrackOn)
+                );
+            } else {
+                notificationSwitch.setThumbTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchThumbOff)
+                );
+                notificationSwitch.setTrackTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchTrackOff)
+                );
+            }
+        });
+
     }
 
     /**
