@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ public class EventDetailOrgFragment extends Fragment {
     private FragmentEventDetailOrgBinding binding;
 
     private FirebaseService eventService;
+    private FirebaseService imageService;
 
 
     /**
@@ -82,6 +84,7 @@ public class EventDetailOrgFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventService = new FirebaseService("Event");
+        imageService = new FirebaseService("Image");
 
         TextView eventName = view.findViewById(R.id.tv_event_name);
 
@@ -116,6 +119,23 @@ public class EventDetailOrgFragment extends Fragment {
                 }
             }
             return null;
+        });
+
+        ImageView posterImageView = view.findViewById(R.id.img_event);
+
+        imageService.getReference().child(args.getString("eventId")).get().addOnSuccessListener(task -> {
+//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+//            if (!eventIdString.equals(holder.eventId) || task.getValue() == null) return;
+
+            try {
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                posterImageView.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                Log.i("image error", ":(");
+            }
+//            imageCache.put(event.getId(), bitmap);
         });
 
         viewWaitingListButton.setOnClickListener(v -> {
@@ -197,16 +217,6 @@ public class EventDetailOrgFragment extends Fragment {
             bundle.putString("eventId", args.getString("eventId")); // Using eventName as eventId
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
-        });
-
-        ImageView posterImageView = view.findViewById(R.id.img_event);
-
-        new FirebaseService("Image").getReference().child(args.getString("eventId")).get().addOnCompleteListener(task -> {
-            if (task.getResult().getValue() == null) return;
-            String base64Image = ((HashMap<String, String>) task.getResult().getValue()).get("url");
-            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            posterImageView.setImageBitmap(bitmap);
         });
     }
 

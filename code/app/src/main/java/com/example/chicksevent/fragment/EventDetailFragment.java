@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,11 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -76,7 +80,7 @@ public class EventDetailFragment extends Fragment {
     String userId;
     String eventId;
 
-    String eventNameString;
+    String eventIdString;
 
     private FirebaseService waitingListService;
     private TextView eventDetails;
@@ -90,6 +94,7 @@ public class EventDetailFragment extends Fragment {
     private Handler locationTimeoutHandler;
     private Runnable locationTimeoutRunnable;
     private ProgressBar locationProgressBar;
+    private FirebaseService imageService;
 
     /**
      * Default constructor required for Fragment instantiation.
@@ -128,16 +133,17 @@ public class EventDetailFragment extends Fragment {
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
         waitingListService = new FirebaseService("WaitingList");
-
+        imageService = new FirebaseService("Image");
 
         TextView eventName = view.findViewById(R.id.tv_event_name);
         eventDetails = view.findViewById(R.id.tv_event_details);
         eventNameReal = view.findViewById(R.id.tv_time);
+        
 
         Bundle args = getArguments();
         if (args != null) {
-            eventNameString = args.getString("eventId");
-            eventName.setText(eventNameString);
+            eventIdString = args.getString("eventId");
+            eventName.setText(eventIdString);
         }
 
 
@@ -159,7 +165,23 @@ public class EventDetailFragment extends Fragment {
         LinearLayout uninvitedStatus = view.findViewById(R.id.layout_not_chosen_status);
         LinearLayout acceptedStatus = view.findViewById(R.id.layout_accepted_status);
         LinearLayout declinedStatus = view.findViewById(R.id.layout_declined_status);
+        ImageView posterImageView = view.findViewById(R.id.img_event);
 
+        imageService.getReference().child(eventIdString).get().addOnSuccessListener(task -> {
+//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+//            if (!eventIdString.equals(holder.eventId) || task.getValue() == null) return;
+            try {
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                posterImageView.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                Log.i("image error", ":(");
+            }
+
+//            imageCache.put(event.getId(), bitmap);
+        });
+        
         if (locationProgressBar != null) {
             locationProgressBar.setVisibility(View.GONE);
         }
@@ -182,12 +204,12 @@ public class EventDetailFragment extends Fragment {
                 eventService.getReference().get().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (DataSnapshot ds : task.getResult().getChildren()) {
-                            if (ds.getKey().equals(eventNameString)) {
+                            if (ds.getKey().equals(eventIdString)) {
                                 Object idObj = ds.child("id").getValue();
                                 Object nameObj = ds.child("name").getValue();
 
-                                String eventId = idObj != null ? idObj.toString() : eventNameString;
-                                String eventNameValue = nameObj != null ? nameObj.toString() : eventNameString;
+                                String eventId = idObj != null ? idObj.toString() : eventIdString;
+                                String eventNameValue = nameObj != null ? nameObj.toString() : eventIdString;
 
                                 Bundle bundle = new Bundle();
                                 bundle.putString("eventId", eventId);
@@ -329,8 +351,8 @@ public class EventDetailFragment extends Fragment {
         return eventService.getReference().get().continueWithTask(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
 
-                Log.i("browaiting", ds.getKey() + " : " + eventNameString + " ");
-                if (ds.getKey().equals(eventNameString)) {
+                Log.i("browaiting", ds.getKey() + " : " + eventIdString + " ");
+                if (ds.getKey().equals(eventIdString)) {
                     HashMap<String, Object> hash = (HashMap<String, Object>) ds.getValue();
                     eventNameReal.setText((String) hash.get("name"));
                     eventDetails.setText((String) hash.get("eventDetails"));
