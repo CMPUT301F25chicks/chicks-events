@@ -40,204 +40,284 @@ public class Lottery {
 
     private static final String TAG = "Lottery";
 
-    private static final String WAITING_NODE   = "WAITING";
-    private static final String INVITED_NODE   = "INVITED";
-    private static final String UNINVITED_NODE = "UNINVITED"; // or "UNSELECTED"
+    private static final String WAITING = "WAITING";
+    private static final String INVITED = "INVITED";
+    private static final String UNINVITED = "UNINVITED";
 
     private final FirebaseService waitingListService;
     private final FirebaseService eventService;
     private final String eventId;
 
-    /**
-     * Creates a lottery instance for the given event.
-     *
-     * @param eventId the event identifier whose waiting list will be processed
-     */
+
     public Lottery(String eventId) {
+        this.eventId = eventId;
         this.waitingListService = new FirebaseService("WaitingList");
         this.eventService = new FirebaseService("Event");
-        this.eventId = eventId;
     }
 
-    /**
-     * Executes the lottery and applies status updates in a single atomic write.
-     * <p>
-     * On completion, eligible entrants are moved from {@code WAITING} to {@code INVITED},
-     * and the remainder (if any) are moved to {@code UNINVITED}. If there are no
-     * waiting entrants, no updates are performed. Errors are logged.
-     * </p>
-     */
-    public void runLottery() {
-        Log.i(TAG, "Running lottery (one-shot) for eventId=" + eventId);
-
-        // Read entrantLimit once
-        eventService.getReference()
+    /* -------------------------------------------------------
+     *  Helper: Check if initial lottery already ran
+     * ------------------------------------------------------- */
+    private void hasInitialLotteryRun(Callback<Boolean> callback) {
+        waitingListService.getReference()
                 .child(eventId)
-                .child("entrantLimit")
+                .child(INVITED)
+                .limitToFirst(1)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snap) {
+                        callback.onResult(snap.exists());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.e(TAG, "Check failed", error.toException());
+                        callback.onResult(false);
+                    }
+                });
+    }
+
+    /* -------------------------------------------------------
+     *  MAIN ENTRY: draw entrants (smart behavior)
+     * ------------------------------------------------------- */
+    public void drawOrPool() {
+        hasInitialLotteryRun(alreadyRan -> {
+            if (!alreadyRan) {
+                Log.i(TAG, "Initial lottery hasn't run yet → Running full lottery.");
+                runLottery();
+            } else {
+                Log.i(TAG, "Initial lottery already ran → Running pool replacement.");
+                poolReplacementAuto();
+            }
+        });
+    }
+
+    /* -------------------------------------------------------
+     *  INITIAL LOTTERY (run once)
+     * ------------------------------------------------------- */
+    public void runLottery() {
+        Log.i(TAG, "RunLottery() start: eventId=" + eventId);
+
+        // Read limit
+        eventService.getReference().child(eventId).child("entrantLimit")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot limitSnap) {
-                        if (limitSnap == null || !limitSnap.exists()) {
-                            Log.e(TAG, "entrantLimit missing for event " + eventId);
-                            return;
-                        }
+
                         Integer limit = limitSnap.getValue(Integer.class);
                         if (limit == null) {
-                            Log.e(TAG, "entrantLimit is null for event " + eventId);
+                            Log.e(TAG, "No entrantLimit for eventId " + eventId);
                             return;
                         }
-                        Log.i(TAG, "entrantLimit = " + limit);
 
-                        // Read waiting list once
+                        // Read WAITING list
                         waitingListService.getReference()
                                 .child(eventId)
-                                .child(WAITING_NODE)
+                                .child(WAITING)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot waitSnap) {
+
                                         List<String> waiting = new ArrayList<>();
-                                        if (waitSnap != null && waitSnap.exists()) {
-                                            for (DataSnapshot ch : waitSnap.getChildren()) {
-                                                waiting.add(ch.getKey()); // uid
-                                            }
-                                        }
-                                        Log.i(TAG, "waitingCount = " + waiting.size());
-
-                                        // Decide invited/uninvited
-                                        List<String> invited = new ArrayList<>();
-                                        List<String> uninvited = new ArrayList<>();
-
-                                        if (limit == 0) {
-                                            uninvited = new ArrayList<>(waiting);
-                                        } else if (waiting.size() <= limit) {
-                                            invited = new ArrayList<>(waiting);
-                                        } else {
-                                            Collections.shuffle(waiting);
-                                            invited   = new ArrayList<>(waiting.subList(0, limit));
-                                            uninvited = new ArrayList<>(waiting.subList(limit, waiting.size()));
+                                        for (DataSnapshot child : waitSnap.getChildren()) {
+                                            waiting.add(child.getKey());
                                         }
 
-                                        // Build atomic multi-location update under WaitingList root
-                                        Map<String, Object> updates = new HashMap<>();
-                                        final String base = eventId + "/";
-
-                                        for (String uid : invited) {
-                                            updates.put(base + INVITED_NODE + "/" + uid, Boolean.TRUE);
-                                            updates.put(base + WAITING_NODE + "/" + uid, null); // null = delete
-                                        }
-                                        for (String uid : uninvited) {
-                                            updates.put(base + UNINVITED_NODE + "/" + uid, Boolean.TRUE);
-                                            updates.put(base + WAITING_NODE + "/" + uid, null); // null = delete
-                                        }
-
-                                        if (updates.isEmpty()) {
-                                            Log.i(TAG, "No WAITING entrants; nothing to update.");
+                                        if (waiting.isEmpty()) {
+                                            Log.i(TAG, "WAITING empty — nothing to run.");
                                             return;
                                         }
 
-                                        DatabaseReference waitingRoot = waitingListService.getReference();
-                                        final List<String> invitedFinal = invited;
-                                        final List<String> uninvitedFinal = uninvited;
-                                        final Map<String, Object> updatesFinal = updates;
+                                        if (limit == 0) {
+                                            Log.w(TAG, "Limit is 0 → all become UNINVITED.");
+                                            markAllUninvited(waiting);
+                                            return;
+                                        }
 
-                                        waitingRoot.updateChildren(updatesFinal, (error, ref) -> {
-                                            if (error != null) {
-                                                Log.e(TAG, "Lottery update failed: " + error.getMessage());
-                                            } else {
-                                                Log.i(TAG, "Lottery update succeeded. Invited=" +
-                                                        invitedFinal.size() + " Uninvited=" + uninvitedFinal.size());
-                                            }
-                                        });
+                                        Collections.shuffle(waiting);
+
+                                        List<String> invited = waiting.subList(0, Math.min(limit, waiting.size()));
+                                        List<String> uninvited = waiting.subList(invited.size(), waiting.size());
+
+                                        applyStatus(invited, uninvited);
                                     }
 
                                     @Override
                                     public void onCancelled(DatabaseError error) {
-                                        Log.e(TAG, "Error reading WAITING: " + error.getMessage());
+                                        Log.e(TAG, "Waiting read failed: " + error.getMessage());
                                     }
                                 });
                     }
 
                     @Override
                     public void onCancelled(DatabaseError error) {
-                        Log.e(TAG, "Error reading entrantLimit: " + error.getMessage());
+                        Log.e(TAG, "Limit read failed: " + error.getMessage());
                     }
                 });
     }
-    /**
-     * Draws up to {@code numReplacements} entrants from the WAITING list and moves them to INVITED.
-     *
-     * @param numReplacements the number of new entrants to invite (or all if waiting < numReplacements)
-     */
-    /**
-     * Draws up to {@code numReplacements} entrants from the WAITING list and moves them
-     * to INVITED. All remaining waiting entrants are moved to UNINVITED.
-     */
-    public void poolReplacement(int numReplacements) {
-        Log.i(TAG, "Pooling replacement up to " + numReplacements + " for eventId=" + eventId);
 
-        DatabaseReference waitingRef = waitingListService.getReference()
-                .child(eventId)
-                .child(WAITING_NODE);
+    /* -------------------------------------------------------
+     *  AUTOMATIC POOL: invite until full
+     * ------------------------------------------------------- */
+    public void poolReplacementAuto() {
+        getCounts((invitedCount, limit, waitingCount) -> {
 
-        DatabaseReference rootRef = waitingListService.getReference();
-
-        waitingRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot waitSnap) {
-
-                List<String> waiting = new ArrayList<>();
-                for (DataSnapshot ch : waitSnap.getChildren()) {
-                    waiting.add(ch.getKey());
-                }
-
-                if (waiting.isEmpty()) {
-                    Log.i(TAG, "No waiting entrants to pool.");
-                    return;
-                }
-
-                // Shuffle and select invited
-                Collections.shuffle(waiting);
-                int actualPool = Math.min(numReplacements, waiting.size());
-                List<String> invited = waiting.subList(0, actualPool);
-
-                // Everyone else becomes UNINVITED
-                List<String> uninvited = waiting.subList(actualPool, waiting.size());
-
-                // Build atomic update map
-                Map<String, Object> updates = new HashMap<>();
-                final String base = eventId + "/";
-
-                // Set INVITED
-                for (String uid : invited) {
-                    updates.put(base + INVITED_NODE + "/" + uid, Boolean.TRUE);
-                }
-
-                // Set UNINVITED
-                for (String uid : uninvited) {
-                    updates.put(base + UNINVITED_NODE + "/" + uid, Boolean.TRUE);
-                }
-
-                // Remove all from WAITING
-                for (String uid : waiting) {
-                    updates.put(base + WAITING_NODE + "/" + uid, null);
-                }
-
-                // Apply atomic update
-                rootRef.updateChildren(updates, (error, ref) -> {
-                    if (error != null) {
-                        Log.e(TAG, "Replacement pool failed: " + error.getMessage());
-                    } else {
-                        Log.i(TAG, "Replacement pool succeeded. Invited=" +
-                                invited.size() + " Uninvited=" + uninvited.size());
-                    }
-                });
+            if (limit == 0) {
+                Log.w(TAG, "Cannot pool: entrantLimit = 0");
+                return;
+            }
+            if (invitedCount >= limit) {
+                Log.i(TAG, "Event already full → no pooling.");
+                return;
+            }
+            if (waitingCount == 0) {
+                Log.i(TAG, "No waiting entrants → no pooling.");
+                return;
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Error reading WAITING: " + error.getMessage());
+            int toPool = limit - invitedCount;
+            poolReplacement(toPool);
+        });
+    }
+
+    /* -------------------------------------------------------
+     *  REPLACEMENT POOL (add N new invited)
+     * ------------------------------------------------------- */
+    public void poolReplacement(int numReplacements) {
+
+        waitingListService.getReference()
+                .child(eventId)
+                .child(WAITING)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot waitSnap) {
+
+                        List<String> waiting = new ArrayList<>();
+                        for (DataSnapshot ch : waitSnap.getChildren()) waiting.add(ch.getKey());
+
+                        if (waiting.isEmpty()) {
+                            Log.i(TAG, "No WAITING entries to pool from.");
+                            return;
+                        }
+
+                        Collections.shuffle(waiting);
+
+                        int actual = Math.min(numReplacements, waiting.size());
+                        List<String> invited = waiting.subList(0, actual);
+                        List<String> uninvited = waiting.subList(actual, waiting.size());
+
+                        applyStatus(invited, uninvited);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.e(TAG, "Waiting load failed", error.toException());
+                    }
+                });
+    }
+
+    /* -------------------------------------------------------
+     *  Helper: Apply invited/uninvited atomically
+     * ------------------------------------------------------- */
+    private void applyStatus(List<String> invited, List<String> uninvited) {
+        DatabaseReference root = waitingListService.getReference();
+
+        Map<String, Object> update = new HashMap<>();
+        String base = eventId + "/";
+
+        for (String id : invited) {
+            update.put(base + INVITED + "/" + id, true);
+            update.put(base + WAITING + "/" + id, null);
+        }
+        for (String id : uninvited) {
+            update.put(base + UNINVITED + "/" + id, true);
+            update.put(base + WAITING + "/" + id, null);
+        }
+
+        root.updateChildren(update, (err, ref) -> {
+            if (err != null) {
+                Log.e(TAG, "Update failed: " + err.getMessage());
+            } else {
+                Log.i(TAG, "Updated → Invited=" + invited.size() + " Uninvited=" + uninvited.size());
             }
         });
     }
 
+    /* -------------------------------------------------------
+     *  Helper: mark all uninvited
+     * ------------------------------------------------------- */
+    private void markAllUninvited(List<String> waiting) {
+        Map<String, Object> update = new HashMap<>();
+        String base = eventId + "/";
+
+        for (String id : waiting) {
+            update.put(base + UNINVITED + "/" + id, true);
+            update.put(base + WAITING + "/" + id, null);
+        }
+
+        waitingListService.getReference().updateChildren(update);
+    }
+
+    /* -------------------------------------------------------
+     *  Helper: get invitedCount, limit, waitingCount
+     * ------------------------------------------------------- */
+    private void getCounts(CountCallback cb) {
+        eventService.getReference().child(eventId).child("entrantLimit")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot limitSnap) {
+                        Integer limitValue = limitSnap.getValue(Integer.class);
+                        // If null or zero → unlimited
+                        if (limitValue == null || limitValue <= 0) {
+                            limitValue = Integer.MAX_VALUE; // represent "no limit"
+                        }
+
+                        final int finalLimit = limitValue;  // <-- FIX: final copy
+
+                        waitingListService.getReference()
+                                .child(eventId)
+                                .child(INVITED)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot invSnap) {
+                                        int invitedCount = (int) invSnap.getChildrenCount();
+
+                                        waitingListService.getReference()
+                                                .child(eventId)
+                                                .child(WAITING)
+                                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot waitSnap) {
+                                                        int waitingCount = (int) waitSnap.getChildrenCount();
+
+                                                        // Use finalLimit here
+                                                        cb.onCounts(invitedCount, finalLimit, waitingCount);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError error) {}
+                                                });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {}
+                                });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {}
+                });
+    }
+
+
+    /* -------------------------------------------------------
+     *  Small callback interfaces
+     * ------------------------------------------------------- */
+    public interface Callback<T> {
+        void onResult(T value);
+    }
+
+    public interface CountCallback {
+        void onCounts(int invited, int limit, int waiting);
+    }
 }

@@ -93,6 +93,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView status = view.findViewById(R.id.tv_status);
         TextView event_name = view.findViewById(R.id.tv_event_name);
         TextView tv_time = view.findViewById(R.id.tv_time);
+        TextView tv_date = view.findViewById(R.id.tv_date);
         ImageButton btn_arrow = view.findViewById(R.id.btn_arrow);
 //        ImageView posterImageView = view.findViewById(R.id.img_event);
 

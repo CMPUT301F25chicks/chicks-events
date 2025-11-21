@@ -46,7 +46,7 @@
         android:id="@+id/info_container"
         android:layout_width="274dp"
         android:layout_height="63dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical"
         android:paddingStart="10dp"
         app:layout_constraintBottom_toBottomOf="parent"

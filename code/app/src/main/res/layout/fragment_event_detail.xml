@@ -48,11 +48,11 @@
 
                 <ImageView
                     android:id="@+id/img_event"
-                    android:layout_width="0dp"
+                    android:layout_width="397dp"
                     android:layout_height="168dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/sample_image"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_date"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

@@ -102,6 +102,25 @@
                 android:gravity="top"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Event Date -->
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Date:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_date" />
+
+            <EditText
+                android:id="@+id/et_event_date"
+                android:layout_width="match_parent"
+                android:textColor="@color/purpleText"
+                android:layout_height="wrap_content"
+                android:hint="Event Description"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:layout_marginBottom="12dp" />
+
             <!-- Event Time -->
             <TextView
                 android:layout_width="379dp"
@@ -138,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Enter max number"
                     android:inputType="number"
-                    android:textColorHint="@color/darkPurple"
+                    android:textColorHint="@color/purpleText"
                     android:visibility="gone" />
             </LinearLayout>
 

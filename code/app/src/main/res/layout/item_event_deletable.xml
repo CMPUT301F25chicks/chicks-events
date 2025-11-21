@@ -13,7 +13,9 @@
     <!-- Date box -->
 
     <!-- Image info -->
-    <ImageButton
+
+    <!-- Arrow button -->
+    <ImageView
         android:id="@+id/img_event"
         android:layout_width="397dp"
         android:layout_height="168dp"
@@ -22,8 +24,6 @@
         app:layout_constraintBottom_toTopOf="@+id/info_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Arrow button -->
 
     <TextView
         android:id="@+id/tv_date"
@@ -38,9 +38,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.023"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/img_event"
-        app:layout_constraintVertical_bias="0.956" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/info_container"

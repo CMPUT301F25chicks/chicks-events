@@ -58,6 +58,9 @@ public class Event {
     /** Long-form description/details for the event. */
     private String eventDetails;
 
+    /** Inclusive date of the event in ISO format (YYYY-MM-DD). */
+    private String eventDate;
+
     /** Inclusive start date of the event in ISO format (YYYY-MM-DD), nullable. */
     private String eventStartDate;          // "YYYY-MM-DD"
 
@@ -100,8 +103,9 @@ public class Event {
      * @param id the Firebase key to use; may be {@code null} to generate a new key on create.
      * @param name the event's display name.
      * @param eventDetails a human-readable description of the event.
-     * @param eventStartDate start date of the event in YYYY-MM-DD (nullable).
-     * @param eventEndDate end date of the event in YYYY-MM-DD (nullable).
+     * @param eventDate a human-readable description of the event.
+     * @param eventStartDate start date of the register in YYYY-MM-DD (nullable).
+     * @param eventEndDate end date of the register in YYYY-MM-DD (nullable).
      * @param registrationStartDate registration open date in YYYY-MM-DD (nullable).
      * @param registrationEndDate registration close date in YYYY-MM-DD (nullable).
      * @param entrantLimit maximum number of entrants allowed (0 or negative for no limit as per caller policy).
@@ -109,7 +113,7 @@ public class Event {
      * @param tag optional space-separated tags; may be {@code null}.
      * @param geolocationRequired whether geolocation is required for entrants to join.
      */
-    public Event(String entrantId, String id, String name, String eventDetails,
+    public Event(String entrantId, String id, String name, String eventDetails, String eventDate,
                  String eventStartDate, String eventEndDate,
                  String registrationStartDate, String registrationEndDate,
                  int entrantLimit, String poster, String tag, boolean geolocationRequired) {
@@ -117,6 +121,7 @@ public class Event {
         this.id = id;
         this.name = name;
         this.eventDetails = eventDetails;
+        this.eventDate = eventDate;
         this.eventStartDate = eventStartDate == null ? "" : eventStartDate;
         this.eventEndDate = eventEndDate == null ? "" : eventEndDate;
         this.registrationStartDate = registrationStartDate;
@@ -139,6 +144,7 @@ public class Event {
         map.put("id", id);
         map.put("name", getName());
         map.put("eventDetails", getEventDetails());
+        map.put("eventDate", getEventDate());
         map.put("eventStartDate", getEventStartDate());
         map.put("eventEndDate", getEventEndDate());
         map.put("registrationStartDate", getRegistrationStartDate());
@@ -174,6 +180,12 @@ public class Event {
 
     /** @param eventDetails sets the event description. */
     public void setEventDetails(String eventDetails) { this.eventDetails = eventDetails; }
+
+    /** @return long-form description of the event. */
+    public String getEventDate() { return eventDate; }
+
+    /** @param eventDate sets the event description. */
+    public void setEventDate(String eventDate) { this.eventDate = eventDate; }
 
     /** @return the event start date in YYYY-MM-DD or {@code null}. */
     public String getEventStartDate() { return eventStartDate; }

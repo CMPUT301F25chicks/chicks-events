@@ -138,6 +138,7 @@ public class CreateEventFragment extends Fragment {
         // Read inputs
         String name  = s(binding.etEventName.getText());
         String desc  = s(binding.etEventDescription.getText());
+        String date = s(binding.etEventDate.getText());
         String time  = s(binding.etEventTime.getText()); // currently not stored in Event model
         String regStart = s(binding.etStartDate.getText()); // Registration Start (from your UI)
         String regEnd   = s(binding.etEndDate.getText());   // Registration End (from your UI)
@@ -188,6 +189,7 @@ public class CreateEventFragment extends Fragment {
                 placeholderId,
                 name,
                 desc,
+                date,
                 eventStartDate,
                 eventEndDate,
                 regStart,

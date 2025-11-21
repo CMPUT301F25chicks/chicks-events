@@ -68,6 +68,9 @@ public class PoolingFragment extends Fragment {
     /** Log tag. */
     private static final String TAG = "RTD8";
 
+    private int targetEntrants;
+
+
     /** The event id whose waiting list is being managed. */
     String eventId;
 
@@ -95,6 +98,7 @@ public class PoolingFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) eventId = args.getString("eventId");
+        loadTargetEntrants();
 
         userView = view.findViewById(R.id.rv_selected_entrants);
 
@@ -133,7 +137,7 @@ public class PoolingFragment extends Fragment {
         if (toPool <= 0) return; // nothing to pool
 
         Lottery lottery = new Lottery(eventId);
-        lottery.poolReplacement(toPool);
+        lottery.drawOrPool();
 
         // Refresh list and counters after a small delay to allow Firebase update
         userView.postDelayed(() -> {
@@ -171,8 +175,35 @@ public class PoolingFragment extends Fragment {
     private void updateCounters() {
         int target = getTargetEntrants();
         int current = getCurrentChosen();
+
         binding.tvCurrentChosen.setText("Current Chosen: " + current + " / " + target);
     }
+
+    private void loadTargetEntrants() {
+        new FirebaseService("Event").getReference()
+                .child(eventId)
+                .child("entrantLimit")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Integer limit = snapshot.getValue(Integer.class);
+                        // If null or zero → unlimited
+                        if (limit == null || limit < 0) {
+                            limit = Integer.MAX_VALUE; // represent "no limit"
+                        }
+
+                        targetEntrants = limit; // <-- STORING REAL VALUE
+
+                        binding.tvTargetEntrants.setText("Target Entrants: " + limit);
+                        updateCounters();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+    }
+
+
 
     /** Convenience wrapper to list entrants in the WAITING bucket. */
     public void listEntrants() {
