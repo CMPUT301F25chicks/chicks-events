@@ -1,5 +1,7 @@
 package com.example.chicksevent.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -7,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -132,8 +135,36 @@ public class WaitingListFragment extends Fragment {
                     getContext().getContentResolver(),
                     Settings.Secure.ANDROID_ID
             ), eventId);
-            organizer.sendWaitingListNotification("waiting list notification");
-            Toast.makeText(getContext(), "awiting list notfication sent", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Send Waiting List Notification");
+
+            final EditText input = new EditText(getContext());
+            input.setHint("Type here...");
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String userInput = input.getText().toString().trim();
+
+                    Toast.makeText(getContext(),
+                            "You entered: " + userInput,
+                            Toast.LENGTH_SHORT).show();
+
+                    organizer.sendWaitingListNotification(EntrantStatus.WAITING, userInput);
+//                    organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+//            Toast.makeText(getContext(), "waiting list notfication sent", Toast.LENGTH_SHORT).show();
         });
 
         listEntrants();

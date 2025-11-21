@@ -1,7 +1,6 @@
 package com.example.chicksevent.fragment_admin;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,8 +65,8 @@ public class NotificationAdminFragment extends Fragment {
         notificationView = view.findViewById(R.id.recycler_notifications);
         notificationList = new ArrayList<>();
 
-        adapter = new NotificationAdapter(requireContext(), notificationList, item -> {});
-        notificationView.setAdapter(adapter);
+//        adapter = new NotificationAdapter(requireContext(), notificationList, item -> {}, item ->{});
+//        notificationView.setAdapter(adapter);
 
         getNotificationList().addOnCompleteListener(task -> {
 //            Log.i(TAG, "should i change");
@@ -77,17 +76,17 @@ public class NotificationAdminFragment extends Fragment {
 
 
             adapter = new NotificationAdapter(getContext(), notificationList, item -> {
-                Log.i("WATTHE", notificationList.size() + " : " + item.getEventId() + " : " + item.getNotificationType().toString());
-                for (Notification notif : notificationList) {
-                    Log.i("WATTHE", item.getEventId() + " : " + item.getNotificationType().toString());
-                    notifNewList.add(notif);
-                }
-                Log.i("WATTHE", "hi : " + notifNewList.size());
-                notificationList = notifNewList;
-                // DON'T DELETE THIS CUZ WE NEED TO RESET NOTIF
-                adapter = new NotificationAdapter(getContext(), notificationList, b -> {});
-                notificationView.setAdapter(adapter);
-            });
+//                Log.i("WATTHE", notificationList.size() + " : " + item.getEventId() + " : " + item.getNotificationType().toString());
+//                for (Notification notif : notificationList) {
+//                    Log.i("WATTHE", item.getEventId() + " : " + item.getNotificationType().toString());
+//                    notifNewList.add(notif);
+//                }
+//                Log.i("WATTHE", "hi : " + notifNewList.size());
+//                notificationList = notifNewList;
+//                // DON'T DELETE THIS CUZ WE NEED TO RESET NOTIF
+//                adapter = new NotificationAdapter(requireContext(), notificationList, item1 -> {}, item2 ->{});
+//                notificationView.setAdapter(adapter);
+            }, i -> {});
 
 
 

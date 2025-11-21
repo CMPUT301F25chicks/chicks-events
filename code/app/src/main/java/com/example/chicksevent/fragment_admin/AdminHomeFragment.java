@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
@@ -47,7 +48,9 @@ public class AdminHomeFragment extends Fragment {
     NotificationAdapter notificationAdapter;
 
     /** Reference to the ListView displaying notifications (kept for adapter updates). */
-    NotificationAdapter notificationView;
+    ListView notificationView;
+
+    User userToUpdate;
 
     /**
      * Default constructor. Initializes the {@link FirebaseService} for notifications.
@@ -90,43 +93,33 @@ public class AdminHomeFragment extends Fragment {
         Button btnProfiles = view.findViewById(R.id.btn_admin_profile);
 
         // Current user identified by Android ID
-        User userToUpdate = new User(Settings.Secure.getString(
+        userToUpdate = new User(Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
         ));
 
         // ListView to display notifications
-        ListView notificationView = view.findViewById(R.id.recycler_notifications);
+        notificationView = view.findViewById(R.id.recycler_notifications);
 
         // Load notifications and set up adapter with click-to-delete behavior
         userToUpdate.getNotificationList().addOnCompleteListener(task -> {
+//            Log.i(TAG, "should i change");
+
             notificationDataList = task.getResult();
-            ArrayList<Notification> notifNewList = new ArrayList<>();
+
+
 
             notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, item -> {
-                Log.i("WATTHE", notificationDataList.size() + " : " + item.getEventId() + " : " + item.getNotificationType().toString());
+                notificationDeleteListener(item);
+            }, item -> notificationEventListener(item));
 
-                // Remove clicked notification from Firebase and update local list
-                for (Notification notif : notificationDataList) {
-                    if (item.getNotificationType() == notif.getNotificationType() &&
-                            item.getEventId().equals(notif.getEventId())) {
-                        notificationService.deleteSubCollectionEntry(
-                                userToUpdate.getUserId(),
-                                item.getEventId(),
-                                item.getNotificationType().toString());
-                    } else {
-                        notifNewList.add(notif);
-                    }
-                }
 
-                // Update data source and refresh adapter
-                notificationDataList = notifNewList;
-                notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, b -> {});
-                notificationView.setAdapter(notificationAdapter);
-            });
 
-            // Initial adapter setup
             notificationView.setAdapter(notificationAdapter);
+
+
+//            Log.i(TAG, String.valueOf(notificationDataList.size()));
+
         });
 
         // Admin section navigation
@@ -144,6 +137,44 @@ public class AdminHomeFragment extends Fragment {
 
         btnNotification.setOnClickListener(v -> NavHostFragment.findNavController(AdminHomeFragment.this)
                 .navigate(R.id.action_adminHome_to_notificationAdminFragment));
+    }
+
+    public void notificationEventListener(Notification item) {
+        Log.i("going to event detail", "");
+        NavController navController = NavHostFragment.findNavController(this);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("eventId", item.getEventId());
+
+        navController.navigate(R.id.action_AdminHomeFragment_to_EventDetailFragment, bundle);
+    }
+
+    public void notificationDeleteListener(Notification item) {
+//        ArrayList<Notification> notifNewList = new ArrayList<>();
+        Notification notifDelete = null;
+        Log.i("WATTHE", notificationDataList.size() + " : " + item.getEventId() + " : " + item.getNotificationType().toString());
+        for (Notification notif : notificationDataList) {
+            Log.i("WATTHE", item.getEventId() + " : " + item.getNotificationType().toString());
+
+            if (item.getNotificationType() == notif.getNotificationType() && item.getEventId().equals(notif.getEventId())) {
+                notificationService.deleteSubCollectionEntry(userToUpdate.getUserId(), item.getEventId(), item.getNotificationType().toString());
+                notifDelete = notif;
+//                notificationAdapter.remove(item);
+//                notificationAdapter.notifyDataSetChanged();
+            } else {
+//                notifNewList.add(notif);
+            }
+        }
+
+        if (notifDelete != null) {
+            notificationAdapter.remove(item);
+            notificationAdapter.notifyDataSetChanged();
+        }
+//        Log.i("WATTHE", "hi : " + notifNewList.size());
+//        notificationDataList = notifNewList;
+//        // DON'T DELETE THIS CUZ WE NEED TO RESET NOTIF
+//        notificationAdapter = new NotificationAdapter(getContext(), notificationDataList, b -> notificationDeleteListener(b));
+//        notificationView.setAdapter(notificationAdapter);
     }
 
     /**

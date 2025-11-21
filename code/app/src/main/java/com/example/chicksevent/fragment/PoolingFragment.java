@@ -2,12 +2,14 @@ package com.example.chicksevent.fragment;
 
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +23,7 @@ import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Lottery;
+import com.example.chicksevent.misc.Organizer;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -136,7 +139,19 @@ public class PoolingFragment extends Fragment {
         userView.postDelayed(() -> {
             listEntrants(EntrantStatus.INVITED);
             updateCounters();
+            Organizer organizer = new Organizer(Settings.Secure.getString(
+                    getContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            ), eventId);
+            organizer.sendWaitingListNotification(EntrantStatus.INVITED, "YOU are the CHOSEN one");
+            organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "you were NOT CHOSEN :(");
         }, 500); // 500ms delay (adjust if needed)
+
+        Log.i("notification", "sending notif");
+
+
+
+        Toast.makeText(getContext(), "chosen list notfication sent", Toast.LENGTH_SHORT).show();
     }
 
     /** Reads target entrants from tv_target_entrants (parses "Target Entrants: N"). */

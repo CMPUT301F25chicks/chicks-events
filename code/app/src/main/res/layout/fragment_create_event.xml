@@ -129,7 +129,7 @@
                     android:id="@+id/cb_limit_waiting_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Limit number of waiting list entrants"
+                    android:text="Limit number of entrants"
                     android:textColor="@color/purpleText"/>
 
                 <EditText
