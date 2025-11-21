@@ -68,7 +68,7 @@
             <TextView
                 android:layout_width="379dp"
                 android:layout_height="wrap_content"
-                android:text="Event Name:"
+                android:text="Event Name *:"
                 android:textColor="@color/purpleText"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/et_event_name" />
@@ -86,7 +86,7 @@
             <TextView
                 android:layout_width="379dp"
                 android:layout_height="wrap_content"
-                android:text="Event Description:"
+                android:text="Event Description *:"
                 android:textColor="@color/purpleText"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/et_event_description" />
@@ -103,40 +103,97 @@
                 android:layout_marginBottom="12dp" />
 
             <!-- Event Date -->
-            <TextView
-                android:layout_width="379dp"
-                android:layout_height="wrap_content"
-                android:text="Event Date:"
-                android:textColor="@color/purpleText"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_date" />
 
-            <EditText
-                android:id="@+id/et_event_date"
-                android:layout_width="match_parent"
-                android:textColor="@color/purpleText"
-                android:layout_height="wrap_content"
-                android:hint="Event Description"
-                android:inputType="textMultiLine"
-                android:gravity="top"
-                android:layout_marginBottom="12dp" />
 
             <!-- Event Time -->
             <TextView
                 android:layout_width="379dp"
                 android:layout_height="wrap_content"
-                android:text="Event Time:"
+                android:text="Event Period *:"
                 android:textColor="@color/purpleText"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_time" />
+                app:layout_constraintBottom_toTopOf="@+id/et_event_date" />
+
             <EditText
-                android:id="@+id/et_event_time"
+                android:id="@+id/et_event_StartDate"
                 android:layout_width="match_parent"
-                android:textColor="@color/purpleText"
                 android:layout_height="wrap_content"
-                android:hint="Event Time"
-                android:inputType="datetime"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                android:gravity="top"
+                android:textColor="@color/purpleText"
+                android:hint="Event Start Date (MM-dd-yyyy)"
+                android:inputType="textMultiLine"
+                android:textColorHint="@color/darkPurple" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <EditText
+                    android:id="@+id/et_StartTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:hint="HH:MM"
+                    android:maxLength="5"
+                    android:textColor="@color/purpleText"
+                    android:textColorHint="@color/darkPurple"
+                    android:layout_marginEnd="8dp"/>
+
+                <Spinner
+                    android:id="@+id/spinner_ampm1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/ampm_choices"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="41dp"
+                android:text="to"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_EndDate" />
+
+            <EditText
+                android:id="@+id/et_event_EndDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:gravity="top"
+                android:textColor="@color/purpleText"
+                android:hint="Event End Date (MM-dd-yyyy)"
+                android:inputType="textMultiLine"
+                android:textColorHint="@color/darkPurple" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <EditText
+                    android:id="@+id/et_EndTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:hint="HH:MM"
+                    android:maxLength="5"
+                    android:textColor="@color/purpleText"
+                    android:textColorHint="@color/darkPurple"
+                    android:layout_marginEnd="8dp"/>
+
+                <Spinner
+                    android:id="@+id/spinner_ampm2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/ampm_choices"/>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -146,10 +203,10 @@
 
                 <CheckBox
                     android:id="@+id/cb_limit_waiting_list"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Limit number of waiting list entrants"
-                    android:textColor="@color/purpleText"/>
+                    android:textColor="@color/purpleText" />
 
                 <EditText
                     android:id="@+id/et_max_entrants"
@@ -164,13 +221,13 @@
 
             <!-- Registration Period -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="379dp"
                 android:layout_height="wrap_content"
-                android:text="Registration Period"
-                android:textColor="@color/purpleText"
-                android:textStyle="bold"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="8dp"
+                android:text="Registration Period *:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"

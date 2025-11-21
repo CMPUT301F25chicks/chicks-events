@@ -9,12 +9,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -23,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
@@ -34,7 +40,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
@@ -138,10 +148,16 @@ public class CreateEventFragment extends Fragment {
         // Read inputs
         String name  = s(binding.etEventName.getText());
         String desc  = s(binding.etEventDescription.getText());
-        String date = s(binding.etEventDate.getText());
-        String time  = s(binding.etEventTime.getText()); // currently not stored in Event model
+
+        String startDateInput = s(binding.etEventStartDate.getText());
+        String startTimeInput = s(binding.etStartTime.getText());
+        String startAMPM = binding.spinnerAmpm1.getSelectedItem().toString();
+
+        String endDateInput = s(binding.etEventEndDate.getText());
+        String endTimeInput = s(binding.etEndTime.getText());
+        String endAMPM = binding.spinnerAmpm2.getSelectedItem().toString();
         String regStart = s(binding.etStartDate.getText()); // Registration Start (from your UI)
-        String regEnd   = s(binding.etEndDate.getText());   // Registration End (from your UI)
+        String regEnd = s(binding.etEndDate.getText()); // Registration End (from your UI)
 
         // Optional max entrants
         int entrantLimit = 999;
@@ -153,7 +169,7 @@ public class CreateEventFragment extends Fragment {
             }
         }
 
-        // Basic validation
+        // Validate required fields
         if (TextUtils.isEmpty(name)) {
             toast("Please enter an event name");
             return;
@@ -162,6 +178,82 @@ public class CreateEventFragment extends Fragment {
             toast("Please enter an event description");
             return;
         }
+        if (TextUtils.isEmpty(startDateInput)) {
+            toast("Please enter a start date");
+            return;
+        }
+        if (TextUtils.isEmpty(startTimeInput)) {
+            toast("Please enter a start time");
+            return;
+        }
+        if (TextUtils.isEmpty(endDateInput)) {
+            toast("Please enter an end date");
+            return;
+        }
+        if (TextUtils.isEmpty(endTimeInput)) {
+            toast("Please enter an end time");
+            return;
+        }
+
+        // Validate date format MM-DD-YYYY
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+        sdf.setLenient(false);
+        try {
+            sdf.parse(startDateInput);
+        } catch (ParseException e) {
+            toast("Please enter start date as MM-DD-YYYY");
+            return;
+        }
+        try {
+            sdf.parse(endDateInput);
+        } catch (ParseException e) {
+            toast("Please enter end date as MM-DD-YYYY");
+            return;
+        }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.ampm_choices,
+                R.layout.spinner_item
+        );
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        binding.spinnerAmpm1.setAdapter(adapter);
+        binding.spinnerAmpm2.setAdapter(adapter);
+
+
+        // Validate time format HH:MM
+        if (!startTimeInput.matches("\\d{2}:\\d{2}")) {
+            toast("Please enter start time as HH:MM");
+            return;
+        }
+        if (!endTimeInput.matches("\\d{2}:\\d{2}")) {
+            toast("Please enter end time as HH:MM");
+            return;
+        }
+
+        // Combine time + AM/PM
+        String finalStartTime = startTimeInput + " " + startAMPM;
+        String finalEndTime = endTimeInput + " " + endAMPM;
+
+        // ✅ Now you have:
+        // startDateInput, finalStartTime
+        // endDateInput, finalEndTime
+        // name, desc, entrantLimit
+        // Use these to create the event
+
+
+
+        // Basic validation
+
+        if (TextUtils.isEmpty(regStart)) {
+            toast("Please enter a registration start date");
+            return;
+        }
+        if (TextUtils.isEmpty(regEnd)) {
+            toast("Please enter a registration end date");
+            return;
+        }
+
         // You can also enforce regStart/regEnd if required
 
         // Organizer/entrant id — using device id like you did in NotificationFragment
@@ -189,9 +281,10 @@ public class CreateEventFragment extends Fragment {
                 placeholderId,
                 name,
                 desc,
-                date,
-                eventStartDate,
-                eventEndDate,
+                finalStartTime,
+                finalEndTime,
+                startDateInput,
+                endDateInput,
                 regStart,
                 regEnd,
                 entrantLimit,
@@ -235,6 +328,47 @@ public class CreateEventFragment extends Fragment {
         // Optionally navigate back:
 //        requireActivity().onBackPressed();
     }
+
+    private void setupTimeFormatWatchers() {
+        addTimeTextWatcher(binding.etStartTime);
+        addTimeTextWatcher(binding.etEndTime);
+    }
+
+    /**
+     * Adds a TextWatcher to an EditText to format input as HH:MM automatically
+     */
+    private void addTimeTextWatcher(EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            private boolean isUpdating = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isUpdating) return;
+                isUpdating = true;
+
+                String str = s.toString().replaceAll("[^\\d]", ""); // remove non-digits
+
+                if (str.length() >= 3) {
+                    str = str.substring(0, 2) + ":" + str.substring(2);
+                }
+
+                if (str.length() > 5) {
+                    str = str.substring(0, 5);
+                }
+
+                editText.setText(str);
+                editText.setSelection(str.length());
+                isUpdating = false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
 
     /**
      * Generates a QR code for the event and saves it to local storage and Firebase Storage.

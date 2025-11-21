@@ -181,6 +181,7 @@ public class Admin extends User {
                                 eventHash.get("name"),
                                 "d",
                                 "g", // placeholder
+                                "OCT/n30",
                                 "s", // placeholder
                                 "w", // placeholder
                                 "q", // placeholder
