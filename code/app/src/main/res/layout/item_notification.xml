@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="LOADING..."
             android:textStyle="bold"
-            android:textColor="#E78282"
+            android:textColor="@color/purpleText"
             android:textSize="20sp" />
 
         <TextView

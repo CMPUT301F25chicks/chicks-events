@@ -169,6 +169,7 @@ public class NotificationFragment extends Fragment {
                 "abc123",                           // id
                 "Swimming Lessons",                 // name
                 "Kids learn freestyle and backstroke", // eventDetails
+                "OCT/n30",
                 "2026-01-01",                       // eventStartDate
                 "2026-02-01",                       // eventEndDate
                 "2025-11-13",                       // registrationStartDate

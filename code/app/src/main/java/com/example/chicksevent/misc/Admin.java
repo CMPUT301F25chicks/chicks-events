@@ -179,6 +179,7 @@ public class Admin extends User {
                                 "e", // placeholder or type
                                 eventHash.get("id"),
                                 eventHash.get("name"),
+                                "d",
                                 "g", // placeholder
                                 "s", // placeholder
                                 "w", // placeholder

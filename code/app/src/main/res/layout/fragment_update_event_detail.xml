@@ -20,18 +20,6 @@
         <!-- Bottom button bar -->
 
 
-        <ImageButton
-            android:id="@+id/btn_check"
-            android:layout_width="29dp"
-            android:layout_height="34dp"
-            android:layout_marginTop="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_arrow_back_24"
-            app:layout_constraintEnd_toStartOf="@+id/header_title"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/purpleText" />
 
         <TextView
             android:id="@+id/header_title"
@@ -71,9 +59,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/header_title">
 
+                <EditText
+                    android:id="@+id/tv_event_details"
+                    android:layout_width="297dp"
+                    android:layout_height="46dp"
+                    android:background="@null"
+                    android:hint="Event Detail"
+                    android:lineSpacingExtra="4dp"
+                    android:text="Join us for a spooky Halloween party with games, food, and prizes!"
+                    android:textColor="@color/dateBox"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.382"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    app:layout_constraintVertical_bias="0.0" />
+
+
                 <ImageButton
                     android:id="@+id/img_event"
-                    android:layout_width="0dp"
+                    android:layout_width="397dp"
                     android:layout_height="168dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -82,6 +88,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
 
                 <TextView
                     android:id="@+id/tv_date"
@@ -95,7 +102,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/tv_time"
-                    app:layout_constraintHorizontal_bias="0.29"
+                    app:layout_constraintHorizontal_bias="0.435"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/img_event" />
 
@@ -103,6 +110,7 @@
                     android:id="@+id/tv_event_name"
                     android:layout_width="233dp"
                     android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
                     android:background="@null"
                     android:hint="Event Name"
                     android:text="Halloween Party"
@@ -110,13 +118,12 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.19"
                     app:layout_constraintStart_toEndOf="@+id/tv_date"
                     app:layout_constraintTop_toBottomOf="@+id/img_event" />
 
                 <EditText
                     android:id="@+id/tv_time"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
@@ -124,121 +131,105 @@
                     android:text="6:00 PM - 9:00 PM"
                     android:textColor="@color/purpleText"
                     android:textSize="14sp"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_event_name"
-                    tools:layout_editor_absoluteX="118dp"
-                    tools:layout_editor_absoluteY="176dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.362"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_event_name" />
 
                 <TextView
                     android:id="@+id/textView3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="257dp"
                     android:layout_height="22dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="12dp"
                     android:text="Registration Open:"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_time"
-                    tools:layout_editor_absoluteX="33dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.083"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_time" />
 
                 <TextView
                     android:id="@+id/textView6"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="245dp"
                     android:layout_height="21dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="12dp"
                     android:text="Description:"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_entrants_count"
-                    tools:layout_editor_absoluteX="35dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.058"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_entrants_count" />
 
                 <TextView
                     android:id="@+id/tv_registration_open"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:text="Oct 2nd"
                     android:textColor="@color/dateBox"
                     android:textSize="16sp"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3"
-                    tools:layout_editor_absoluteX="36dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.077"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
                 <TextView
                     android:id="@+id/tv_registration_deadline"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="4dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:text="Oct 15th"
                     android:textColor="@color/dateBox"
                     android:textSize="16sp"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4"
-                    tools:layout_editor_absoluteX="36dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.078"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
                 <TextView
                     android:id="@+id/textView5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="220dp"
                     android:layout_height="22dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
                     android:text="Entrants (Current / Limit):"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_registration_deadline"
-                    tools:layout_editor_absoluteX="37dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.055"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_registration_deadline" />
 
                 <TextView
                     android:id="@+id/tv_entrants_count"
                     android:layout_width="54dp"
                     android:layout_height="18dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:text="12 / 50"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:textColor="@color/dateBox"
                     android:textSize="16sp"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5"
-                    tools:layout_editor_absoluteX="35dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.083"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
                 <TextView
                     android:id="@+id/textView4"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_width="224dp"
                     android:layout_height="22dp"
                     android:layout_marginTop="8dp"
                     android:text="Registration Deadline:"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_registration_open"
-                    tools:layout_editor_absoluteX="36dp" />
-
-                <EditText
-                    android:id="@+id/tv_event_details"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_width="297dp"
-                    android:layout_height="46dp"
-                    android:background="@null"
-                    android:hint="Event Detail"
-                    android:lineSpacingExtra="4dp"
-                    android:text="Join us for a spooky Halloween party with games, food, and prizes!"
-                    android:textColor="@color/dateBox"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/switch_geo_layout"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:layout_editor_absoluteX="33dp" />
+                    app:layout_constraintHorizontal_bias="0.063"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_registration_open" />
 
                 <!-- Geolocation Requirement Toggle -->
                 <LinearLayout
@@ -250,7 +241,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_event_details"
                     tools:layout_editor_absoluteX="33dp">
 
                     <TextView
