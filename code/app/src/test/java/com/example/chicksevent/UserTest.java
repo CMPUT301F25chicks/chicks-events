@@ -190,18 +190,12 @@ public class UserTest {
         
         // Mock the get() call chain
         DatabaseReference userChildRef = mock(DatabaseReference.class);
+        when(mockUserSvc.getReference()).thenReturn(mockUserRef);
         when(mockUserRef.child(UID)).thenReturn(userChildRef);
         
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        Task<DataSnapshot> mockGetTask = Tasks.forResult(userSnapshot);
         when(userChildRef.get()).thenReturn(mockGetTask);
-        
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, Boolean> cont =
-                    (Continuation<DataSnapshot, Boolean>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(userSnapshot));
-        });
         
         Task<Boolean> result = user.isBannedFromOrganizer();
         assertTrue(result.isComplete());
@@ -220,18 +214,12 @@ public class UserTest {
         when(bannedField.getValue()).thenReturn(false);
         
         DatabaseReference userChildRef = mock(DatabaseReference.class);
+        when(mockUserSvc.getReference()).thenReturn(mockUserRef);
         when(mockUserRef.child(UID)).thenReturn(userChildRef);
         
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        Task<DataSnapshot> mockGetTask = Tasks.forResult(userSnapshot);
         when(userChildRef.get()).thenReturn(mockGetTask);
-        
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, Boolean> cont =
-                    (Continuation<DataSnapshot, Boolean>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(userSnapshot));
-        });
         
         Task<Boolean> result = user.isBannedFromOrganizer();
         assertTrue(result.isComplete());
@@ -250,18 +238,12 @@ public class UserTest {
         when(bannedField.getValue()).thenReturn(null); // field doesn't exist
         
         DatabaseReference userChildRef = mock(DatabaseReference.class);
+        when(mockUserSvc.getReference()).thenReturn(mockUserRef);
         when(mockUserRef.child(UID)).thenReturn(userChildRef);
         
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        Task<DataSnapshot> mockGetTask = Tasks.forResult(userSnapshot);
         when(userChildRef.get()).thenReturn(mockGetTask);
-        
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, Boolean> cont =
-                    (Continuation<DataSnapshot, Boolean>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(userSnapshot));
-        });
         
         Task<Boolean> result = user.isBannedFromOrganizer();
         assertTrue(result.isComplete());

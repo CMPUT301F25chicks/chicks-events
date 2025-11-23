@@ -54,7 +54,7 @@ public class EventGeolocationTest {
     @Test
     public void createEvent_withGeolocationRequired_includesInFirebase() throws Exception {
         Event e = new Event(
-                "U1", null, "Test Event", "Desc",
+                "U1", null, "Test Event", "Desc", "2025-01-01",
                 "2025-01-01", "2025-01-02",
                 "2024-12-01", "2024-12-15",
                 50, "poster.png", "fun", true  // geolocationRequired = true
@@ -77,7 +77,7 @@ public class EventGeolocationTest {
     @Test
     public void createEvent_withoutGeolocationRequired_defaultsToFalse() throws Exception {
         Event e = new Event(
-                "U1", null, "Test Event", "Desc",
+                "U1", null, "Test Event", "Desc", "2025-01-01",
                 "2025-01-01", "2025-01-02",
                 "2024-12-01", "2024-12-15",
                 50, "poster.png", "fun", false  // geolocationRequired = false
@@ -100,7 +100,7 @@ public class EventGeolocationTest {
     @Test
     public void geolocationRequired_getterAndSetter_workCorrectly() {
         Event e = new Event(
-                "U1", "E1", "Test", "Desc",
+                "U1", "E1", "Test", "Desc", null,
                 null, null, null, null,
                 10, null, null, false
         );
@@ -120,14 +120,14 @@ public class EventGeolocationTest {
     @Test
     public void constructor_withGeolocationRequired_preservesValue() {
         Event e1 = new Event(
-                "U1", "E1", "Event1", "Desc",
+                "U1", "E1", "Event1", "Desc", null,
                 null, null, null, null,
                 10, null, null, true
         );
         assertTrue(e1.isGeolocationRequired());
 
         Event e2 = new Event(
-                "U1", "E2", "Event2", "Desc",
+                "U1", "E2", "Event2", "Desc", null,
                 null, null, null, null,
                 10, null, null, false
         );

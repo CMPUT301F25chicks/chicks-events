@@ -7,6 +7,7 @@ import com.example.chicksevent.misc.Admin;
 import com.example.chicksevent.misc.Organizer;
 import com.example.chicksevent.misc.User;
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
@@ -274,19 +275,21 @@ public class AdminTest {
         when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
 
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        Task<DataSnapshot> mockGetTask = Tasks.forResult(root);
         when(eventRoot.get()).thenReturn(mockGetTask);
-
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, List<Organizer>> cont =
-                    (Continuation<DataSnapshot, List<Organizer>>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(root));
-        });
+        // For completed tasks, addOnSuccessListener fires immediately, but we'll trigger it explicitly
+        doAnswer(inv -> {
+            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
+            // Fire immediately since task is already complete
+            listener.onSuccess(root);
+            return mockGetTask;
+        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
 
         Task<List<Organizer>> out = admin.browseOrganizers();
-        assertTrue(out.isComplete());
-        assertTrue(out.isSuccessful());
+        // Give a moment for async operations to complete
+        try { Thread.sleep(50); } catch (InterruptedException e) {}
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
         // Should return 2 unique organizers (org1 and org2)
         assertEquals(2, out.getResult().size());
         Set<String> organizerIds = new java.util.HashSet<>();
@@ -303,19 +306,18 @@ public class AdminTest {
         when(root.getChildren()).thenAnswer(i -> iterable());
 
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        Task<DataSnapshot> mockGetTask = Tasks.forResult(root);
         when(eventRoot.get()).thenReturn(mockGetTask);
-
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, List<Organizer>> cont =
-                    (Continuation<DataSnapshot, List<Organizer>>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(root));
-        });
+        doAnswer(inv -> {
+            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
+            listener.onSuccess(root);
+            return mockGetTask;
+        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
 
         Task<List<Organizer>> out = admin.browseOrganizers();
-        assertTrue(out.isComplete());
-        assertTrue(out.isSuccessful());
+        try { Thread.sleep(50); } catch (InterruptedException e) {}
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
         assertEquals(0, out.getResult().size());
     }
 
@@ -349,15 +351,8 @@ public class AdminTest {
         when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
 
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        Task<DataSnapshot> mockGetTask = Tasks.forResult(root);
         when(eventRoot.get()).thenReturn(mockGetTask);
-
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, List<String>> cont =
-                    (Continuation<DataSnapshot, List<String>>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(root));
-        });
 
         Task<List<String>> out = admin.getEventsByOrganizer("org1");
         assertTrue(out.isComplete());
@@ -375,53 +370,26 @@ public class AdminTest {
     public void banUserFromOrganizer_returnsTask() {
         String userId = "user123";
         
-        // Mock getEventsByOrganizer to return empty list
-        DataSnapshot root = mock(DataSnapshot.class);
-        when(root.getChildren()).thenAnswer(i -> iterable());
-        
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(eventRoot.get()).thenReturn(mockGetTask);
-        
-        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, List<String>> cont =
-                    (Continuation<DataSnapshot, List<String>>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(root));
-        });
-        
-        // Mock the second get() call for all events snapshot
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockAllEventsTask = mock(Task.class);
-        DataSnapshot allEventsSnapshot = mock(DataSnapshot.class);
-        when(allEventsSnapshot.child(anyString())).thenReturn(mock(DataSnapshot.class));
-        when(mockAllEventsTask.isSuccessful()).thenReturn(true);
-        when(mockAllEventsTask.getResult()).thenReturn(allEventsSnapshot);
-        
-        // Trigger the onComplete listener for getEventsByOrganizer
-        doAnswer(inv -> {
-            com.google.android.gms.tasks.OnCompleteListener<List<String>> listener = inv.getArgument(0);
-            listener.onComplete(Tasks.forResult(java.util.Collections.emptyList()));
-            return null;
-        }).when(mockGetTask).addOnCompleteListener(any());
-        
-        // Mock the all events get() call
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> allEventsGetTask = mock(Task.class);
-        when(eventRoot.get()).thenReturn(allEventsGetTask);
-        doAnswer(inv -> {
-            com.google.android.gms.tasks.OnCompleteListener<DataSnapshot> listener = inv.getArgument(0);
-            listener.onComplete(mockAllEventsTask);
-            return null;
-        }).when(allEventsGetTask).addOnCompleteListener(any());
+        // Mock getEventsByOrganizer to return empty list (no events to delete)
+        DataSnapshot emptyRoot = mock(DataSnapshot.class);
+        when(emptyRoot.getChildren()).thenAnswer(i -> iterable());
+        Task<DataSnapshot> emptyEventsTask = Tasks.forResult(emptyRoot);
+        when(eventRoot.get()).thenReturn(emptyEventsTask);
         
         // Mock userService.editEntry
         DatabaseReference userChildRef = mock(DatabaseReference.class);
         when(userRoot.child(userId)).thenReturn(userChildRef);
         when(userChildRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
         
+        // Mock notification service
+        DatabaseReference notifRef = mock(DatabaseReference.class);
+        when(notificationRoot.push()).thenReturn(notifRef);
+        when(notifRef.getKey()).thenReturn("N123");
+        when(notifRef.setValue(any())).thenReturn(Tasks.forResult(null));
+        
         Task<Void> banTask = admin.banUserFromOrganizer(userId);
         assertNotNull(banTask);
+        // Task may not be complete immediately due to async operations
     }
 
     // -------------------- unbanUserFromOrganizer --------------------
@@ -434,6 +402,12 @@ public class AdminTest {
         DatabaseReference userChildRef = mock(DatabaseReference.class);
         when(userRoot.child(userId)).thenReturn(userChildRef);
         when(userChildRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
+        
+        // Mock notification service for Notification creation
+        DatabaseReference notifRef = mock(DatabaseReference.class);
+        when(notificationRoot.push()).thenReturn(notifRef);
+        when(notifRef.getKey()).thenReturn("N123");
+        when(notifRef.setValue(any())).thenReturn(Tasks.forResult(null));
         
         Task<Void> unbanTask = admin.unbanUserFromOrganizer(userId);
         assertNotNull(unbanTask);
