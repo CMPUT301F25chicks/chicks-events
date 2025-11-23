@@ -173,23 +173,27 @@ public class Admin extends User {
                 DataSnapshot snapshot = task.getResult();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     Log.i("friedchicken", child.getKey());
-                    HashMap<String, String> eventHash = (HashMap<String, String>) child.getValue();
+                    HashMap<String, Object> eventHash = (HashMap<String, Object>) child.getValue();
                     if (eventHash != null) {
-                        events.add(new Event(
-                                "e", // placeholder or type
-                                eventHash.get("id"),
-                                eventHash.get("name"),
-                                "d",
-                                "g", // placeholder
-                                "s", // placeholder
-                                "w", // placeholder
-                                "q", // placeholder
-                                "f", // placeholder
-                                3,   // placeholder capacity
-                                "v", // placeholder
-                                "sa", // placeholder
-                                false // geolocationRequired
-                        ));
+                        // Parse values with proper type handling
+                        String entrantId = eventHash.get("organizer") != null ? eventHash.get("organizer").toString() : "";
+                        String id = eventHash.get("id") != null ? eventHash.get("id").toString() : null;
+                        String name = eventHash.get("name") != null ? eventHash.get("name").toString() : "";
+                        String eventDetails = eventHash.get("eventDetails") != null ? eventHash.get("eventDetails").toString() : "";
+                        String eventDate = eventHash.get("eventDate") != null ? eventHash.get("eventDate").toString() : "";
+                        String eventStartDate = eventHash.get("eventStartDate") != null ? eventHash.get("eventStartDate").toString() : null;
+                        String eventEndDate = eventHash.get("eventEndDate") != null ? eventHash.get("eventEndDate").toString() : null;
+                        String registrationStartDate = eventHash.get("registrationStartDate") != null ? eventHash.get("registrationStartDate").toString() : null;
+                        String registrationEndDate = eventHash.get("registrationEndDate") != null ? eventHash.get("registrationEndDate").toString() : null;
+                        int entrantLimit = eventHash.get("entrantLimit") != null ? ((Number) eventHash.get("entrantLimit")).intValue() : 0;
+                        String poster = eventHash.get("poster") != null ? eventHash.get("poster").toString() : null;
+                        String tag = eventHash.get("tag") != null ? eventHash.get("tag").toString() : null;
+                        boolean geolocationRequired = eventHash.get("geolocationRequired") != null && (Boolean) eventHash.get("geolocationRequired");
+                        
+                        events.add(new Event(entrantId, id, name, eventDetails, eventDate, 
+                                            eventStartDate, eventEndDate, 
+                                            registrationStartDate, registrationEndDate, 
+                                            entrantLimit, poster, tag, geolocationRequired));
                     }
                 }
                 return com.google.android.gms.tasks.Tasks.forResult(events);
