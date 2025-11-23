@@ -2,6 +2,8 @@ package com.example.chicksevent.misc;
 
 import android.util.Log;
 
+import com.example.chicksevent.enums.EntrantStatus;
+import com.example.chicksevent.enums.NotificationType;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.database.DataSnapshot;
@@ -46,6 +48,10 @@ public class Admin extends User {
     private final FirebaseService organizerService;
 
     private final FirebaseService imageService = new FirebaseService("Image");
+
+    private final FirebaseService waitingListService = new FirebaseService("WaitingList");
+
+    private final FirebaseService notificationService = new FirebaseService("Notification");
 
     /**
      * Constructs an {@code Admin} for the given user ID.
@@ -118,8 +124,9 @@ public class Admin extends User {
     /**
      * Retrieves all organizer profiles from the database.
      * <p>
-     * Reads the entire {@code /Organizer} node, deserializes each child into an {@link Organizer}
-     * object, and assigns the Firebase key as the organizer ID.
+     * An organizer is defined as any user who has created at least one event.
+     * This method reads all events from the {@code /Event} node, extracts unique organizer IDs,
+     * and creates {@link Organizer} objects for each unique organizer.
      * </p>
      *
      * @return a {@link Task} that resolves to a {@link List} of {@link Organizer} objects on success.
@@ -127,19 +134,29 @@ public class Admin extends User {
     public Task<List<Organizer>> browseOrganizers() {
         TaskCompletionSource<List<Organizer>> tcs = new TaskCompletionSource<>();
 
-        organizerService.getReference().get().addOnSuccessListener(snapshot -> {
+        // Get all events and extract unique organizer IDs
+        eventsService.getReference().get().addOnSuccessListener(snapshot -> {
             List<Organizer> organizers = new ArrayList<>();
-            for (DataSnapshot child : snapshot.getChildren()) {
-                Organizer o = child.getValue(Organizer.class);
-                if (o != null) {
-                    try {
-                        o.setOrganizerId(child.getKey());
-                    } catch (Exception ignored) {
-                        // Ignore if setter fails (e.g., no such method)
+            java.util.Set<String> organizerIds = new java.util.HashSet<>();
+            
+            // Collect all unique organizer IDs from events
+            for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                HashMap<String, Object> eventData = (HashMap<String, Object>) eventSnapshot.getValue();
+                if (eventData != null) {
+                    Object organizerId = eventData.get("organizer");
+                    if (organizerId != null && !organizerId.toString().isEmpty()) {
+                        organizerIds.add(organizerId.toString());
                     }
-                    organizers.add(o);
                 }
             }
+            
+            // Create Organizer objects for each unique organizer ID
+            // Use a placeholder eventId since Organizer constructor requires it
+            for (String organizerId : organizerIds) {
+                Organizer organizer = new Organizer(organizerId, "");
+                organizers.add(organizer);
+            }
+            
             tcs.setResult(organizers);
         }).addOnFailureListener(tcs::setException);
 
@@ -254,6 +271,201 @@ public class Admin extends User {
     @Override
     public Boolean isOrganizer() {
         return false;
+    }
+
+    /**
+     * Retrieves all events created by a specific organizer.
+     *
+     * @param organizerId the user ID of the organizer
+     * @return a Task that resolves to a list of Event IDs created by the organizer
+     */
+    public Task<List<String>> getEventsByOrganizer(String organizerId) {
+        return eventsService.getReference().get().continueWith(task -> {
+            List<String> eventIds = new ArrayList<>();
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    HashMap<String, Object> eventData = (HashMap<String, Object>) child.getValue();
+                    if (eventData != null) {
+                        Object organizer = eventData.get("organizer");
+                        if (organizer != null && organizer.toString().equals(organizerId)) {
+                            eventIds.add(child.getKey());
+                        }
+                    }
+                }
+            }
+            return eventIds;
+        });
+    }
+
+    /**
+     * Deletes an event and cleans up all related data (WaitingList, Notifications).
+     * Also notifies all entrants that the event has been cancelled.
+     *
+     * @param eventId the ID of the event to delete
+     * @param eventName the name of the event (for notification message)
+     * @return a Task that completes when the deletion and cleanup are done
+     */
+    public Task<Void> deleteEventAndCleanup(String eventId, String eventName) {
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        // First, get all entrants from WaitingList and notify them
+        waitingListService.getReference().child(eventId).get().addOnCompleteListener(waitingListTask -> {
+            if (waitingListTask.isSuccessful()) {
+                DataSnapshot waitingListSnapshot = waitingListTask.getResult();
+                List<String> entrantIds = new ArrayList<>();
+
+                // Collect all entrant IDs from all status buckets
+                for (DataSnapshot statusSnapshot : waitingListSnapshot.getChildren()) {
+                    for (DataSnapshot entrantSnapshot : statusSnapshot.getChildren()) {
+                        String entrantId = entrantSnapshot.getKey();
+                        if (entrantId != null && !entrantIds.contains(entrantId)) {
+                            entrantIds.add(entrantId);
+                        }
+                    }
+                }
+
+                // Send cancellation notifications to all entrants
+                String message = "The event \"" + eventName + "\" has been cancelled.";
+                for (String entrantId : entrantIds) {
+                    Notification notification = new Notification(
+                            entrantId,
+                            eventId,
+                            NotificationType.CANCELLED,
+                            message
+                    );
+                    notification.createNotification();
+                }
+
+                // Delete WaitingList entries for this event
+                waitingListService.getReference().child(eventId).removeValue();
+
+                // Delete Notification entries for this event
+                notificationService.getReference().get().addOnCompleteListener(notifTask -> {
+                    if (notifTask.isSuccessful()) {
+                        DataSnapshot notifSnapshot = notifTask.getResult();
+                        for (DataSnapshot userSnapshot : notifSnapshot.getChildren()) {
+                            notificationService.getReference()
+                                    .child(userSnapshot.getKey())
+                                    .child(eventId)
+                                    .removeValue();
+                        }
+                    }
+                });
+
+                // Delete the event itself
+                deleteEvent(eventId);
+                deletePoster(eventId);
+
+                tcs.setResult(null);
+            } else {
+                // Even if waiting list fetch fails, still delete the event
+                deleteEvent(eventId);
+                deletePoster(eventId);
+                tcs.setResult(null);
+            }
+        });
+
+        return tcs.getTask();
+    }
+
+    /**
+     * Bans a user from creating new events as an organizer.
+     * Deletes all events created by the user and notifies them of the ban.
+     *
+     * @param userId the ID of the user to ban
+     * @return a Task that completes when the ban is processed
+     */
+    public Task<Void> banUserFromOrganizer(String userId) {
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        // Get all events created by this user
+        getEventsByOrganizer(userId).addOnCompleteListener(eventsTask -> {
+            if (eventsTask.isSuccessful()) {
+                List<String> eventIds = eventsTask.getResult();
+
+                // Delete all events created by this user
+                eventsService.getReference().get().addOnCompleteListener(allEventsTask -> {
+                    if (allEventsTask.isSuccessful()) {
+                        DataSnapshot allEventsSnapshot = allEventsTask.getResult();
+                        for (String eventId : eventIds) {
+                            DataSnapshot eventSnapshot = allEventsSnapshot.child(eventId);
+                            if (eventSnapshot.exists()) {
+                                HashMap<String, Object> eventData = (HashMap<String, Object>) eventSnapshot.getValue();
+                                String eventName = eventData != null && eventData.get("name") != null
+                                        ? eventData.get("name").toString()
+                                        : "Event";
+                                deleteEventAndCleanup(eventId, eventName);
+                            } else {
+                                deleteEvent(eventId);
+                                deletePoster(eventId);
+                            }
+                        }
+                    }
+
+                    // Update user's banned status in Firebase
+                    HashMap<String, Object> updates = new HashMap<>();
+                    updates.put("bannedFromOrganizer", true);
+                    userService.editEntry(userId, updates);
+
+                    // Notify the user that they've been banned
+                    Notification banNotification = new Notification(
+                            userId,
+                            "SYSTEM",
+                            NotificationType.CANCELLED,
+                            "You have been banned from creating events. All your events have been deleted."
+                    );
+                    banNotification.createNotification();
+
+                    tcs.setResult(null);
+                });
+            } else {
+                // Even if getting events fails, still ban the user
+                HashMap<String, Object> updates = new HashMap<>();
+                updates.put("bannedFromOrganizer", true);
+                userService.editEntry(userId, updates);
+
+                Notification banNotification = new Notification(
+                        userId,
+                        "SYSTEM",
+                        NotificationType.CANCELLED,
+                        "You have been banned from creating events."
+                );
+                banNotification.createNotification();
+
+                tcs.setResult(null);
+            }
+        });
+
+        return tcs.getTask();
+    }
+
+    /**
+     * Unbans a user, allowing them to create events again.
+     * Notifies the user that they've been unbanned.
+     *
+     * @param userId the ID of the user to unban
+     * @return a Task that completes when the unban is processed
+     */
+    public Task<Void> unbanUserFromOrganizer(String userId) {
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        // Update user's banned status in Firebase
+        HashMap<String, Object> updates = new HashMap<>();
+        updates.put("bannedFromOrganizer", false);
+        userService.editEntry(userId, updates);
+
+        // Notify the user that they've been unbanned
+        Notification unbanNotification = new Notification(
+                userId,
+                "SYSTEM",
+                NotificationType.CANCELLED,
+                "You have been unbanned and can now create events again."
+        );
+        unbanNotification.createNotification();
+
+        tcs.setResult(null);
+        return tcs.getTask();
     }
 }
 

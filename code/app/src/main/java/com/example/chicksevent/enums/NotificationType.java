@@ -48,4 +48,12 @@ public enum NotificationType {
      * </p>
      */
     UNINVITED,
+
+    /**
+     * Indicates an event has been cancelled.
+     * <p>
+     * Sent when an event is cancelled (e.g., when an organizer is banned and their events are deleted).
+     * </p>
+     */
+    CANCELLED,
 }
