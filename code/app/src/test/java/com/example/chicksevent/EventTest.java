@@ -83,7 +83,7 @@ public class EventTest {
     public void createEvent_pushesAndAddsEntry() throws Exception {
         // Construct Event (its inline eventService will be replaced before use)
         Event e = new Event(
-                "U1", null, "Test Event", "Desc",
+                "U1", null, "Test Event", "Desc", "2025-01-01",
                 "2025-01-01", "2025-01-02",
                 "2024-12-01", "2024-12-15",
                 50, "poster.png", "fun", false
@@ -110,7 +110,7 @@ public class EventTest {
     @Test
     public void gettersAndSetters_workConsistently() {
         Organizer org = new Organizer("U55", "E77");
-        Event e = new Event("U55", "E77", "My Event", "Cool",
+        Event e = new Event("U55", "E77", "My Event", "Cool", "2025-01-01",
                 "2025-01-01", "2025-01-02",
                 "2024-12-01", "2024-12-10", 10, "poster.jpg", "tag1", false);
 
@@ -142,7 +142,7 @@ public class EventTest {
     @Test
     public void createEvent_handlesNullsGracefully() throws Exception {
         Event e = new Event(
-                "U1", null, "NullTest", null,
+                "U1", null, "NullTest", null, null,
                 null, null, null, null,
                 0, null, null, false
         );
