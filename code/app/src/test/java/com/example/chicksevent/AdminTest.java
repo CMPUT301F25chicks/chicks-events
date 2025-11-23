@@ -274,20 +274,20 @@ public class AdminTest {
         when(e3.getValue()).thenReturn(event3Data);
         when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
 
+        // Mock the task and intercept addOnSuccessListener
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = Tasks.forResult(root);
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
         when(eventRoot.get()).thenReturn(mockGetTask);
-        // For completed tasks, addOnSuccessListener fires immediately, but we'll trigger it explicitly
+        
+        // Intercept addOnSuccessListener and execute it immediately
         doAnswer(inv -> {
             OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
-            // Fire immediately since task is already complete
             listener.onSuccess(root);
             return mockGetTask;
         }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
-
+        
         Task<List<Organizer>> out = admin.browseOrganizers();
-        // Give a moment for async operations to complete
-        try { Thread.sleep(50); } catch (InterruptedException e) {}
+        // addOnSuccessListener executes synchronously, so TCS should be set
         assertTrue("Task should be complete", out.isComplete());
         assertTrue("Task should be successful", out.isSuccessful());
         // Should return 2 unique organizers (org1 and org2)
@@ -306,16 +306,16 @@ public class AdminTest {
         when(root.getChildren()).thenAnswer(i -> iterable());
 
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = Tasks.forResult(root);
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
         when(eventRoot.get()).thenReturn(mockGetTask);
+        
         doAnswer(inv -> {
             OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
             listener.onSuccess(root);
             return mockGetTask;
         }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
-
+        
         Task<List<Organizer>> out = admin.browseOrganizers();
-        try { Thread.sleep(50); } catch (InterruptedException e) {}
         assertTrue("Task should be complete", out.isComplete());
         assertTrue("Task should be successful", out.isSuccessful());
         assertEquals(0, out.getResult().size());
@@ -351,12 +351,20 @@ public class AdminTest {
         when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
 
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = Tasks.forResult(root);
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
         when(eventRoot.get()).thenReturn(mockGetTask);
-
+        
+        // Intercept continueWith and execute continuation immediately
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, List<String>> cont = (Continuation<DataSnapshot, List<String>>) inv.getArgument(0);
+            List<String> result = cont.then(Tasks.forResult(root));
+            return Tasks.forResult(result);
+        });
+        
         Task<List<String>> out = admin.getEventsByOrganizer("org1");
-        assertTrue(out.isComplete());
-        assertTrue(out.isSuccessful());
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
         List<String> eventIds = out.getResult();
         assertEquals(2, eventIds.size());
         assertTrue(eventIds.contains("event1"));
@@ -403,11 +411,15 @@ public class AdminTest {
         when(userRoot.child(userId)).thenReturn(userChildRef);
         when(userChildRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
         
-        // Mock notification service for Notification creation
-        DatabaseReference notifRef = mock(DatabaseReference.class);
-        when(notificationRoot.push()).thenReturn(notifRef);
-        when(notifRef.getKey()).thenReturn("N123");
-        when(notifRef.setValue(any())).thenReturn(Tasks.forResult(null));
+        // Mock notification service for Notification.createNotification()
+        // Notification uses updateSubCollectionEntry which calls child().child().updateChildren()
+        DatabaseReference userNotifRef = mock(DatabaseReference.class);
+        DatabaseReference eventNotifRef = mock(DatabaseReference.class);
+        DatabaseReference typeNotifRef = mock(DatabaseReference.class);
+        when(notificationRoot.child(userId)).thenReturn(userNotifRef);
+        when(userNotifRef.child("SYSTEM")).thenReturn(eventNotifRef);
+        when(eventNotifRef.child(anyString())).thenReturn(typeNotifRef);
+        when(typeNotifRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
         
         Task<Void> unbanTask = admin.unbanUserFromOrganizer(userId);
         assertNotNull(unbanTask);

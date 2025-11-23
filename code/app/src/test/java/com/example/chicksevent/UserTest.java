@@ -194,8 +194,16 @@ public class UserTest {
         when(mockUserRef.child(UID)).thenReturn(userChildRef);
         
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = Tasks.forResult(userSnapshot);
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
         when(userChildRef.get()).thenReturn(mockGetTask);
+        
+        // Intercept continueWith and execute continuation immediately
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Boolean> cont = (Continuation<DataSnapshot, Boolean>) inv.getArgument(0);
+            Boolean result = cont.then(Tasks.forResult(userSnapshot));
+            return Tasks.forResult(result);
+        });
         
         Task<Boolean> result = user.isBannedFromOrganizer();
         assertTrue(result.isComplete());
@@ -218,8 +226,15 @@ public class UserTest {
         when(mockUserRef.child(UID)).thenReturn(userChildRef);
         
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = Tasks.forResult(userSnapshot);
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
         when(userChildRef.get()).thenReturn(mockGetTask);
+        
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Boolean> cont = (Continuation<DataSnapshot, Boolean>) inv.getArgument(0);
+            Boolean result = cont.then(Tasks.forResult(userSnapshot));
+            return Tasks.forResult(result);
+        });
         
         Task<Boolean> result = user.isBannedFromOrganizer();
         assertTrue(result.isComplete());
@@ -242,8 +257,15 @@ public class UserTest {
         when(mockUserRef.child(UID)).thenReturn(userChildRef);
         
         @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = Tasks.forResult(userSnapshot);
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
         when(userChildRef.get()).thenReturn(mockGetTask);
+        
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Boolean> cont = (Continuation<DataSnapshot, Boolean>) inv.getArgument(0);
+            Boolean result = cont.then(Tasks.forResult(userSnapshot));
+            return Tasks.forResult(result);
+        });
         
         Task<Boolean> result = user.isBannedFromOrganizer();
         assertTrue(result.isComplete());
