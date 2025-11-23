@@ -148,7 +148,7 @@ public class CancelledListFragment extends Fragment {
                             "You entered: " + userInput,
                             Toast.LENGTH_SHORT).show();
 
-                    organizer.sendWaitingListNotification(EntrantStatus.INVITED, userInput);
+                    organizer.sendWaitingListNotification(EntrantStatus.CANCELLED, userInput);
 //                    organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
                 }
             });
