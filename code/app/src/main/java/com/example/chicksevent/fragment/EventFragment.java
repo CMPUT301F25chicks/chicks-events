@@ -241,16 +241,23 @@ public class EventFragment extends Fragment {
                         String eventEndDate = value.get("eventEndDate") != null ? value.get("eventEndDate").toString() : null;
                         String registrationStartDate = value.get("registrationStartDate") != null ? value.get("registrationStartDate").toString() : null;
                         String registrationEndDate = value.get("registrationEndDate") != null ? value.get("registrationEndDate").toString() : null;
-                        int entrantLimit = value.get("entrantLimit") != null ? ((Number) value.get("entrantLimit")).intValue() : 0;
-                        String poster = value.get("poster") != null ? value.get("poster").toString() : null;
-                        String tag = value.get("tag") != null ? value.get("tag").toString() : null;
-                        boolean geolocationRequired = value.get("geolocationRequired") != null && (Boolean) value.get("geolocationRequired");
-                        
-                        Event e = new Event(entrantId, id, name, eventDetails, eventDate, 
-                                           eventStartDate, eventEndDate, 
-                                           registrationStartDate, registrationEndDate, 
-                                           entrantLimit, poster, tag, geolocationRequired);
-                        eventDataList.add(e);
+                    int entrantLimit = value.get("entrantLimit") != null ? ((Number) value.get("entrantLimit")).intValue() : 0;
+                    String poster = value.get("poster") != null ? value.get("poster").toString() : null;
+                    String tag = value.get("tag") != null ? value.get("tag").toString() : null;
+                    boolean geolocationRequired = value.get("geolocationRequired") != null && (Boolean) value.get("geolocationRequired");
+                    boolean onHold = value.get("onHold") != null && (Boolean) value.get("onHold");
+                    
+                    // Skip on-hold events from public browsing
+                    if (onHold) {
+                        continue;
+                    }
+                    
+                    Event e = new Event(entrantId, id, name, eventDetails, eventDate, 
+                                       eventStartDate, eventEndDate, 
+                                       registrationStartDate, registrationEndDate, 
+                                       entrantLimit, poster, tag, geolocationRequired);
+                    e.setOnHold(onHold);
+                    eventDataList.add(e);
                     }
 
 
@@ -314,11 +321,18 @@ public class EventFragment extends Fragment {
                     String poster = value.get("poster") != null ? value.get("poster").toString() : null;
                     String tag = value.get("tag") != null ? value.get("tag").toString() : null;
                     boolean geolocationRequired = value.get("geolocationRequired") != null && (Boolean) value.get("geolocationRequired");
+                    boolean onHold = value.get("onHold") != null && (Boolean) value.get("onHold");
+                    
+                    // Skip on-hold events from public browsing
+                    if (onHold) {
+                        continue;
+                    }
                     
                     Event e = new Event(entrantId, id, name, eventDetails, eventDate, 
                                        eventStartDate, eventEndDate, 
                                        registrationStartDate, registrationEndDate, 
                                        entrantLimit, poster, tag, geolocationRequired);
+                    e.setOnHold(onHold);
                     eventDataList.add(e);
 
                     Log.d(TAG, "---");

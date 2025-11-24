@@ -9,6 +9,8 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -206,11 +208,14 @@ public class Admin extends User {
                         String poster = eventHash.get("poster") != null ? eventHash.get("poster").toString() : null;
                         String tag = eventHash.get("tag") != null ? eventHash.get("tag").toString() : null;
                         boolean geolocationRequired = eventHash.get("geolocationRequired") != null && (Boolean) eventHash.get("geolocationRequired");
+                        boolean onHold = eventHash.get("onHold") != null && (Boolean) eventHash.get("onHold");
                         
-                        events.add(new Event(entrantId, id, name, eventDetails, eventDate, 
+                        Event event = new Event(entrantId, id, name, eventDetails, eventDate, 
                                             eventStartDate, eventEndDate, 
                                             registrationStartDate, registrationEndDate, 
-                                            entrantLimit, poster, tag, geolocationRequired));
+                                            entrantLimit, poster, tag, geolocationRequired);
+                        event.setOnHold(onHold);
+                        events.add(event);
                     }
                 }
                 return com.google.android.gms.tasks.Tasks.forResult(events);
@@ -374,13 +379,56 @@ public class Admin extends User {
     }
 
     /**
+     * Checks if an event is happening today based on its eventStartDate.
+     *
+     * @param eventStartDate the event start date in YYYY-MM-DD format (can be null or empty)
+     * @return true if the event is happening today, false otherwise
+     */
+    private boolean isEventHappeningToday(String eventStartDate) {
+        if (eventStartDate == null || eventStartDate.isEmpty()) {
+            return false;
+        }
+        try {
+            LocalDate today = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate eventDate = LocalDate.parse(eventStartDate, formatter);
+            return eventDate.equals(today);
+        } catch (Exception e) {
+            Log.e("Admin", "Error parsing event date: " + eventStartDate, e);
+            return false;
+        }
+    }
+
+    /**
+     * Checks if an event has already happened (eventStartDate is before today).
+     *
+     * @param eventStartDate the event start date in YYYY-MM-DD format (can be null or empty)
+     * @return true if the event has already happened, false otherwise
+     */
+    private boolean isEventInPast(String eventStartDate) {
+        if (eventStartDate == null || eventStartDate.isEmpty()) {
+            return false;
+        }
+        try {
+            LocalDate today = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate eventDate = LocalDate.parse(eventStartDate, formatter);
+            return eventDate.isBefore(today);
+        } catch (Exception e) {
+            Log.e("Admin", "Error parsing event date: " + eventStartDate, e);
+            return false;
+        }
+    }
+
+    /**
      * Bans a user from creating new events as an organizer.
-     * Deletes all events created by the user and notifies them of the ban.
+     * Puts all events created by the user on hold (except events happening today or events that have already happened) and notifies them of the ban.
      *
      * @param userId the ID of the user to ban
+     * @param reason the reason for banning the organizer
      * @return a Task that completes when the ban is processed
      */
-    public Task<Void> banUserFromOrganizer(String userId) {
+    public Task<Void> banUserFromOrganizer(String userId, String reason) {
         TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
         // Get all events created by this user
@@ -388,55 +436,159 @@ public class Admin extends User {
             if (eventsTask.isSuccessful()) {
                 List<String> eventIds = eventsTask.getResult();
 
-                // Delete all events created by this user
+                // Put events on hold (except those happening today or events that have already happened)
                 eventsService.getReference().get().addOnCompleteListener(allEventsTask -> {
                     if (allEventsTask.isSuccessful()) {
                         DataSnapshot allEventsSnapshot = allEventsTask.getResult();
+                        List<String> eventsToNotify = new ArrayList<>(); // Store eventId|eventName pairs
+                        
+                        // First pass: put events on hold and collect event info for notifications
                         for (String eventId : eventIds) {
                             DataSnapshot eventSnapshot = allEventsSnapshot.child(eventId);
                             if (eventSnapshot.exists()) {
                                 HashMap<String, Object> eventData = (HashMap<String, Object>) eventSnapshot.getValue();
-                                String eventName = eventData != null && eventData.get("name") != null
-                                        ? eventData.get("name").toString()
-                                        : "Event";
-                                deleteEventAndCleanup(eventId, eventName);
-                            } else {
-                                deleteEvent(eventId);
-                                deletePoster(eventId);
+                                if (eventData != null) {
+                                    String eventStartDate = eventData.get("eventStartDate") != null 
+                                            ? eventData.get("eventStartDate").toString() 
+                                            : null;
+                                    
+                                    // Skip events happening today or events that have already happened (don't touch past events)
+                                    if (!isEventHappeningToday(eventStartDate) && !isEventInPast(eventStartDate)) {
+                                        String eventName = eventData.get("name") != null
+                                                ? eventData.get("name").toString()
+                                                : "Event";
+                                        
+                                        // Put event on hold
+                                        HashMap<String, Object> eventUpdates = new HashMap<>();
+                                        eventUpdates.put("onHold", true);
+                                        eventsService.editEntry(eventId, eventUpdates);
+                                        
+                                        // Store event info for notification
+                                        eventsToNotify.add(eventId + "|" + eventName);
+                                    }
+                                }
                             }
                         }
+                        
+                        // Second pass: collect all entrants from all events and notify them
+                        final int[] completedQueries = {0};
+                        final int totalEvents = eventsToNotify.size();
+                        
+                        if (totalEvents == 0) {
+                            // No events to process, just ban the user
+                            HashMap<String, Object> updates = new HashMap<>();
+                            updates.put("bannedFromOrganizer", true);
+                            userService.editEntry(userId, updates);
+                            
+                            Notification banNotification = new Notification(
+                                    userId,
+                                    "SYSTEM",
+                                    NotificationType.CANCELLED,
+                                    "You have been banned from creating events.\n\nReason: " + reason
+                            );
+                            banNotification.createNotification();
+                            tcs.setResult(null);
+                            return;
+                        }
+                        
+                        HashMap<String, String> eventIdToName = new HashMap<>();
+                        HashMap<String, List<String>> eventIdToEntrants = new HashMap<>();
+                        
+                        for (String eventInfo : eventsToNotify) {
+                            String[] parts = eventInfo.split("\\|", 2);
+                            String eventId = parts[0];
+                            String eventName = parts.length > 1 ? parts[1] : "Event";
+                            eventIdToName.put(eventId, eventName);
+                            eventIdToEntrants.put(eventId, new ArrayList<>());
+                            
+                            // Collect entrants for this event
+                            waitingListService.getReference().child(eventId).get().addOnCompleteListener(waitingListTask -> {
+                                synchronized (completedQueries) {
+                                    if (waitingListTask.isSuccessful()) {
+                                        DataSnapshot waitingListSnapshot = waitingListTask.getResult();
+                                        if (waitingListSnapshot.exists()) {
+                                            List<String> entrantIds = eventIdToEntrants.get(eventId);
+                                            for (DataSnapshot statusSnapshot : waitingListSnapshot.getChildren()) {
+                                                for (DataSnapshot entrantSnapshot : statusSnapshot.getChildren()) {
+                                                    String entrantId = entrantSnapshot.getKey();
+                                                    if (entrantId != null && !entrantIds.contains(entrantId)) {
+                                                        entrantIds.add(entrantId);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    completedQueries[0]++;
+                                    
+                                    // When all queries are done, send notifications
+                                    if (completedQueries[0] == totalEvents) {
+                                        // Notify all entrants
+                                        for (String eventIdNotify : eventIdToEntrants.keySet()) {
+                                            String eventNameNotify = eventIdToName.get(eventIdNotify);
+                                            List<String> entrantIds = eventIdToEntrants.get(eventIdNotify);
+                                            
+                                            for (String entrantId : entrantIds) {
+                                                Notification onHoldNotification = new Notification(
+                                                        entrantId,
+                                                        eventIdNotify,
+                                                        NotificationType.CANCELLED,
+                                                        "The event \"" + eventNameNotify + "\" has been put on hold. You cannot join or leave the waiting list until it is restored."
+                                                );
+                                                onHoldNotification.createNotification();
+                                            }
+                                        }
+                                        
+                                        // Update user's banned status in Firebase
+                                        HashMap<String, Object> updates = new HashMap<>();
+                                        updates.put("bannedFromOrganizer", true);
+                                        userService.editEntry(userId, updates);
+                                        
+                                        // Notify the user that they've been banned
+                                        Notification banNotification = new Notification(
+                                                userId,
+                                                "SYSTEM",
+                                                NotificationType.CANCELLED,
+                                                "You have been banned from creating events. Your events have been put on hold.\n\nReason: " + reason
+                                        );
+                                        banNotification.createNotification();
+                                        
+                                        tcs.setResult(null);
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        // Even if getting events fails, still ban the user
+                        HashMap<String, Object> updates = new HashMap<>();
+                        updates.put("bannedFromOrganizer", true);
+                        userService.editEntry(userId, updates);
+                        
+                        Notification banNotification = new Notification(
+                                userId,
+                                "SYSTEM",
+                                NotificationType.CANCELLED,
+                                "You have been banned from creating events.\n\nReason: " + reason
+                        );
+                        banNotification.createNotification();
+                        
+                        tcs.setResult(null);
                     }
-
-                    // Update user's banned status in Firebase
-                    HashMap<String, Object> updates = new HashMap<>();
-                    updates.put("bannedFromOrganizer", true);
-                    userService.editEntry(userId, updates);
-
-                    // Notify the user that they've been banned
-                    Notification banNotification = new Notification(
-                            userId,
-                            "SYSTEM",
-                            NotificationType.CANCELLED,
-                            "You have been banned from creating events. All your events have been deleted."
-                    );
-                    banNotification.createNotification();
-
-                    tcs.setResult(null);
                 });
             } else {
                 // Even if getting events fails, still ban the user
                 HashMap<String, Object> updates = new HashMap<>();
                 updates.put("bannedFromOrganizer", true);
                 userService.editEntry(userId, updates);
-
+                
                 Notification banNotification = new Notification(
                         userId,
                         "SYSTEM",
                         NotificationType.CANCELLED,
-                        "You have been banned from creating events."
+                        "You have been banned from creating events.\n\nReason: " + reason
                 );
                 banNotification.createNotification();
-
+                
                 tcs.setResult(null);
             }
         });
@@ -446,7 +598,7 @@ public class Admin extends User {
 
     /**
      * Unbans a user, allowing them to create events again.
-     * Notifies the user that they've been unbanned.
+     * Takes all their events off hold and notifies them and all entrants.
      *
      * @param userId the ID of the user to unban
      * @return a Task that completes when the unban is processed
@@ -454,21 +606,166 @@ public class Admin extends User {
     public Task<Void> unbanUserFromOrganizer(String userId) {
         TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
-        // Update user's banned status in Firebase
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put("bannedFromOrganizer", false);
-        userService.editEntry(userId, updates);
+        // Get all events created by this user
+        getEventsByOrganizer(userId).addOnCompleteListener(eventsTask -> {
+            if (eventsTask.isSuccessful()) {
+                List<String> eventIds = eventsTask.getResult();
 
-        // Notify the user that they've been unbanned
-        Notification unbanNotification = new Notification(
-                userId,
-                "SYSTEM",
-                NotificationType.CANCELLED,
-                "You have been unbanned and can now create events again."
-        );
-        unbanNotification.createNotification();
+                // Get all events and restore those that are on hold
+                eventsService.getReference().get().addOnCompleteListener(allEventsTask -> {
+                    if (allEventsTask.isSuccessful()) {
+                        DataSnapshot allEventsSnapshot = allEventsTask.getResult();
+                        List<String> eventsToRestore = new ArrayList<>(); // Store eventId|eventName pairs
+                        
+                        // First pass: take events off hold and collect event info for notifications
+                        for (String eventId : eventIds) {
+                            DataSnapshot eventSnapshot = allEventsSnapshot.child(eventId);
+                            if (eventSnapshot.exists()) {
+                                HashMap<String, Object> eventData = (HashMap<String, Object>) eventSnapshot.getValue();
+                                if (eventData != null) {
+                                    Object onHoldObj = eventData.get("onHold");
+                                    boolean isOnHold = onHoldObj instanceof Boolean && (Boolean) onHoldObj;
+                                    
+                                    if (isOnHold) {
+                                        String eventName = eventData.get("name") != null
+                                                ? eventData.get("name").toString()
+                                                : "Event";
+                                        
+                                        // Take event off hold
+                                        HashMap<String, Object> eventUpdates = new HashMap<>();
+                                        eventUpdates.put("onHold", false);
+                                        eventsService.editEntry(eventId, eventUpdates);
+                                        
+                                        // Store event info for notification
+                                        eventsToRestore.add(eventId + "|" + eventName);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Second pass: collect all entrants from all restored events and notify them
+                        final int[] completedQueries = {0};
+                        final int totalEvents = eventsToRestore.size();
+                        
+                        if (totalEvents == 0) {
+                            // No events to restore, just unban the user
+                            HashMap<String, Object> updates = new HashMap<>();
+                            updates.put("bannedFromOrganizer", false);
+                            userService.editEntry(userId, updates);
+                            
+                            Notification unbanNotification = new Notification(
+                                    userId,
+                                    "SYSTEM",
+                                    NotificationType.CANCELLED,
+                                    "You have been unbanned from organizing events. You can now create events again."
+                            );
+                            unbanNotification.createNotification();
+                            tcs.setResult(null);
+                            return;
+                        }
+                        
+                        HashMap<String, String> eventIdToName = new HashMap<>();
+                        HashMap<String, List<String>> eventIdToEntrants = new HashMap<>();
+                        
+                        for (String eventInfo : eventsToRestore) {
+                            String[] parts = eventInfo.split("\\|", 2);
+                            String eventId = parts[0];
+                            String eventName = parts.length > 1 ? parts[1] : "Event";
+                            eventIdToName.put(eventId, eventName);
+                            eventIdToEntrants.put(eventId, new ArrayList<>());
+                            
+                            // Collect entrants for this event
+                            waitingListService.getReference().child(eventId).get().addOnCompleteListener(waitingListTask -> {
+                                synchronized (completedQueries) {
+                                    if (waitingListTask.isSuccessful()) {
+                                        DataSnapshot waitingListSnapshot = waitingListTask.getResult();
+                                        if (waitingListSnapshot.exists()) {
+                                            List<String> entrantIds = eventIdToEntrants.get(eventId);
+                                            for (DataSnapshot statusSnapshot : waitingListSnapshot.getChildren()) {
+                                                for (DataSnapshot entrantSnapshot : statusSnapshot.getChildren()) {
+                                                    String entrantId = entrantSnapshot.getKey();
+                                                    if (entrantId != null && !entrantIds.contains(entrantId)) {
+                                                        entrantIds.add(entrantId);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    completedQueries[0]++;
+                                    
+                                    // When all queries are done, send notifications
+                                    if (completedQueries[0] == totalEvents) {
+                                        // Notify all entrants
+                                        for (String eventIdNotify : eventIdToEntrants.keySet()) {
+                                            String eventNameNotify = eventIdToName.get(eventIdNotify);
+                                            List<String> entrantIds = eventIdToEntrants.get(eventIdNotify);
+                                            
+                                            for (String entrantId : entrantIds) {
+                                                Notification restoredNotification = new Notification(
+                                                        entrantId,
+                                                        eventIdNotify,
+                                                        NotificationType.CANCELLED,
+                                                        "The event \"" + eventNameNotify + "\" has been restored. You can now join or leave the waiting list."
+                                                );
+                                                restoredNotification.createNotification();
+                                            }
+                                        }
+                                        
+                                        // Update user's banned status in Firebase
+                                        HashMap<String, Object> updates = new HashMap<>();
+                                        updates.put("bannedFromOrganizer", false);
+                                        userService.editEntry(userId, updates);
+                                        
+                                        // Notify the user that they've been unbanned
+                                        Notification unbanNotification = new Notification(
+                                                userId,
+                                                "SYSTEM",
+                                                NotificationType.CANCELLED,
+                                                "You have been unbanned from organizing events. Your events have been restored and you can now create events again."
+                                        );
+                                        unbanNotification.createNotification();
+                                        
+                                        tcs.setResult(null);
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        // Even if getting events fails, still unban the user
+                        HashMap<String, Object> updates = new HashMap<>();
+                        updates.put("bannedFromOrganizer", false);
+                        userService.editEntry(userId, updates);
+                        
+                        Notification unbanNotification = new Notification(
+                                userId,
+                                "SYSTEM",
+                                NotificationType.CANCELLED,
+                                "You have been unbanned from organizing events. You can now create events again."
+                        );
+                        unbanNotification.createNotification();
+                        
+                        tcs.setResult(null);
+                    }
+                });
+            } else {
+                // Even if getting events fails, still unban the user
+                HashMap<String, Object> updates = new HashMap<>();
+                updates.put("bannedFromOrganizer", false);
+                userService.editEntry(userId, updates);
+                
+                Notification unbanNotification = new Notification(
+                        userId,
+                        "SYSTEM",
+                        NotificationType.CANCELLED,
+                        "You have been unbanned from organizing events. You can now create events again."
+                );
+                unbanNotification.createNotification();
+                
+                tcs.setResult(null);
+            }
+        });
 
-        tcs.setResult(null);
         return tcs.getTask();
     }
 }
