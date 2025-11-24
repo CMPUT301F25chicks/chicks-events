@@ -47,35 +47,17 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/switch_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:layout_width="46dp"
+        android:layout_height="41dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_close"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tv_ban_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Can Create Events"
-            android:textColor="@color/purpleText"
-            android:textSize="10sp"
-            android:layout_marginBottom="4dp" />
-
-        <Switch
-            android:id="@+id/switch_ban_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textOff=""
-            android:textOn="" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/lightRed" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

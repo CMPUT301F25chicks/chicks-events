@@ -101,11 +101,8 @@ public class OrgAdminFragment extends Fragment {
         admin = new Admin("ADMIN_DEFAULT");
         recyclerView = binding.recyclerChosenUser;
 
-        // Adapter with ban toggle callback
-        adapter = new OrganizerAdapter(
-                organizerList,
-                this::handleBanToggle
-        );
+        // Adapter with delete click callback
+        adapter = new OrganizerAdapter(organizerList, this::confirmDeleteOrganizer);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
@@ -133,101 +130,37 @@ public class OrgAdminFragment extends Fragment {
                 });
     }
 
-
     /**
-     * Handles the ban/unban toggle switch change.
-     * Shows appropriate confirmation dialog based on the action.
+     * Shows a confirmation dialog before deleting an organizer.
+     * <p>
+     * Called by {@link OrganizerAdapter} when the delete button is clicked.
+     * </p>
      *
-     * @param organizer the {@link Organizer} to toggle ban status for
-     * @param willBeBanned true if switching to banned, false if switching to unbanned
+     * @param organizer the {@link Organizer} to be deleted
      */
-    private void handleBanToggle(Organizer organizer, boolean willBeBanned) {
-        if (willBeBanned) {
-            // Switching to banned - show ban confirmation
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Ban Organizer")
-                    .setMessage("Are you sure you want to ban \"" + organizer.getOrganizerId() + "\" from creating events? All their events will be deleted.")
-                    .setPositiveButton("Ban", (dialog, which) -> banOrganizer(organizer))
-                    .setNegativeButton("Cancel", (dialog, which) -> {
-                        // Revert the switch if cancelled
-                        adapter.notifyItemChanged(organizerList.indexOf(organizer));
-                    })
-                    .show();
-        } else {
-            // Switching to unbanned - show unban confirmation
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Unban Organizer")
-                    .setMessage("Are you sure you want to unban \"" + organizer.getOrganizerId() + "\"? They will be able to create events again.")
-                    .setPositiveButton("Unban", (dialog, which) -> unbanOrganizer(organizer))
-                    .setNegativeButton("Cancel", (dialog, which) -> {
-                        // Revert the switch if cancelled
-                        adapter.notifyItemChanged(organizerList.indexOf(organizer));
-                    })
-                    .show();
-        }
+    private void confirmDeleteOrganizer(Organizer organizer) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Organizer")
+                .setMessage("Are you sure you want to delete \"" + organizer.getOrganizerId() + "\"?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteOrganizer(organizer))
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     /**
-     * Bans the specified organizer from creating events.
+     * Deletes the specified organizer from Firebase and updates the UI.
      * <p>
-     * Calls {@link Admin#banUserFromOrganizer(String)} to ban the user,
-     * delete all their events, and notify them. Updates the UI after completion.
+     * Calls {@link Admin#deleteOrganizerProfile(String)} to remove from database,
+     * removes from {@link #organizerList}, and notifies the adapter.
+     * Shows a success toast.
      * </p>
      *
-     * @param organizer the {@link Organizer} to ban
+     * @param organizer the {@link Organizer} to delete
      */
-    private void banOrganizer(Organizer organizer) {
-        admin.banUserFromOrganizer(organizer.getOrganizerId())
-                .addOnSuccessListener(aVoid -> {
-                    // Refresh the specific item to update the label and switch
-                    int position = organizerList.indexOf(organizer);
-                    if (position >= 0) {
-                        adapter.notifyItemChanged(position);
-                    } else {
-                        adapter.notifyDataSetChanged();
-                    }
-                    Toast.makeText(getContext(), "Organizer banned", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("OrgAdmin", "Error banning organizer", e);
-                    // Revert the switch if failed
-                    int position = organizerList.indexOf(organizer);
-                    if (position >= 0) {
-                        adapter.notifyItemChanged(position);
-                    }
-                    Toast.makeText(getContext(), "Failed to ban organizer", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    /**
-     * Unbans the specified organizer, allowing them to create events again.
-     * <p>
-     * Calls {@link Admin#unbanUserFromOrganizer(String)} to unban the user
-     * and notify them. Updates the UI after completion.
-     * </p>
-     *
-     * @param organizer the {@link Organizer} to unban
-     */
-    private void unbanOrganizer(Organizer organizer) {
-        admin.unbanUserFromOrganizer(organizer.getOrganizerId())
-                .addOnSuccessListener(aVoid -> {
-                    // Refresh the specific item to update the label and switch
-                    int position = organizerList.indexOf(organizer);
-                    if (position >= 0) {
-                        adapter.notifyItemChanged(position);
-                    } else {
-                        adapter.notifyDataSetChanged();
-                    }
-                    Toast.makeText(getContext(), "Organizer unbanned", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("OrgAdmin", "Error unbanning organizer", e);
-                    // Revert the switch if failed
-                    int position = organizerList.indexOf(organizer);
-                    if (position >= 0) {
-                        adapter.notifyItemChanged(position);
-                    }
-                    Toast.makeText(getContext(), "Failed to unban organizer", Toast.LENGTH_SHORT).show();
-                });
+    private void deleteOrganizer(Organizer organizer) {
+        admin.deleteOrganizerProfile(organizer.getOrganizerId());
+        organizerList.remove(organizer);
+        adapter.notifyDataSetChanged();
+        Toast.makeText(getContext(), "Organizer deleted", Toast.LENGTH_SHORT).show();
     }
 }

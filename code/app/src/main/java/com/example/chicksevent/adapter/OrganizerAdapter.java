@@ -3,16 +3,14 @@ package com.example.chicksevent.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.misc.Organizer;
-import com.example.chicksevent.misc.User;
 import com.example.chicksevent.R;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
@@ -35,18 +33,20 @@ import java.util.ArrayList;
  */
 public class OrganizerAdapter extends RecyclerView.Adapter<OrganizerAdapter.ViewHolder> {
 
-
     /**
-     * Callback interface for handling ban/unban toggle switch changes on organizer items.
+     * Callback interface for handling delete button clicks on organizer items.
+     * <p>
+     * Implementations should typically delete the organizer from Firebase
+     * and remove it from the underlying data list.
+     * </p>
      */
-    public interface OnBanToggleClickListener {
+    public interface OnDeleteClickListener {
         /**
-         * Called when the ban/unban toggle switch is changed for a specific organizer.
+         * Called when the delete button is clicked for a specific organizer.
          *
          * @param organizer the {@link Organizer} object associated with the clicked item
-         * @param willBeBanned whether the organizer will be banned (true) or unbanned (false) after this action
          */
-        void onBanToggleClick(Organizer organizer, boolean willBeBanned);
+        void onDeleteClick(Organizer organizer);
     }
 
     /**
@@ -58,22 +58,23 @@ public class OrganizerAdapter extends RecyclerView.Adapter<OrganizerAdapter.View
      */
     private ArrayList<Organizer> organizers;
 
-
     /**
-     * Listener to be notified when the ban/unban toggle button is clicked on an item.
+     * Listener to be notified when the delete button is clicked on an item.
+     * <p>
+     * May be {@code null} if no delete action is required.
+     * </p>
      */
-    private OnBanToggleClickListener banToggleListener;
+    private OnDeleteClickListener listener;
 
     /**
-     * Constructs a new {@code OrganizerAdapter} with ban/unban toggle functionality.
+     * Constructs a new {@code OrganizerAdapter} with the given data and listener.
      *
      * @param organizers the list of organizers to display
-     * @param banToggleListener the listener to notify on ban/unban toggle clicks, or {@code null}
+     * @param listener   the listener to notify on delete clicks, or {@code null}
      */
-    public OrganizerAdapter(ArrayList<Organizer> organizers,
-                           OnBanToggleClickListener banToggleListener) {
+    public OrganizerAdapter(ArrayList<Organizer> organizers, OnDeleteClickListener listener) {
         this.organizers = organizers;
-        this.banToggleListener = banToggleListener;
+        this.listener = listener;
     }
 
     /**
@@ -108,50 +109,9 @@ public class OrganizerAdapter extends RecyclerView.Adapter<OrganizerAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Organizer organizer = organizers.get(position);
-        String organizerId = organizer.getOrganizerId();
-        
-        // Get user name instead of ID
-        User user = new User(organizerId);
-        user.getName().addOnCompleteListener(nameTask -> {
-            String displayName = nameTask.getResult();
-            // If name is null, empty, or error message, fallback to ID
-            if (displayName == null || displayName.isEmpty() || displayName.equals("couldn't find name")) {
-                holder.name.setText(organizerId);
-            } else {
-                holder.name.setText(displayName);
-            }
-        });
-        
-        // Check if organizer is banned and update switch state
-        user.isBannedFromOrganizer().addOnCompleteListener(task -> {
-            boolean isBanned = task.isSuccessful() && task.getResult();
-            
-            // Update label text based on ban status
-            if (holder.banLabel != null) {
-                if (isBanned) {
-                    holder.banLabel.setText("Banned");
-                } else {
-                    holder.banLabel.setText("Can Create Events");
-                }
-            }
-            
-            // Update switch state: OFF = banned, ON = not banned
-            if (holder.banToggleSwitch != null) {
-                // Set switch state (inverted: banned = false/off, not banned = true/on)
-                holder.banToggleSwitch.setChecked(!isBanned);
-                
-                // Remove any existing listeners to avoid conflicts
-                holder.banToggleSwitch.setOnCheckedChangeListener(null);
-                
-                // Set click listener for toggle
-                holder.banToggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    // isChecked = true means NOT banned, false means BANNED
-                    boolean willBeBanned = !isChecked;
-                    if (banToggleListener != null) {
-                        banToggleListener.onBanToggleClick(organizers.get(position), willBeBanned);
-                    }
-                });
-            }
+        holder.name.setText(organizer.getOrganizerId());
+        holder.deleteButton.setOnClickListener(v -> {
+            if (listener != null) listener.onDeleteClick(organizers.get(position));
         });
     }
 
@@ -175,25 +135,19 @@ public class OrganizerAdapter extends RecyclerView.Adapter<OrganizerAdapter.View
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         /**
-         * TextView displaying the organizer's name or ID.
+         * TextView displaying the organizer's ID or name.
          */
         TextView name;
 
         /**
-         * TextView displaying the label for the ban toggle switch.
+         * ImageButton that triggers deletion of the organizer when clicked.
          */
-        TextView banLabel;
-
-        /**
-         * Switch that toggles ban/unban status of the organizer.
-         * ON = not banned, OFF = banned
-         */
-        Switch banToggleSwitch;
+        ImageButton deleteButton;
 
         /**
          * Constructs a new ViewHolder from the provided item view.
          * <p>
-         * Initializes {@link #name} and {@link #banToggleSwitch} by finding views
+         * Initializes {@link #name} and {@link #deleteButton} by finding views
          * using their resource IDs.
          * </p>
          *
@@ -202,8 +156,7 @@ public class OrganizerAdapter extends RecyclerView.Adapter<OrganizerAdapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.tv_user_name);
-            banLabel = itemView.findViewById(R.id.tv_ban_label);
-            banToggleSwitch = itemView.findViewById(R.id.switch_ban_toggle);
+            deleteButton = itemView.findViewById(R.id.btn_delete);
         }
     }
 }
