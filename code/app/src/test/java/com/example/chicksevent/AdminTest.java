@@ -4,8 +4,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import com.example.chicksevent.misc.Admin;
+import com.example.chicksevent.misc.Organizer;
 import com.example.chicksevent.misc.User;
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
@@ -15,11 +17,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Unit tests for {@link Admin}.
@@ -63,6 +68,9 @@ public class AdminTest {
     private DatabaseReference userRoot;
     private DatabaseReference eventRoot;
     private DatabaseReference organizerRoot;
+    private DatabaseReference waitingListRoot;
+    private DatabaseReference notificationRoot;
+    private DatabaseReference imageRoot;
 
     private Admin admin;
 
@@ -72,10 +80,13 @@ public class AdminTest {
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
 
-        adminRoot     = mock(DatabaseReference.class); // "Admin"
-        userRoot      = mock(DatabaseReference.class); // "User"
-        eventRoot     = mock(DatabaseReference.class); // "Event"
-        organizerRoot = mock(DatabaseReference.class); // "Organizer"
+        adminRoot        = mock(DatabaseReference.class); // "Admin"
+        userRoot         = mock(DatabaseReference.class); // "User"
+        eventRoot        = mock(DatabaseReference.class); // "Event"
+        organizerRoot    = mock(DatabaseReference.class); // "Organizer"
+        waitingListRoot  = mock(DatabaseReference.class); // "WaitingList"
+        notificationRoot = mock(DatabaseReference.class); // "Notification"
+        imageRoot        = mock(DatabaseReference.class); // "Image"
 
         firebaseDbStatic.when(() -> FirebaseDatabase.getInstance(anyString()))
                 .thenReturn(mockDb);
@@ -84,6 +95,9 @@ public class AdminTest {
         when(mockDb.getReference("User")).thenReturn(userRoot);
         when(mockDb.getReference("Event")).thenReturn(eventRoot);
         when(mockDb.getReference("Organizer")).thenReturn(organizerRoot);
+        when(mockDb.getReference("WaitingList")).thenReturn(waitingListRoot);
+        when(mockDb.getReference("Notification")).thenReturn(notificationRoot);
+        when(mockDb.getReference("Image")).thenReturn(imageRoot);
 
         // Safe to construct Admin (its FirebaseService members will bind to the mocked refs)
         admin = new Admin(UID);
@@ -231,6 +245,187 @@ public class AdminTest {
         assertTrue(out.isComplete());
         assertTrue(out.isSuccessful());
         assertEquals(2, out.getResult().size()); // size matches children
+    }
+
+    // -------------------- browseOrganizers --------------------
+
+    @Test
+    public void browseOrganizers_returnsOrganizersFromEvents() {
+        // Create fake events with different organizers
+        DataSnapshot root = mock(DataSnapshot.class);
+        DataSnapshot e1 = mock(DataSnapshot.class);
+        DataSnapshot e2 = mock(DataSnapshot.class);
+        DataSnapshot e3 = mock(DataSnapshot.class);
+
+        HashMap<String, Object> event1Data = new HashMap<>();
+        event1Data.put("organizer", "org1");
+        event1Data.put("name", "Event 1");
+        
+        HashMap<String, Object> event2Data = new HashMap<>();
+        event2Data.put("organizer", "org1"); // same organizer
+        event2Data.put("name", "Event 2");
+        
+        HashMap<String, Object> event3Data = new HashMap<>();
+        event3Data.put("organizer", "org2"); // different organizer
+        event3Data.put("name", "Event 3");
+
+        when(e1.getValue()).thenReturn(event1Data);
+        when(e2.getValue()).thenReturn(event2Data);
+        when(e3.getValue()).thenReturn(event3Data);
+        when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
+
+        // Mock the task and intercept addOnSuccessListener
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(eventRoot.get()).thenReturn(mockGetTask);
+        
+        // Intercept addOnSuccessListener and execute it immediately
+        doAnswer(inv -> {
+            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
+            listener.onSuccess(root);
+            return mockGetTask;
+        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
+        
+        Task<List<Organizer>> out = admin.browseOrganizers();
+        // addOnSuccessListener executes synchronously, so TCS should be set
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
+        // Should return 2 unique organizers (org1 and org2)
+        assertEquals(2, out.getResult().size());
+        Set<String> organizerIds = new java.util.HashSet<>();
+        for (Organizer org : out.getResult()) {
+            organizerIds.add(org.getOrganizerId());
+        }
+        assertTrue(organizerIds.contains("org1"));
+        assertTrue(organizerIds.contains("org2"));
+    }
+
+    @Test
+    public void browseOrganizers_noEvents_returnsEmptyList() {
+        DataSnapshot root = mock(DataSnapshot.class);
+        when(root.getChildren()).thenAnswer(i -> iterable());
+
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(eventRoot.get()).thenReturn(mockGetTask);
+        
+        doAnswer(inv -> {
+            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
+            listener.onSuccess(root);
+            return mockGetTask;
+        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
+        
+        Task<List<Organizer>> out = admin.browseOrganizers();
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
+        assertEquals(0, out.getResult().size());
+    }
+
+    // -------------------- getEventsByOrganizer --------------------
+
+    @Test
+    public void getEventsByOrganizer_returnsEventIdsForOrganizer() {
+        DataSnapshot root = mock(DataSnapshot.class);
+        DataSnapshot e1 = mock(DataSnapshot.class);
+        DataSnapshot e2 = mock(DataSnapshot.class);
+        DataSnapshot e3 = mock(DataSnapshot.class);
+
+        HashMap<String, Object> event1Data = new HashMap<>();
+        event1Data.put("organizer", "org1");
+        event1Data.put("name", "Event 1");
+        
+        HashMap<String, Object> event2Data = new HashMap<>();
+        event2Data.put("organizer", "org2");
+        event2Data.put("name", "Event 2");
+        
+        HashMap<String, Object> event3Data = new HashMap<>();
+        event3Data.put("organizer", "org1");
+        event3Data.put("name", "Event 3");
+
+        when(e1.getKey()).thenReturn("event1");
+        when(e2.getKey()).thenReturn("event2");
+        when(e3.getKey()).thenReturn("event3");
+        when(e1.getValue()).thenReturn(event1Data);
+        when(e2.getValue()).thenReturn(event2Data);
+        when(e3.getValue()).thenReturn(event3Data);
+        when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
+
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(eventRoot.get()).thenReturn(mockGetTask);
+        
+        // Intercept continueWith and execute continuation immediately
+        when(mockGetTask.continueWith(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, List<String>> cont = (Continuation<DataSnapshot, List<String>>) inv.getArgument(0);
+            List<String> result = cont.then(Tasks.forResult(root));
+            return Tasks.forResult(result);
+        });
+        
+        Task<List<String>> out = admin.getEventsByOrganizer("org1");
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
+        List<String> eventIds = out.getResult();
+        assertEquals(2, eventIds.size());
+        assertTrue(eventIds.contains("event1"));
+        assertTrue(eventIds.contains("event3"));
+        assertFalse(eventIds.contains("event2"));
+    }
+
+    // -------------------- banUserFromOrganizer --------------------
+
+    @Test
+    public void banUserFromOrganizer_returnsTask() {
+        String userId = "user123";
+        
+        // Mock getEventsByOrganizer to return empty list (no events to delete)
+        DataSnapshot emptyRoot = mock(DataSnapshot.class);
+        when(emptyRoot.getChildren()).thenAnswer(i -> iterable());
+        Task<DataSnapshot> emptyEventsTask = Tasks.forResult(emptyRoot);
+        when(eventRoot.get()).thenReturn(emptyEventsTask);
+        
+        // Mock userService.editEntry
+        DatabaseReference userChildRef = mock(DatabaseReference.class);
+        when(userRoot.child(userId)).thenReturn(userChildRef);
+        when(userChildRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
+        
+        // Mock notification service
+        DatabaseReference notifRef = mock(DatabaseReference.class);
+        when(notificationRoot.push()).thenReturn(notifRef);
+        when(notifRef.getKey()).thenReturn("N123");
+        when(notifRef.setValue(any())).thenReturn(Tasks.forResult(null));
+        
+        Task<Void> banTask = admin.banUserFromOrganizer(userId);
+        assertNotNull(banTask);
+        // Task may not be complete immediately due to async operations
+    }
+
+    // -------------------- unbanUserFromOrganizer --------------------
+
+    @Test
+    public void unbanUserFromOrganizer_returnsTask() {
+        String userId = "user123";
+        
+        // Mock userService.editEntry
+        DatabaseReference userChildRef = mock(DatabaseReference.class);
+        when(userRoot.child(userId)).thenReturn(userChildRef);
+        when(userChildRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
+        
+        // Mock notification service for Notification.createNotification()
+        // Notification uses updateSubCollectionEntry which calls child().child().updateChildren()
+        DatabaseReference userNotifRef = mock(DatabaseReference.class);
+        DatabaseReference eventNotifRef = mock(DatabaseReference.class);
+        DatabaseReference typeNotifRef = mock(DatabaseReference.class);
+        when(notificationRoot.child(userId)).thenReturn(userNotifRef);
+        when(userNotifRef.child("SYSTEM")).thenReturn(eventNotifRef);
+        when(eventNotifRef.child(anyString())).thenReturn(typeNotifRef);
+        when(typeNotifRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
+        
+        Task<Void> unbanTask = admin.unbanUserFromOrganizer(userId);
+        assertNotNull(unbanTask);
+        // The task completes synchronously for unban
+        assertTrue(unbanTask.isComplete());
+        assertTrue(unbanTask.isSuccessful());
     }
 
     // -------------------- helpers --------------------

@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
+import com.example.chicksevent.misc.User;
 import com.example.chicksevent.util.FirebaseStorageHelper;
 import com.example.chicksevent.util.QRCodeGenerator;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -97,7 +98,19 @@ public class CreateEventFragment extends Fragment {
 
         // Hook up CREATE button
         binding.btnCreateEvent.setOnClickListener(v -> {
-            createEventFromForm();
+            // Check if user is banned from creating events
+            String entrantId = Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            );
+            User currentUser = new User(entrantId);
+            currentUser.isBannedFromOrganizer().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult()) {
+                    toast("You are banned from creating events. Please contact an administrator.");
+                } else {
+                    createEventFromForm();
+                }
+            });
         });
 
         // Optional: Cancel just pops back
