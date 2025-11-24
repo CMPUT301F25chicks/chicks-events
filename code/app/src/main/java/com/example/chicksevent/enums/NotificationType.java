@@ -49,5 +49,6 @@ public enum NotificationType {
      */
     UNINVITED,
 
-    CANCELLED
+    CANCELLED,
+    SYSTEM
 }

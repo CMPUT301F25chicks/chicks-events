@@ -129,6 +129,9 @@ public class NotificationAdminFragment extends Fragment {
                                 case "UNINVITED":
                                     notificationType = NotificationType.UNINVITED;
                                     break;
+                                case "CANCELLED":
+                                    notificationType = NotificationType.CANCELLED;
+                                    break;
                                 default:
                                     notificationType = NotificationType.WAITING;
                                     break;

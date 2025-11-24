@@ -239,6 +239,12 @@ public class User {
                             case "UNINVITED":
                                 notificationType = NotificationType.UNINVITED;
                                 break;
+                            case "CANCELLED":
+                                notificationType = NotificationType.CANCELLED;
+                                break;
+                            case "SYSTEM":
+                                notificationType = NotificationType.SYSTEM;
+                                break;
                             default:
                                 notificationType = NotificationType.WAITING;
                                 break;

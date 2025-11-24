@@ -2,7 +2,6 @@ package com.example.chicksevent.misc;
 
 import android.util.Log;
 
-import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.enums.NotificationType;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -335,7 +334,7 @@ public class Admin extends User {
                     Notification notification = new Notification(
                             entrantId,
                             eventId,
-                            NotificationType.CANCELLED,
+                            NotificationType.SYSTEM,
                             message
                     );
                     notification.createNotification();
@@ -416,7 +415,7 @@ public class Admin extends User {
                     Notification banNotification = new Notification(
                             userId,
                             "SYSTEM",
-                            NotificationType.CANCELLED,
+                            NotificationType.SYSTEM,
                             "You have been banned from creating events. All your events have been deleted."
                     );
                     banNotification.createNotification();
@@ -432,7 +431,7 @@ public class Admin extends User {
                 Notification banNotification = new Notification(
                         userId,
                         "SYSTEM",
-                        NotificationType.CANCELLED,
+                        NotificationType.SYSTEM,
                         "You have been banned from creating events."
                 );
                 banNotification.createNotification();
@@ -463,7 +462,7 @@ public class Admin extends User {
         Notification unbanNotification = new Notification(
                 userId,
                 "SYSTEM",
-                NotificationType.CANCELLED,
+                NotificationType.SYSTEM,
                 "You have been unbanned and can now create events again."
         );
         unbanNotification.createNotification();
