@@ -332,6 +332,18 @@
             android:drawablePadding="6dp"
             android:drawableTint="@color/purpleText"
             android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_export_csv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Export Final List (CSV)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_finalist"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,8 @@
 package com.example.chicksevent.fragment_org;
 
+import android.content.Intent; // <-- Add this
+import android.net.Uri;        // <-- Add this
+import android.widget.Toast;// <-- Add this
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -166,6 +169,45 @@ public class EventDetailOrgFragment extends Fragment {
 
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_FinalListFragment, bundle);
+        });
+
+        Button exportCsvButton = view.findViewById(R.id.btn_export_csv);
+
+        exportCsvButton.setOnClickListener(v -> {
+            // Get the eventId from the fragment arguments, which you are already using
+            if (args == null) {
+                Toast.makeText(getContext(), "Error: Event data not found.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String eventId = args.getString("eventId");
+            if (eventId == null || eventId.isEmpty()) {
+                Toast.makeText(getContext(), "Error: Event ID is missing.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // IMPORTANT: Replace this with the URL you will get in Step 3
+            // It will look something like: "https://us-central1-your-project-name.cloudfunctions.net/exportFinalEntrants"
+            String functionUrl = "YOUR_CLOUD_FUNCTION_URL_HERE";
+
+            if (functionUrl.equals("YOUR_CLOUD_FUNCTION_URL_HERE")) {
+                Toast.makeText(getContext(), "Error: Cloud function URL not configured.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            // Build the final URL with the eventId as a query parameter
+            String downloadUrl = functionUrl + "?eventId=" + eventId;
+
+            // Create an Intent to open the URL in a web browser.
+            // The browser will handle the download automatically because of the headers
+            // we will set in the cloud function.
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(downloadUrl));
+
+            try {
+                startActivity(intent);
+            } catch (android.content.ActivityNotFoundException e) {
+                Toast.makeText(getContext(), "Error: No web browser found.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         viewChosenListButton.setOnClickListener(v -> {
