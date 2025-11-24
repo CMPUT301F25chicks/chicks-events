@@ -132,6 +132,9 @@ public class NotificationAdminFragment extends Fragment {
                                 case "CANCELLED":
                                     notificationType = NotificationType.CANCELLED;
                                     break;
+                                case "SYSTEM":
+                                    notificationType = NotificationType.SYSTEM;
+                                    break;
                                 default:
                                     notificationType = NotificationType.WAITING;
                                     break;

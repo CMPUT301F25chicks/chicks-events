@@ -87,6 +87,7 @@ public class EventDetailFragment extends Fragment {
     private TextView eventNameReal;
     private Integer waitingListCount;
     private boolean geolocationRequired = false;
+    private boolean eventOnHold = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final long LOCATION_TIMEOUT_MS = 30000; // 30 seconds
     private LocationManager locationManager;
@@ -253,6 +254,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         joinButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot join the waiting list.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             userExists().continueWithTask(boole -> {
                 if (boole.getResult()) {
                     // Check if geolocation is required
@@ -282,6 +291,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         leaveButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot leave the waiting list.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.leaveWaitingList();
@@ -295,6 +312,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         acceptButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot accept the invitation.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.acceptWaitingList();
@@ -306,6 +331,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         declineButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot decline the invitation.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.declineWaitingList();
@@ -364,6 +397,14 @@ public class EventDetailFragment extends Fragment {
                         geolocationRequired = (Boolean) geoRequired;
                     } else {
                         geolocationRequired = false; // Default to false if not set
+                    }
+                    
+                    // Check if event is on hold
+                    Object onHoldObj = hash.get("onHold");
+                    if (onHoldObj instanceof Boolean) {
+                        eventOnHold = (Boolean) onHoldObj;
+                    } else {
+                        eventOnHold = false; // Default to false if not set
                     }
 
                     getWaitingCount();

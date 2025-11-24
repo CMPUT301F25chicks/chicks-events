@@ -143,11 +143,15 @@ public class OrgAdminFragment extends Fragment {
      */
     private void handleBanToggle(Organizer organizer, boolean willBeBanned) {
         if (willBeBanned) {
-            // Switching to banned - show ban confirmation
+            // Switching to banned - show ban confirmation with reason
+            String reason = "Organizer violated policy";
+            String message = "Are you sure you want to ban \"" + organizer.getOrganizerId() + "\" from creating events?\n\n" +
+                           "Reason: " + reason + "\n\n" +
+                           "All their future events will be put on hold.";
             new AlertDialog.Builder(requireContext())
                     .setTitle("Ban Organizer")
-                    .setMessage("Are you sure you want to ban \"" + organizer.getOrganizerId() + "\" from creating events? All their events will be deleted.")
-                    .setPositiveButton("Ban", (dialog, which) -> banOrganizer(organizer))
+                    .setMessage(message)
+                    .setPositiveButton("Confirm Ban", (dialog, which) -> banOrganizer(organizer, reason))
                     .setNegativeButton("Cancel", (dialog, which) -> {
                         // Revert the switch if cancelled
                         adapter.notifyItemChanged(organizerList.indexOf(organizer));
@@ -170,14 +174,15 @@ public class OrgAdminFragment extends Fragment {
     /**
      * Bans the specified organizer from creating events.
      * <p>
-     * Calls {@link Admin#banUserFromOrganizer(String)} to ban the user,
-     * delete all their events, and notify them. Updates the UI after completion.
+     * Calls {@link Admin#banUserFromOrganizer(String, String)} to ban the user,
+     * put their events on hold, and notify them. Updates the UI after completion.
      * </p>
      *
      * @param organizer the {@link Organizer} to ban
+     * @param reason the reason for banning the organizer
      */
-    private void banOrganizer(Organizer organizer) {
-        admin.banUserFromOrganizer(organizer.getOrganizerId())
+    private void banOrganizer(Organizer organizer, String reason) {
+        admin.banUserFromOrganizer(organizer.getOrganizerId(), reason)
                 .addOnSuccessListener(aVoid -> {
                     // Refresh the specific item to update the label and switch
                     int position = organizerList.indexOf(organizer);
