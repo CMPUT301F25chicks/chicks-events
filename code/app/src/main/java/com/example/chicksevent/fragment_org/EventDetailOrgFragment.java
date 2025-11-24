@@ -172,7 +172,22 @@ public class EventDetailOrgFragment extends Fragment {
         });
 
         Button exportCsvButton = view.findViewById(R.id.btn_export_csv);
-
+        /**
+         * Sets up a click listener for the 'Export to CSV' button.
+         * <p>* When clicked, this listener retrieves the current event's ID from the fragment arguments.
+         * It then constructs a URL by appending the event ID as a query parameter
+         * to a predefined Firebase Cloud Function URL.
+         * </p>
+         * <p>
+         * An {@link Intent#ACTION_VIEW} is created with this URL, which opens a web browser.
+         * The Cloud Function is responsible for generating a CSV file and setting the
+         * appropriate HTTP headers to trigger a file download in the browser.
+         * </p>
+         * <p>
+         * Includes error handling for missing event data or if no web browser is installed
+         * on the device.
+         * </p>
+         */
         exportCsvButton.setOnClickListener(v -> {
             // Get the eventId from the fragment arguments, which you are already using
             if (args == null) {
@@ -187,9 +202,9 @@ public class EventDetailOrgFragment extends Fragment {
 
             // IMPORTANT: Replace this with the URL you will get in Step 3
             // It will look something like: "https://us-central1-your-project-name.cloudfunctions.net/exportFinalEntrants"
-            String functionUrl = "YOUR_CLOUD_FUNCTION_URL_HERE";
+            String functionUrl = "https://console.firebase.google.com/project/listycity-friedchicken/overview";
 
-            if (functionUrl.equals("YOUR_CLOUD_FUNCTION_URL_HERE")) {
+            if (functionUrl.equals("https://console.firebase.google.com/project/listycity-friedchicken/overview")) {
                 Toast.makeText(getContext(), "Error: Cloud function URL not configured.", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -261,8 +276,6 @@ public class EventDetailOrgFragment extends Fragment {
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
         });
     }
-
-
 
     @Override
     public void onDestroyView() {
