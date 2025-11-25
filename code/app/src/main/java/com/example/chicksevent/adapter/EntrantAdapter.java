@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chicksevent.R;
+import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.User;
 import com.google.firebase.database.DatabaseReference;
@@ -79,14 +80,25 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
 
         deleteBtn.setOnClickListener(v -> {
             String uid = entrant.getEntrantId();
-            String eventId = entrant.getEventId();   // using your getter
+            String eventId = entrant.getEventId();
+            EntrantStatus status = entrant.getStatus();
 
             if (eventId == null || eventId.isEmpty()) {
                 Toast.makeText(getContext(), "Missing eventId!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Show confirmation dialog
+            // If NOT in INVITED, they cannot be cancelled
+            if (!"INVITED".equals(status)) {
+                new androidx.appcompat.app.AlertDialog.Builder(getContext())
+                        .setTitle("Cannot Cancel")
+                        .setMessage("This entrant is already signed up, so they cannot be cancelled.")
+                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                        .show();
+                return;
+            }
+
+            // Only INVITED entrants can be cancelled
             new androidx.appcompat.app.AlertDialog.Builder(getContext())
                     .setTitle("Cancel Entrant")
                     .setMessage("Are you sure you want to cancel " + userName.getText() + "?")
@@ -95,7 +107,6 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
                                 .getReference("WaitingList")
                                 .child(eventId);
 
-                        // Move user from INVITED to CANCELLED
                         root.child("INVITED").child(uid).removeValue();
                         root.child("CANCELLED").child(uid).setValue(true);
 
@@ -106,6 +117,7 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
+
 
         return view;
     }
