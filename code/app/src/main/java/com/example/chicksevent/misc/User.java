@@ -60,7 +60,7 @@ public class User {
     private FirebaseService eventService;
 
     /** Firebase service for the "Notification" root. */
-    private FirebaseService notificationService;
+    FirebaseService notificationService;
 
     /** Firebase service for admin-related operations (reserved). */
     private FirebaseService adminService;

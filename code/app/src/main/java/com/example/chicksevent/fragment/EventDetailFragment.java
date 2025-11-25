@@ -84,7 +84,15 @@ public class EventDetailFragment extends Fragment {
 
     private FirebaseService waitingListService;
     private TextView eventDetails;
-    private TextView eventNameReal;
+    private TextView eventName;
+
+    private TextView startTime;
+    private TextView endTime;
+    private TextView startDate;
+    private TextView endDate;
+
+    private TextView registrationStart;
+    private TextView registrationEnd;
     private Integer waitingListCount;
     private boolean geolocationRequired = false;
     private boolean eventOnHold = false;
@@ -96,6 +104,7 @@ public class EventDetailFragment extends Fragment {
     private Runnable locationTimeoutRunnable;
     private ProgressBar locationProgressBar;
     private FirebaseService imageService;
+
 
     /**
      * Default constructor required for Fragment instantiation.
@@ -136,15 +145,21 @@ public class EventDetailFragment extends Fragment {
         waitingListService = new FirebaseService("WaitingList");
         imageService = new FirebaseService("Image");
 
-        TextView eventName = view.findViewById(R.id.tv_event_name);
+        eventName = view.findViewById(R.id.tv_event_name);
         eventDetails = view.findViewById(R.id.tv_event_details);
-        eventNameReal = view.findViewById(R.id.tv_time);
+        startTime = view.findViewById(R.id.tv_startTime);
+        startDate = view.findViewById(R.id.tv_startDate);
+        endTime = view.findViewById(R.id.tv_endTime);
+        endDate = view.findViewById(R.id.tv_endDate);
+        registrationStart = view.findViewById(R.id.tv_registration_open);
+        registrationEnd = view.findViewById(R.id.tv_registration_deadline);
+//        eventNameReal = view.findViewById(R.id.tv_event_name);
         
 
         Bundle args = getArguments();
         if (args != null) {
             eventIdString = args.getString("eventId");
-            eventName.setText(eventIdString);
+//            eventName.setText(eventIdString);
         }
 
 
@@ -228,6 +243,7 @@ public class EventDetailFragment extends Fragment {
 
         getEventDetail().addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
+//            if (!t.isSuccessful()) return;
             if (t.getResult()==1) {
                 waitingStatus.setVisibility(View.VISIBLE);
                 waitingCount.setText("Number of Entrants: " + waitingListCount);
@@ -387,8 +403,14 @@ public class EventDetailFragment extends Fragment {
                 Log.i("browaiting", ds.getKey() + " : " + eventIdString + " ");
                 if (ds.getKey().equals(eventIdString)) {
                     HashMap<String, Object> hash = (HashMap<String, Object>) ds.getValue();
-                    eventNameReal.setText((String) hash.get("name"));
+                    eventName.setText((String) hash.get("name"));
                     eventDetails.setText((String) hash.get("eventDetails"));
+                    startTime.setText((String) hash.get("eventStartTime"));
+                    startDate.setText((String) hash.get("eventStartDate"));
+                    endTime.setText((String) hash.get("eventEndTime"));
+                    endDate.setText((String) hash.get("eventEndDate"));
+                    registrationStart.setText((String) hash.get("registrationStartDate"));
+                    registrationEnd.setText((String) hash.get("registrationEndDate"));
                     eventId = (String) hash.get("id");
 
                     // Check if geolocation is required

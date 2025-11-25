@@ -173,11 +173,11 @@
 
                 <Spinner
                     android:id="@+id/spinner_ampm1"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:entries="@array/ampm_choices"
-                    android:layout_marginEnd="16dp"/>
+                    android:spinnerMode="dropdown"
+                    />
 
                 <!-- End Time -->
                 <EditText
@@ -193,10 +193,10 @@
 
                 <Spinner
                     android:id="@+id/spinner_ampm2"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:entries="@array/ampm_choices"/>
+                    android:entries="@array/ampm_choices"
+                    android:spinnerMode="dropdown" />
             </LinearLayout>
 
 
@@ -221,6 +221,7 @@
                     android:hint="Enter max number"
                     android:inputType="number"
                     android:textColorHint="@color/purpleText"
+                    android:textColor="@color/purpleText"
                     android:visibility="gone" />
             </LinearLayout>
 

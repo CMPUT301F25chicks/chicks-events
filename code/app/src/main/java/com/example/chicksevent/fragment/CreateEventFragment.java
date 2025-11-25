@@ -27,6 +27,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
@@ -43,7 +45,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -51,7 +52,7 @@ import java.util.Locale;
  * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
  * <p>
  * This fragment allows users to input event details such as name, description, start and end
- * registration dates, and optionally specify a maximum number of entrants. The event is then
+ * registration dates, and optionally specify a maximum enumber of entrants. The event is then
  * persisted to Firebase through the {@link Event#createEvent()} method.
  * </p>
  *
@@ -100,6 +101,18 @@ public class CreateEventFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.ampm_choices,
+                R.layout.spinner_item
+        );
+        adapter.setDropDownViewResource(R.layout.spinner_item_dropdown);
+        Spinner a = view.findViewById(R.id.spinner_ampm1);
+        Spinner b = view.findViewById(R.id.spinner_ampm2);
+        a.setAdapter(adapter);
+        b.setAdapter(adapter);
+//        .setAdapter(adapter);
 
         // Show/hide "max entrants" field when checkbox changes
         binding.cbLimitWaitingList.setOnCheckedChangeListener((btn, checked) -> {
@@ -224,15 +237,6 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.ampm_choices,
-                R.layout.spinner_item
-        );
-        adapter.setDropDownViewResource(R.layout.spinner_item);
-        binding.spinnerAmpm1.setAdapter(adapter);
-        binding.spinnerAmpm2.setAdapter(adapter);
-
 
         // Validate time format HH:MM
         if (!startTimeInput.matches("\\d{2}:\\d{2}")) {
@@ -317,7 +321,10 @@ public class CreateEventFragment extends Fragment {
         generateAndSaveQRCode(eventId, eventName);
         Bitmap bitmap = null;
 
-        if (imageUri == null) return;
+        if (imageUri == null) {
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_CreateEventFragment_to_EventFragment);
+        };
 //
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -335,6 +342,9 @@ public class CreateEventFragment extends Fragment {
         urlData.put("url", base64Image);
 
         imageService.addEntry(urlData, id);
+
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(R.id.action_CreateEventFragment_to_EventFragment);
 
 
 

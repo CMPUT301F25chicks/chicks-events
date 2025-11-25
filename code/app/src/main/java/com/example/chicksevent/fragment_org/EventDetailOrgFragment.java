@@ -56,6 +56,14 @@ public class EventDetailOrgFragment extends Fragment {
     private FirebaseService eventService;
     private FirebaseService imageService;
 
+    private TextView startTime;
+    private TextView endTime;
+    private TextView startDate;
+    private TextView endDate;
+
+    private TextView registrationStart;
+    private TextView registrationEnd;
+
 
     /**
      * Inflates the layout for the organizer event detail fragment.
@@ -94,7 +102,12 @@ public class EventDetailOrgFragment extends Fragment {
             // Use it to populate UI
         }
 
-        
+        startTime = view.findViewById(R.id.tv_startTime);
+        startDate = view.findViewById(R.id.tv_startDate);
+        endTime = view.findViewById(R.id.tv_endTime);
+        endDate = view.findViewById(R.id.tv_endDate);
+        registrationStart = view.findViewById(R.id.tv_registration_open);
+        registrationEnd = view.findViewById(R.id.tv_registration_deadline);
         
         
 
@@ -105,7 +118,7 @@ public class EventDetailOrgFragment extends Fragment {
 
         Button viewMapButton = view.findViewById(R.id.btn_map);
         TextView eventDetails = view.findViewById(R.id.tv_event_details);
-        TextView eventNameReal = view.findViewById(R.id.tv_time);
+        TextView eventNameReal = view.findViewById(R.id.tv_event_name);
 
 
 
@@ -116,6 +129,12 @@ public class EventDetailOrgFragment extends Fragment {
                     HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
                     eventNameReal.setText(hash.get("name"));
                     eventDetails.setText(hash.get("eventDetails"));
+                    startTime.setText((String) hash.get("eventStartTime"));
+                    startDate.setText((String) hash.get("eventStartDate"));
+                    endTime.setText((String) hash.get("eventEndTime"));
+                    endDate.setText((String) hash.get("eventEndDate"));
+                    registrationStart.setText((String) hash.get("registrationStartDate"));
+                    registrationEnd.setText((String) hash.get("registrationEndDate"));
                 }
             }
             return null;

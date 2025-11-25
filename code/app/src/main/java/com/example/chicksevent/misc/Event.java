@@ -110,7 +110,6 @@ public class Event {
      * @param id the Firebase key to use; may be {@code null} to generate a new key on create.
      * @param name the event's display name.
      * @param eventDetails a human-readable description of the event.
-     * @param eventDate a human-readable description of the event.
      * @param eventStartDate start date of the register in YYYY-MM-DD (nullable).
      * @param eventEndDate end date of the register in YYYY-MM-DD (nullable).
      * @param registrationStartDate registration open date in YYYY-MM-DD (nullable).
