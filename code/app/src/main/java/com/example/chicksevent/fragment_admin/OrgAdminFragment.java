@@ -2,6 +2,7 @@ package com.example.chicksevent.fragment_admin;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -143,6 +144,19 @@ public class OrgAdminFragment extends Fragment {
      */
     private void handleBanToggle(Organizer organizer, boolean willBeBanned) {
         if (willBeBanned) {
+            // Check if admin is trying to ban themselves
+            String currentUserId = Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            );
+            
+            if (organizer.getOrganizerId().equals(currentUserId)) {
+                Toast.makeText(getContext(), "You cannot ban yourself", Toast.LENGTH_SHORT).show();
+                // Revert the switch
+                adapter.notifyItemChanged(organizerList.indexOf(organizer));
+                return;
+            }
+            
             // Switching to banned - show ban confirmation with reason
             String reason = "Organizer violated policy";
             String message = "Are you sure you want to ban \"" + organizer.getOrganizerId() + "\" from creating events?\n\n" +
