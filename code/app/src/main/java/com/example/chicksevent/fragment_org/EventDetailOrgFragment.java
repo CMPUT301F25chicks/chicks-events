@@ -187,9 +187,9 @@ public class EventDetailOrgFragment extends Fragment {
          * Includes error handling for missing event data or if no web browser is installed
          * on the device.
          * </p>
-         */
+         **/
         exportCsvButton.setOnClickListener(v -> {
-            // Get the eventId from the fragment arguments, which you are already using
+            // 1. Get the eventId from the fragment arguments
             if (args == null) {
                 Toast.makeText(getContext(), "Error: Event data not found.", Toast.LENGTH_SHORT).show();
                 return;
@@ -200,30 +200,25 @@ public class EventDetailOrgFragment extends Fragment {
                 return;
             }
 
-            // IMPORTANT: Replace this with the URL you will get in Step 3
-            // It will look something like: "https://us-central1-your-project-name.cloudfunctions.net/exportFinalEntrants"
-            String functionUrl = "https://console.firebase.google.com/project/listycity-friedchicken/overview";
+            // 2. Use the CORRECT Deployed Cloud Function URL
+            String functionUrl = "https://us-central1-listycity-friedchicken.cloudfunctions.net/exportFinalEntrants";
 
-            if (functionUrl.equals("https://console.firebase.google.com/project/listycity-friedchicken/overview")) {
-                Toast.makeText(getContext(), "Error: Cloud function URL not configured.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            // Build the final URL with the eventId as a query parameter
+            // 3. Build the final URL with the eventId as a query parameter
             String downloadUrl = functionUrl + "?eventId=" + eventId;
 
-            // Create an Intent to open the URL in a web browser.
-            // The browser will handle the download automatically because of the headers
-            // we will set in the cloud function.
+            // 4. Create an Intent to open the URL in a web browser.
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(downloadUrl));
 
+            // 5. Start the activity and handle potential errors
             try {
                 startActivity(intent);
             } catch (android.content.ActivityNotFoundException e) {
+                // This error occurs if no web browser is installed on the device.
                 Toast.makeText(getContext(), "Error: No web browser found.", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         viewChosenListButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
