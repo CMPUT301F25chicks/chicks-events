@@ -209,12 +209,26 @@ public class ProfileFragment extends Fragment {
     private void updateProfile() {
         HashMap<String, Object> data = new HashMap<>();
 
-        user = new User(userId);
-        if (user.updateProfile(editName.getText().toString(), editEmail.getText().toString(), editPhone.getText().toString(), notificationSwitch.isChecked())) {
-            Toast.makeText(getContext(), "Updated Profile", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "Failed to Update Profile", Toast.LENGTH_SHORT).show();
-        }
+        userService.getReference().child(userId).get().continueWith(v -> {
+            if (v.getResult() != null) {
+                return ((HashMap<String, Object>) v.getResult().getValue()).get("bannedFromOrganizer");
+            }
+
+            return false;
+        }).addOnCompleteListener(t -> {
+            boolean banned = (boolean) t.getResult();
+
+            user = new User(userId);
+            user.setBannedFromOrganizer(banned);
+
+            if (user.updateProfile(editName.getText().toString(), editEmail.getText().toString(), editPhone.getText().toString(), notificationSwitch.isChecked())) {
+                Toast.makeText(getContext(), "Updated Profile", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed to Update Profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     /**
