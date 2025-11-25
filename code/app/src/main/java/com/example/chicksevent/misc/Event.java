@@ -62,6 +62,9 @@ public class Event {
     /** Inclusive date of the event in ISO format (YYYY-MM-DD). */
     private String eventDate;
 
+    private String eventStartTime;
+    private String eventEndTime;
+
     /** Inclusive start date of the event in ISO format (YYYY-MM-DD), nullable. */
     private String eventStartDate;          // "YYYY-MM-DD"
 
@@ -117,7 +120,7 @@ public class Event {
      * @param tag optional space-separated tags; may be {@code null}.
      * @param geolocationRequired whether geolocation is required for entrants to join.
      */
-    public Event(String entrantId, String id, String name, String eventDetails, String eventDate,
+    public Event(String entrantId, String id, String name, String eventDetails, String eventStartTime, String eventEndTime,
                  String eventStartDate, String eventEndDate,
                  String registrationStartDate, String registrationEndDate,
                  int entrantLimit, String poster, String tag, boolean geolocationRequired) {
@@ -125,7 +128,8 @@ public class Event {
         this.id = id;
         this.name = name;
         this.eventDetails = eventDetails;
-        this.eventDate = eventDate;
+        this.eventStartTime = eventStartTime;
+        this.eventEndTime = eventEndTime;
         this.eventStartDate = eventStartDate == null ? "" : eventStartDate;
         this.eventEndDate = eventEndDate == null ? "" : eventEndDate;
         this.registrationStartDate = registrationStartDate;
@@ -149,7 +153,8 @@ public class Event {
         map.put("id", id);
         map.put("name", getName());
         map.put("eventDetails", getEventDetails());
-        map.put("eventDate", getEventDate());
+        map.put("eventStartTime", getEventStartTime());
+        map.put("eventEndTime", getEventEndTime());
         map.put("eventStartDate", getEventStartDate());
         map.put("eventEndDate", getEventEndDate());
         map.put("registrationStartDate", getRegistrationStartDate());
@@ -188,10 +193,16 @@ public class Event {
     public void setEventDetails(String eventDetails) { this.eventDetails = eventDetails; }
 
     /** @return long-form description of the event. */
-    public String getEventDate() { return eventDate; }
+
+    public String getEventStartTime() { return eventStartTime; }
 
     /** @param eventDate sets the event description. */
-    public void setEventDate(String eventDate) { this.eventDate = eventDate; }
+    public void setEventStartTime(String eventDate) { this.eventStartTime = eventStartTime; }
+    public String getEventEndTime() { return eventEndTime; }
+
+    /** @param eventDate sets the event description. */
+    public void setEventEndTime(String eventDate) { this.eventEndTime = eventEndTime; }
+
 
     /** @return the event start date in YYYY-MM-DD or {@code null}. */
     public String getEventStartDate() { return eventStartDate; }

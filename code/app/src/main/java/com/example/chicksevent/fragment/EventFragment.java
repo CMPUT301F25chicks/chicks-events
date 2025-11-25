@@ -193,16 +193,7 @@ public class EventFragment extends Fragment {
 
             }
 
-            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {
-                NavController navController = NavHostFragment.findNavController(EventFragment.this);
-
-                Bundle bundle = new Bundle();
-                bundle.putString("eventId", item.getId());
-
-                navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
-
-            });
-
+            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
             eventView.setAdapter(eventAdapter);
 
             return null;
@@ -225,39 +216,14 @@ public class EventFragment extends Fragment {
                 // Iterate through all children
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String key = childSnapshot.getKey();
-                    HashMap<String, Object> value = (HashMap<String, Object>) childSnapshot.getValue();
+                    HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
 //                    new Event();
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
                     if (eventFilterList.contains(key)) {
-                        // Parse values with proper type handling
-                        String entrantId = value.get("organizer") != null ? value.get("organizer").toString() : "";
-                        String id = value.get("id") != null ? value.get("id").toString() : null;
-                        String name = value.get("name") != null ? value.get("name").toString() : "";
-                        String eventDetails = value.get("eventDetails") != null ? value.get("eventDetails").toString() : "";
-                        String eventDate = value.get("eventDate") != null ? value.get("eventDate").toString() : "";
-                        String eventStartDate = value.get("eventStartDate") != null ? value.get("eventStartDate").toString() : null;
-                        String eventEndDate = value.get("eventEndDate") != null ? value.get("eventEndDate").toString() : null;
-                        String registrationStartDate = value.get("registrationStartDate") != null ? value.get("registrationStartDate").toString() : null;
-                        String registrationEndDate = value.get("registrationEndDate") != null ? value.get("registrationEndDate").toString() : null;
-                    int entrantLimit = value.get("entrantLimit") != null ? ((Number) value.get("entrantLimit")).intValue() : 0;
-                    String poster = value.get("poster") != null ? value.get("poster").toString() : null;
-                    String tag = value.get("tag") != null ? value.get("tag").toString() : null;
-                    boolean geolocationRequired = value.get("geolocationRequired") != null && (Boolean) value.get("geolocationRequired");
-                    boolean onHold = value.get("onHold") != null && (Boolean) value.get("onHold");
-                    
-                    // Skip on-hold events from public browsing
-                    if (onHold) {
-                        continue;
-                    }
-                    
-                    Event e = new Event(entrantId, id, name, eventDetails, eventDate, 
-                                       eventStartDate, eventEndDate, 
-                                       registrationStartDate, registrationEndDate, 
-                                       entrantLimit, poster, tag, geolocationRequired);
-                    e.setOnHold(onHold);
-                    eventDataList.add(e);
+                        Event e = new Event("e", value.get("id"), value.get("name"),  value.get("eventDetails"), value.get("eventStartTime"), value.get("eventEndTime"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
+                        eventDataList.add(e);
                     }
 
 
@@ -301,38 +267,12 @@ public class EventFragment extends Fragment {
                 // Iterate through all children
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     String key = childSnapshot.getKey();
-                    HashMap<String, Object> value = (HashMap<String, Object>) childSnapshot.getValue();
+                    HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
 //                    new Event();
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
-                    
-                    // Parse values with proper type handling
-                    String entrantId = value.get("organizer") != null ? value.get("organizer").toString() : "";
-                    String id = value.get("id") != null ? value.get("id").toString() : null;
-                    String name = value.get("name") != null ? value.get("name").toString() : "";
-                    String eventDetails = value.get("eventDetails") != null ? value.get("eventDetails").toString() : "";
-                    String eventDate = value.get("eventDate") != null ? value.get("eventDate").toString() : "";
-                    String eventStartDate = value.get("eventStartDate") != null ? value.get("eventStartDate").toString() : null;
-                    String eventEndDate = value.get("eventEndDate") != null ? value.get("eventEndDate").toString() : null;
-                    String registrationStartDate = value.get("registrationStartDate") != null ? value.get("registrationStartDate").toString() : null;
-                    String registrationEndDate = value.get("registrationEndDate") != null ? value.get("registrationEndDate").toString() : null;
-                    int entrantLimit = value.get("entrantLimit") != null ? ((Number) value.get("entrantLimit")).intValue() : 0;
-                    String poster = value.get("poster") != null ? value.get("poster").toString() : null;
-                    String tag = value.get("tag") != null ? value.get("tag").toString() : null;
-                    boolean geolocationRequired = value.get("geolocationRequired") != null && (Boolean) value.get("geolocationRequired");
-                    boolean onHold = value.get("onHold") != null && (Boolean) value.get("onHold");
-                    
-                    // Skip on-hold events from public browsing
-                    if (onHold) {
-                        continue;
-                    }
-                    
-                    Event e = new Event(entrantId, id, name, eventDetails, eventDate, 
-                                       eventStartDate, eventEndDate, 
-                                       registrationStartDate, registrationEndDate, 
-                                       entrantLimit, poster, tag, geolocationRequired);
-                    e.setOnHold(onHold);
+                    Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), value.get("eventStartTime"), value.get("eventEndTime"), "N/A", "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                     eventDataList.add(e);
 
                     Log.d(TAG, "---");

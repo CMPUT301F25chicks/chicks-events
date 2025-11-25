@@ -132,13 +132,15 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
 
         TextView status = view.findViewById(R.id.tv_status);
         TextView event_name = view.findViewById(R.id.tv_event_name);
-        TextView tv_time = view.findViewById(R.id.tv_time);
+        TextView tv_startTime = view.findViewById(R.id.tv_startTime);
+        TextView tv_endTime = view.findViewById(R.id.tv_endTime);
         ImageButton btn_arrow = view.findViewById(R.id.btn_arrow);
 
         Button update_button = view.findViewById(R.id.update_button);
 
         event_name.setText(event.getName());
-        tv_time.setText(event.getTag());
+        tv_startTime.setText(event.getEventStartTime());
+        tv_endTime.setText(event.getEventEndTime());
 
 
         btn_arrow.setOnClickListener(l -> {
