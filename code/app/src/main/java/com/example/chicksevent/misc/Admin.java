@@ -1,5 +1,6 @@
 package com.example.chicksevent.misc;
 
+import android.os.Build;
 import android.util.Log;
 
 import com.example.chicksevent.enums.NotificationType;
@@ -369,10 +370,15 @@ public class Admin extends User {
             return false;
         }
         try {
-            LocalDate today = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate eventDate = LocalDate.parse(eventStartDate, formatter);
-            return eventDate.equals(today);
+            LocalDate today = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                today = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate eventDate = LocalDate.parse(eventStartDate, formatter);
+                return eventDate.equals(today);
+            }
+
+            return false;
         } catch (Exception e) {
             Log.e("Admin", "Error parsing event date: " + eventStartDate, e);
             return false;
@@ -390,10 +396,14 @@ public class Admin extends User {
             return false;
         }
         try {
-            LocalDate today = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate eventDate = LocalDate.parse(eventStartDate, formatter);
-            return eventDate.isBefore(today);
+            LocalDate today = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                today = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate eventDate = LocalDate.parse(eventStartDate, formatter);
+                return eventDate.isBefore(today);
+            }
+            return false;
         } catch (Exception e) {
             Log.e("Admin", "Error parsing event date: " + eventStartDate, e);
             return false;

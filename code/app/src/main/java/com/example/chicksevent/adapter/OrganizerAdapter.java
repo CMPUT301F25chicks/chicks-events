@@ -9,10 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chicksevent.R;
 import com.example.chicksevent.misc.Organizer;
 import com.example.chicksevent.misc.User;
-import com.example.chicksevent.R;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
@@ -21,7 +20,7 @@ import java.util.ArrayList;
  * in a {@link RecyclerView}, with support for deleting individual organizers via a button.
  * <p>
  * Each item is inflated from {@code R.layout.item_facility} and shows the organizer's ID.
- * Clicking the delete button triggers the registered {@link OnDeleteClickListener}.
+ * Clicking the delete button triggers the registered {@link OnBanToggleClickListener}.
  * </p>
  *
  * <p>
@@ -29,7 +28,7 @@ import java.util.ArrayList;
  * </p>
  *
  * @see Organizer
- * @see OnDeleteClickListener
+ * @see OnBanToggleClickListener
  * @see RecyclerView
  * @see ViewHolder
  */
@@ -169,7 +168,7 @@ public class OrganizerAdapter extends RecyclerView.Adapter<OrganizerAdapter.View
      * A {@link RecyclerView.ViewHolder} that represents a single organizer item
      * in the list.
      * <p>
-     * Holds references to the name {@link TextView} and delete {@link ImageButton}
+     * Holds references to the name {@link TextView} and delete button
      * defined in {@code item_facility.xml}.
      * </p>
      */
