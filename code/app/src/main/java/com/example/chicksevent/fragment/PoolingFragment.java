@@ -224,6 +224,8 @@ public class PoolingFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (getContext() == null) return;
+
                         entrantDataList = new ArrayList<>();
 
                         if (dataSnapshot != null && dataSnapshot.exists()) {

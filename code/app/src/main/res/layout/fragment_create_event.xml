@@ -120,9 +120,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:gravity="top"
-                android:textColor="@color/purpleText"
                 android:hint="Event Start Date (MM-dd-yyyy)"
                 android:inputType="textMultiLine"
+                android:textColor="@color/purpleText"
                 android:textColorHint="@color/darkPurple" />
 
             <TextView
