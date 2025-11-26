@@ -111,38 +111,89 @@
                 android:layout_height="wrap_content"
                 android:text="Event Period *:"
                 android:textColor="@color/purpleText"
+                android:paddingBottom="10dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/et_event_date" />
 
-            <EditText
-                android:id="@+id/et_event_StartDate"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:gravity="top"
-                android:hint="Event Start Date (MM-dd-yyyy)"
-                android:inputType="textMultiLine"
-                android:textColor="@color/purpleText"
-                android:textColorHint="@color/darkPurple" />
+                android:orientation="horizontal"
 
-            <TextView
-                android:layout_width="379dp"
-                android:layout_height="41dp"
-                android:text="to"
-                android:textColor="@color/purpleText"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_EndDate" />
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
 
-            <EditText
-                android:id="@+id/et_event_EndDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:gravity="top"
-                android:textColor="@color/purpleText"
-                android:hint="Event End Date (MM-dd-yyyy)"
-                android:inputType="textMultiLine"
-                android:textColorHint="@color/darkPurple" />
+                <!-- Start Date -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/ev_start_date_container">
+
+                    <EditText
+                        android:id="@+id/et_event_StartDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:hint="Start Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:focusable="true"
+                        android:background="@null" />
+
+                    <ImageView
+                        android:id="@+id/icon_Evstart_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        app:tint="@color/darkPurple"
+                        android:padding="4dp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent" />
+
+                <!-- End Date -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/ev_end_date_container">
+
+                    <EditText
+                        android:id="@+id/et_event_EndDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="End Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="@null" />
+
+                    <ImageView
+                        android:id="@+id/icon_Evend_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        android:padding="4dp"
+                        app:tint="@color/darkPurple" />
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="379dp"
@@ -196,7 +247,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:entries="@array/ampm_choices"
-                    android:spinnerMode="dropdown" />
+                    android:spinnerMode="dropdown"
+                    />
             </LinearLayout>
 
 
@@ -221,7 +273,6 @@
                     android:hint="Enter max number"
                     android:inputType="number"
                     android:textColorHint="@color/purpleText"
-                    android:textColor="@color/purpleText"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -254,10 +305,10 @@
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/ev_start_date_container">
+                    android:id="@+id/start_date_container">
 
                     <EditText
-                        android:id="@+id/reg_event_StartDate"
+                        android:id="@+id/et_start_date"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -268,7 +319,7 @@
                         android:background="@null" />
 
                     <ImageView
-                        android:id="@+id/icon_Evstart_date"
+                        android:id="@+id/icon_start_date"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"
@@ -291,10 +342,10 @@
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/ev_end_date_container">
+                    android:id="@+id/end_date_container">
 
                     <EditText
-                        android:id="@+id/reg_event_EndDate"
+                        android:id="@+id/et_end_date"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -305,7 +356,7 @@
                         android:background="@null" />
 
                     <ImageView
-                        android:id="@+id/icon_Evend_date"
+                        android:id="@+id/icon_end_date"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"

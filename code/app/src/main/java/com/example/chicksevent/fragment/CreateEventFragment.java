@@ -69,7 +69,7 @@ public class CreateEventFragment extends Fragment {
 
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
-    private Uri imageUri;
+    private Uri imageUri = null;
 
     private HashMap<String, Object> urlData = new HashMap<>();
 
@@ -178,12 +178,11 @@ public class CreateEventFragment extends Fragment {
         String startDateInput = s(binding.etEventStartDate.getText());
         String startTimeInput = s(binding.etStartTime.getText());
         String startAMPM = binding.spinnerAmpm1.getSelectedItem().toString();
-
         String endDateInput = s(binding.etEventEndDate.getText());
         String endTimeInput = s(binding.etEndTime.getText());
         String endAMPM = binding.spinnerAmpm2.getSelectedItem().toString();
-        String regStart = s(binding.regEventStartDate.getText()); // Registration Start (from your UI)
-        String regEnd = s(binding.regEventEndDate.getText()); // Registration End (from your UI)
+        String regStart = s(binding.etStartDate.getText()); // Registration Start (from your UI)
+        String regEnd = s(binding.etEndDate.getText()); // Registration End (from your UI)
 
         // Optional max entrants
         int entrantLimit = 999;
