@@ -108,6 +108,7 @@
                 android:layout_height="wrap_content"
                 android:text="Event Period *:"
                 android:textColor="@color/purpleText"
+                android:paddingBottom="10dp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 

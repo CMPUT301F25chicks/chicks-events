@@ -202,7 +202,6 @@
                     android:layout_width="257dp"
                     android:layout_height="22dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
                     android:text="Registration Period:"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
