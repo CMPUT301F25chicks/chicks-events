@@ -5,5 +5,8 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:textSize="16sp"
-    android:textColor="@color/purpleText"
+    android:textColor="@color/darkPurple"
+    android:textStyle="normal"
+    android:typeface="normal"
+    android:fontFamily="sans-serif"
     />
