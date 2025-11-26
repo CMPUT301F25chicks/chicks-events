@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -113,9 +114,6 @@ public class CreateEventFragment extends Fragment {
         adapter.setDropDownViewResource(R.layout.spinner_item);
         binding.spinnerAmpm1.setAdapter(adapter);
         binding.spinnerAmpm2.setAdapter(adapter);
-        a.setAdapter(adapter);
-        b.setAdapter(adapter);
-//        .setAdapter(adapter);
 
         // Show/hide "max entrants" field when checkbox changes
         binding.cbLimitWaitingList.setOnCheckedChangeListener((btn, checked) -> {
