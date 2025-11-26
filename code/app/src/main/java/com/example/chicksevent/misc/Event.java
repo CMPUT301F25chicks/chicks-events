@@ -171,6 +171,32 @@ public class Event {
         return id;
     }
 
+    public String editEvent(String id){
+        Log.i("filtering", "creating event");
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("id", id);
+        map.put("name", getName());
+        map.put("eventDetails", getEventDetails());
+        map.put("eventStartTime", getEventStartTime());
+        map.put("eventEndTime", getEventEndTime());
+        map.put("eventStartDate", getEventStartDate());
+        map.put("eventEndDate", getEventEndDate());
+        map.put("registrationStartDate", getRegistrationStartDate());
+        map.put("registrationEndDate", getRegistrationEndDate());
+        map.put("entrantLimit", getEntrantLimit());
+        map.put("organizer", getOrganizer().getOrganizerId());
+        map.put("poster", getPoster());              // null is fine; it will simply be omitted
+        map.put("tag", getTag());
+        map.put("geolocationRequired", isGeolocationRequired());
+        map.put("onHold", isOnHold());
+        id = eventService.editEntry(id, map);
+
+        this.organizer = new Organizer(entrantId, id);
+
+        return id;
+    }
+
     // --- Getters and setters ---
 
     /** @return the Firebase id for this event. */

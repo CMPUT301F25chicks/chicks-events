@@ -1,423 +1,523 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".fragment_org.UpdateEventFragment">
+    android:padding="16dp"
+    android:background="#000000"
+    tools:context=".fragment.CreateEventFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <!-- Scrollable content -->
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#000000"
-        android:padding="16dp">
+        android:fontFamily="@font/michroma"
+        android:text="Create Event"
+        android:textColor="@color/purpleText"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Header -->
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@+id/header_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Event box container -->
-
-        <!-- Bottom button bar -->
-
-
-
-        <TextView
-            android:id="@+id/header_title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/michroma"
-            android:text="Update Event Detail"
-            android:textColor="@color/purpleText"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.745"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingBottom="24dp">
 
-        <ScrollView
-            android:id="@+id/event_box_scroll"
-            android:layout_width="379dp"
-            android:layout_height="491dp"
-            android:fillViewport="true"
-            app:layout_constraintBottom_toTopOf="@id/btn_save_event"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header_title">
+            <!-- Event Poster Upload -->
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/event_box"
-                android:layout_width="381dp"
-                android:layout_height="477dp"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_notification_item"
-                android:padding="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.687"
+            <!-- Event Name -->
+
+
+
+            <ImageButton
+                android:id="@+id/img_event_poster"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_image"
+                app:layout_constraintBottom_toTopOf="@+id/info_container"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header_title">
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Image"
+                android:textColor="@color/darkPurple"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/img_event_poster" />
 
-                <ImageButton
-                    android:id="@+id/img_event"
-                    android:layout_width="397dp"
-                    android:layout_height="168dp"
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Name *:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_name" />
+
+            <EditText
+                android:id="@+id/et_event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/purpleText"
+                android:hint="Event Name"
+                android:inputType="textPersonName"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Event Description -->
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Description *:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/et_event_description" />
+
+            <EditText
+                android:id="@+id/et_event_description"
+                android:layout_width="match_parent"
+                android:textColor="@color/purpleText"
+                android:layout_height="wrap_content"
+                android:hint="Event Description"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:gravity="top"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Event Period -->
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Period *:"
+                android:textColor="@color/purpleText"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Event Start Date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/sample_image"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/event_start_date_container">
 
-                <TextView
-                    android:id="@+id/tv_event_name"
-                    android:layout_width="379dp"
+                    <EditText
+                        android:id="@+id/et_event_StartDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:hint="Start Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null" />
+
+                    <ImageView
+                        android:id="@+id/icon_event_start_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        app:tint="@color/darkPurple"
+                        android:padding="4dp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent" />
+
+                <!-- Event Start Time -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Event Name:"
-                    android:textColor="@color/purpleText"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/img_event" />
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/event_end_date_container">
+
+                    <EditText
+                        android:id="@+id/et_event_EndDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:hint="End Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null" />
+
+                    <ImageView
+                        android:id="@+id/icon_event_end_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        app:tint="@color/darkPurple"
+                        android:padding="4dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Time *:"
+                android:textColor="@color/purpleText"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Event End Date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/event_start_time_container">
+
+                    <EditText
+                        android:id="@+id/et_StartTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:hint="Start Time"
+                        android:inputType="time"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null"
+                        android:paddingEnd="8dp" />
+
+                    <Spinner
+                        android:id="@+id/spinner_ampm1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="50dp"
+                        android:entries="@array/ampm_choices"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/darkPurple" />
+                </LinearLayout>
+
+
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent" />
+
+                <!-- Event End Time -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/event_end_time_container">
+
+                    <EditText
+                        android:id="@+id/et_EndTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:hint="End Time"
+                        android:inputType="time"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null"
+                        android:paddingEnd="8dp" />
+
+                    <Spinner
+                        android:id="@+id/spinner_ampm2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="50dp"
+                        android:entries="@array/ampm_choices"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/darkPurple" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp">
+
+                <CheckBox
+                    android:id="@+id/cb_limit_waiting_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Limit number of entrants"
+                    android:textColor="@color/purpleText" />
 
                 <EditText
-                    android:id="@+id/event_name"
-                    android:layout_width="379dp"
+                    android:id="@+id/et_max_entrants"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@null"
-                    android:hint="Event Name"
-                    android:text="Halloween Party"
-                    android:textColor="@color/purpleText"
+                    android:hint="Enter max number"
+                    android:inputType="number"
+                    android:textColorHint="@color/darkPurple"
+                    android:textColor="@color/darkPurple"
+                    android:textSize="16sp"
+                    android:textStyle="normal"
+                    android:typeface="normal"
+                    android:fontFamily="sans-serif"
+                    android:visibility="gone" />
+            </LinearLayout>
 
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_event_name" />
 
-                <TextView
-                    android:id="@+id/event_time"
-                    android:layout_width="379dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Event Time :"
-                    android:textColor="@color/purpleText"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/event_name" />
+            <!-- Registration Period -->
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Registration Period *:"
+                android:textColor="@color/purpleText"
+                android:textStyle="bold" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <!-- Start Date -->
                 <LinearLayout
-                    android:id="@+id/time"
-                    android:layout_width="379dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_time">
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/start_date_container">
 
                     <EditText
-                        android:id="@+id/tv_startTime"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/et_start_date"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="LOADING..."
-                        android:textColor="@color/purpleText"
-                        android:textSize="14sp" />
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:hint="Start Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:focusable="false"
+                        android:background="@null" />
 
-                    <TextView
-                        android:id="@+id/tv_dash"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:text=" - "
-                        android:textColor="@color/purpleText"
-                        android:textSize="14sp" />
-
-                    <EditText
-                        android:id="@+id/tv_endTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LOADING..."
-                        android:textColor="@color/purpleText"
-                        android:textSize="14sp" />
-
+                    <ImageView
+                        android:id="@+id/icon_start_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        app:tint="@color/darkPurple"
+                        android:padding="4dp" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/eventPeriod"
-                    android:layout_width="379dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Event Period:"
-                    android:textColor="@color/purpleText"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/time" />
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent" />
 
+                <!-- End Date -->
                 <LinearLayout
-                    android:id="@+id/period"
-                    android:layout_width="379dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/eventPeriod">
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/end_date_container">
 
                     <EditText
-                        android:id="@+id/tv_startDate"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/et_end_date"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="LOADING..."
-                        android:textColor="@color/dateBox"
-                        android:textSize="14sp" />
+                        android:layout_weight="1"
+                        android:hint="End Date"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:background="@null" />
 
-                    <TextView
-                        android:id="@+id/tv_dash1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:text=" - "
-                        android:textColor="@color/dateBox"
-                        android:textSize="14sp" />
-
-                    <EditText
-                        android:id="@+id/tv_endDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LOADING..."
-                        android:textColor="@color/dateBox"
-                        android:textSize="14sp" />
-
+                    <ImageView
+                        android:id="@+id/icon_end_date"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_events"
+                        android:padding="4dp"
+                        app:tint="@color/darkPurple" />
                 </LinearLayout>
 
+            </LinearLayout>
 
+            <!-- Geolocation Requirement -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
                 <TextView
-                    android:layout_width="379dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Registration Period *:"
-                    android:id="@+id/reg_period"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/period"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:text="Enable Geolocation Requirement"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Switch
+                    android:id="@+id/switch_geo"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:id="@+id/reg_date_container"
-                    app:layout_constraintTop_toBottomOf="@+id/reg_period"
-                    android:layout_marginBottom="12dp">
-
-                    <!-- Start Date -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_date_box"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="8dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:id="@+id/start_date_container">
-
-                        <EditText
-                            android:id="@+id/et_start_date"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:clickable="true"
-                            android:hint="Start Date"
-                            android:textColorHint="@color/darkPurple"
-                            android:focusable="true"
-                            android:background="@null" />
-
-                        <ImageView
-                            android:id="@+id/icon_start_date"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_events"
-                            app:tint="@color/darkPurple"
-                            android:padding="4dp" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="8dp"
-                        android:layout_height="match_parent" />
-
-                    <!-- End Date -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_date_box"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="8dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:id="@+id/end_date_container">
-
-                        <EditText
-                            android:id="@+id/et_end_date"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="End Date"
-                            android:textColorHint="@color/darkPurple"
-                            android:focusable="true"
-                            android:clickable="true"
-                            android:background="@null" />
-
-                        <ImageView
-                            android:id="@+id/icon_end_date"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_events"
-                            android:padding="4dp"
-                            app:tint="@color/darkPurple" />
-                    </LinearLayout>
-
-                </LinearLayout>
+                    android:showText="false"
+                    android:switchMinWidth="55dp"
+                    android:thumbTint="@color/purpleText"
+                    android:trackTint="@color/dateBox" />
+            </LinearLayout>
 
 
+            <!-- Create and Cancel Buttons (same row) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-                <LinearLayout
-                    android:id="@+id/limit_waiting_list"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@+id/reg_date_container">
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:backgroundTint="@color/darkPurple"
+                    android:textColor="@android:color/white" />
 
-                    <CheckBox
-                        android:id="@+id/cb_limit_waiting_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Limit number of waiting list entrants"
-                        android:textColor="@color/purpleText" />
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="match_parent" />
 
-                    <EditText
-                        android:id="@+id/et_max_entrants"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter max number"
-                        android:inputType="number"
-                        android:textColorHint="@color/purpleText"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="379dp"
+                <Button
+                    android:id="@+id/btn_create_event"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Description:"
-                    android:textColor="@color/purpleText"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.058"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/limit_waiting_list" />
-
-                <EditText
-                    android:id="@+id/tv_event_details"
-                    android:layout_width="379dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@null"
-                    android:hint="Event Detail: "
-                    android:lineSpacingExtra="4dp"
-                    android:text="Join us for a spooky Halloween party with games, food, and prizes!"
-                    android:textColor="@color/dateBox"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.382"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <!-- Geolocation Requirement Toggle -->
-                <LinearLayout
-                    android:id="@+id/switch_geo_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_event_details"
-                    tools:layout_editor_absoluteX="33dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Require Geolocation for Entrants"
-                        android:textColor="@color/purpleText"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-
-                    <Switch
-                        android:id="@+id/switch_geo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:showText="false"
-                        android:switchMinWidth="55dp"
-                        android:thumbTint="@color/purpleText"
-                        android:trackTint="@color/dateBox" />
-                </LinearLayout>
-
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
-
-
-        <Button
-            android:id="@+id/btn_save_event"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:backgroundTint="@color/purpleText"
-            android:text="Save Changes"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
-            tools:layout_editor_absoluteX="16dp" />
-
-        <LinearLayout
-            android:id="@+id/bottom_buttons_layoute"
-            android:layout_width="375dp"
-            android:layout_height="58dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
+                    android:layout_weight="1"
+                    android:text="Save"
+                    android:backgroundTint="@color/purpleText"
+                    android:textColor="@color/darkPurple" />
+            </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+    <LinearLayout
+        android:id="@+id/bottom_buttons_layoute"
+        android:layout_width="375dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
