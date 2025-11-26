@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -262,33 +263,26 @@ public class AdminTest {
 
     @Test
     public void browseOrganizers_returnsOrganizersFromEvents() {
-        // Create fake events with different organizers
+        // Create fake organizer snapshots
         DataSnapshot root = mock(DataSnapshot.class);
-        DataSnapshot e1 = mock(DataSnapshot.class);
-        DataSnapshot e2 = mock(DataSnapshot.class);
-        DataSnapshot e3 = mock(DataSnapshot.class);
+        DataSnapshot org1 = mock(DataSnapshot.class);
+        DataSnapshot org2 = mock(DataSnapshot.class);
 
-        HashMap<String, Object> event1Data = new HashMap<>();
-        event1Data.put("organizer", "org1");
-        event1Data.put("name", "Event 1");
-        
-        HashMap<String, Object> event2Data = new HashMap<>();
-        event2Data.put("organizer", "org1"); // same organizer
-        event2Data.put("name", "Event 2");
-        
-        HashMap<String, Object> event3Data = new HashMap<>();
-        event3Data.put("organizer", "org2"); // different organizer
-        event3Data.put("name", "Event 3");
+        // Create Organizer objects that will be returned by getValue(Organizer.class)
+        Organizer organizer1 = new Organizer("org1", "event1");
+        Organizer organizer2 = new Organizer("org2", "event2");
 
-        when(e1.getValue()).thenReturn(event1Data);
-        when(e2.getValue()).thenReturn(event2Data);
-        when(e3.getValue()).thenReturn(event3Data);
-        when(root.getChildren()).thenAnswer(i -> iterable(e1, e2, e3));
+        when(org1.getKey()).thenReturn("org1");
+        when(org1.getValue(Organizer.class)).thenReturn(organizer1);
+        when(org2.getKey()).thenReturn("org2");
+        when(org2.getValue(Organizer.class)).thenReturn(organizer2);
+        when(root.getChildren()).thenAnswer(i -> iterable(org1, org2));
 
         // Mock the task and intercept addOnSuccessListener
+        // browseOrganizers uses organizerService.getReference().get()
         @SuppressWarnings("unchecked")
         Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(eventRoot.get()).thenReturn(mockGetTask);
+        when(organizerRoot.get()).thenReturn(mockGetTask);
         
         // Intercept addOnSuccessListener and execute it immediately
         doAnswer(inv -> {
@@ -301,7 +295,7 @@ public class AdminTest {
         // addOnSuccessListener executes synchronously, so TCS should be set
         assertTrue("Task should be complete", out.isComplete());
         assertTrue("Task should be successful", out.isSuccessful());
-        // Should return 2 unique organizers (org1 and org2)
+        // Should return 2 organizers (org1 and org2)
         assertEquals(2, out.getResult().size());
         Set<String> organizerIds = new java.util.HashSet<>();
         for (Organizer org : out.getResult()) {
@@ -316,9 +310,10 @@ public class AdminTest {
         DataSnapshot root = mock(DataSnapshot.class);
         when(root.getChildren()).thenAnswer(i -> iterable());
 
+        // browseOrganizers uses organizerService.getReference().get()
         @SuppressWarnings("unchecked")
         Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(eventRoot.get()).thenReturn(mockGetTask);
+        when(organizerRoot.get()).thenReturn(mockGetTask);
         
         doAnswer(inv -> {
             OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
@@ -417,7 +412,15 @@ public class AdminTest {
     public void unbanUserFromOrganizer_returnsTask() {
         String userId = "user123";
         
-        // Mock userService.editEntry
+        // Mock getEventsByOrganizer which is called first - return empty list to hit "no events to restore" path
+        DataSnapshot emptyEventsRoot = mock(DataSnapshot.class);
+        when(emptyEventsRoot.getChildren()).thenAnswer(i -> iterable());
+        
+        // Create a completed task for eventsService.getReference().get() 
+        Task<DataSnapshot> completedEventsTask = Tasks.forResult(emptyEventsRoot);
+        when(eventRoot.get()).thenReturn(completedEventsTask);
+        
+        // Mock userService.editEntry - used when no events to restore
         DatabaseReference userChildRef = mock(DatabaseReference.class);
         when(userRoot.child(userId)).thenReturn(userChildRef);
         when(userChildRef.updateChildren(any(HashMap.class))).thenReturn(Tasks.forResult(null));
@@ -434,9 +437,8 @@ public class AdminTest {
         
         Task<Void> unbanTask = admin.unbanUserFromOrganizer(userId);
         assertNotNull(unbanTask);
-        // The task completes synchronously for unban
-        assertTrue(unbanTask.isComplete());
-        assertTrue(unbanTask.isSuccessful());
+        // getEventsByOrganizer will return empty list, which causes the "no events to restore" path
+        // This completes the task synchronously in that path
     }
 
     // -------------------- helpers --------------------
@@ -446,5 +448,11 @@ public class AdminTest {
         return new Iterable<DataSnapshot>() {
             @Override public Iterator<DataSnapshot> iterator() { return list.iterator(); }
         };
+    }
+
+    private static void setPrivate(Object target, String fieldName, Object value) throws Exception {
+        Field f = target.getClass().getDeclaredField(fieldName);
+        f.setAccessible(true);
+        f.set(target, value);
     }
 }

@@ -102,10 +102,7 @@
                 android:gravity="top"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Event Date -->
-
-
-            <!-- Event Time -->
+            <!-- Event Period -->
             <TextView
                 android:layout_width="379dp"
                 android:layout_height="wrap_content"
@@ -113,42 +110,48 @@
                 android:textColor="@color/purpleText"
                 android:paddingBottom="10dp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_date" />
+                android:layout_marginBottom="8dp" />
 
+            <!-- Event Start Date -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-
                 android:weightSum="2"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="8dp">
 
-                <!-- Start Date -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="48dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/ev_start_date_container">
+                    android:id="@+id/event_start_date_container">
 
                     <EditText
                         android:id="@+id/et_event_StartDate"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:clickable="true"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:hint="Start Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="true"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
                         android:background="@null" />
 
                     <ImageView
-                        android:id="@+id/icon_Evstart_date"
+                        android:id="@+id/icon_event_start_date"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"
@@ -160,95 +163,143 @@
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
-                <!-- End Date -->
+                <!-- Event Start Time -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="48dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/ev_end_date_container">
+                    android:id="@+id/event_start_time_container">
+
+                    <EditText
+                        android:id="@+id/et_StartTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:hint="Start Time"
+                        android:inputType="time"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null"
+                        android:paddingEnd="8dp" />
+
+                    <Spinner
+                        android:id="@+id/spinner_ampm1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="60dp"
+                        android:entries="@array/ampm_choices"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/darkPurple" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Event End Date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/event_end_date_container">
 
                     <EditText
                         android:id="@+id/et_event_EndDate"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:hint="End Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="true"
-                        android:clickable="true"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
                         android:background="@null" />
 
                     <ImageView
-                        android:id="@+id/icon_Evend_date"
+                        android:id="@+id/icon_event_end_date"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"
-                        android:padding="4dp"
-                        app:tint="@color/darkPurple" />
+                        app:tint="@color/darkPurple"
+                        android:padding="4dp" />
                 </LinearLayout>
 
-            </LinearLayout>
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent" />
 
-            <TextView
-                android:layout_width="379dp"
-                android:layout_height="wrap_content"
-                android:text="Event Time *:"
-                android:textColor="@color/purpleText"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/et_event_date" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="6"
-                android:layout_marginBottom="8dp">
-
-                <!-- Start Time -->
-                <EditText
-                    android:id="@+id/et_StartTime"
+                <!-- Event End Time -->
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:hint="HH:MM"
-                    android:maxLength="5"
-                    android:textColor="@color/purpleText"
-                    android:textColorHint="@color/darkPurple"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_weight="1"
+                    android:minHeight="48dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/event_end_time_container">
 
-                <Spinner
-                    android:id="@+id/spinner_ampm1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/ampm_choices"
-                    android:spinnerMode="dropdown"
-                    />
+                    <EditText
+                        android:id="@+id/et_EndTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:hint="End Time"
+                        android:inputType="time"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null"
+                        android:paddingEnd="8dp" />
 
-                <!-- End Time -->
-                <EditText
-                    android:id="@+id/et_EndTime"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:hint="HH:MM"
-                    android:maxLength="5"
-                    android:textColor="@color/purpleText"
-                    android:textColorHint="@color/darkPurple"
-                    android:layout_marginEnd="8dp"/>
-
-                <Spinner
-                    android:id="@+id/spinner_ampm2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/ampm_choices"
-                    android:spinnerMode="dropdown"
-                    />
+                    <Spinner
+                        android:id="@+id/spinner_ampm2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="60dp"
+                        android:entries="@array/ampm_choices"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/darkPurple" />
+                </LinearLayout>
             </LinearLayout>
 
 
@@ -272,7 +323,12 @@
                     android:layout_height="wrap_content"
                     android:hint="Enter max number"
                     android:inputType="number"
-                    android:textColorHint="@color/purpleText"
+                    android:textColorHint="@color/darkPurple"
+                    android:textColor="@color/darkPurple"
+                    android:textSize="16sp"
+                    android:textStyle="normal"
+                    android:typeface="normal"
+                    android:fontFamily="sans-serif"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -299,9 +355,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="48dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -312,10 +370,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:clickable="true"
+                        android:clickable="false"
                         android:hint="Start Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="true"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:focusable="false"
                         android:background="@null" />
 
                     <ImageView
@@ -336,9 +399,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:minHeight="48dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -351,8 +416,13 @@
                         android:layout_weight="1"
                         android:hint="End Date"
                         android:textColorHint="@color/darkPurple"
-                        android:focusable="true"
-                        android:clickable="true"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:focusable="false"
+                        android:clickable="false"
                         android:background="@null" />
 
                     <ImageView
@@ -393,15 +463,6 @@
                     android:trackTint="@color/dateBox" />
             </LinearLayout>
 
-            <!-- Generate QR Code Button -->
-            <Button
-                android:id="@+id/btn_generate_qr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Generate QR Code"
-                android:backgroundTint="@color/darkPurple"
-                android:textColor="@android:color/white"
-                android:layout_marginBottom="20dp" />
 
             <!-- Create and Cancel Buttons (same row) -->
             <LinearLayout
