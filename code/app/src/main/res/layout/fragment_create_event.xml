@@ -254,10 +254,10 @@
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/start_date_container">
+                    android:id="@+id/ev_start_date_container">
 
                     <EditText
-                        android:id="@+id/et_start_date"
+                        android:id="@+id/reg_event_StartDate"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -268,7 +268,7 @@
                         android:background="@null" />
 
                     <ImageView
-                        android:id="@+id/icon_start_date"
+                        android:id="@+id/icon_Evstart_date"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"
@@ -291,10 +291,10 @@
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:id="@+id/end_date_container">
+                    android:id="@+id/ev_end_date_container">
 
                     <EditText
-                        android:id="@+id/et_end_date"
+                        android:id="@+id/reg_event_EndDate"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -305,7 +305,7 @@
                         android:background="@null" />
 
                     <ImageView
-                        android:id="@+id/icon_end_date"
+                        android:id="@+id/icon_Evend_date"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_events"

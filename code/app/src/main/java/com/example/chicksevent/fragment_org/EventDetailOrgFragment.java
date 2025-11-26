@@ -1,10 +1,9 @@
 package com.example.chicksevent.fragment_org;
 
-import android.content.Intent; // <-- Add this
-import android.net.Uri;        // <-- Add this
-import android.widget.Toast;// <-- Add this
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -14,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,9 +24,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailOrgBinding;
 import com.example.chicksevent.misc.FirebaseService;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Fragment displaying detailed information about an event from the organizer's perspective.
@@ -59,6 +65,8 @@ public class EventDetailOrgFragment extends Fragment {
     private FirebaseService eventService;
     private FirebaseService imageService;
 
+    private FirebaseService waitingListService = new FirebaseService("WaitingList");
+
     private TextView startTime;
     private TextView endTime;
     private TextView startDate;
@@ -66,6 +74,8 @@ public class EventDetailOrgFragment extends Fragment {
 
     private TextView registrationStart;
     private TextView registrationEnd;
+
+    private String eventId;
 
 
     /**
@@ -98,11 +108,12 @@ public class EventDetailOrgFragment extends Fragment {
         imageService = new FirebaseService("Image");
 
         TextView eventName = view.findViewById(R.id.tv_event_name);
-
         Bundle args = getArguments();
         if (args != null) {
-            eventName.setText(args.getString("eventId"));
-            // Use it to populate UI
+            eventId = args.getString("eventId");
+            loadEventDetails(eventId);
+        } else {
+            Log.e("EventDetail", "No eventId passed to fragment!");
         }
 
         startTime = view.findViewById(R.id.tv_startTime);
@@ -122,26 +133,6 @@ public class EventDetailOrgFragment extends Fragment {
         Button viewMapButton = view.findViewById(R.id.btn_map);
         TextView eventDetails = view.findViewById(R.id.tv_event_details);
         TextView eventNameReal = view.findViewById(R.id.tv_event_name);
-
-
-
-        eventService.getReference().get().continueWith(task -> {
-//            eventName =
-            for (DataSnapshot ds : task.getResult().getChildren()) {
-                if (ds.getKey().equals(args.getString("eventId"))) {
-                    HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
-                    eventNameReal.setText(hash.get("name"));
-                    eventDetails.setText(hash.get("eventDetails"));
-                    startTime.setText((String) hash.get("eventStartTime"));
-                    startDate.setText((String) hash.get("eventStartDate"));
-                    endTime.setText((String) hash.get("eventEndTime"));
-                    endDate.setText((String) hash.get("eventEndDate"));
-                    registrationStart.setText((String) hash.get("registrationStartDate"));
-                    registrationEnd.setText((String) hash.get("registrationEndDate"));
-                }
-            }
-            return null;
-        });
 
         ImageView posterImageView = view.findViewById(R.id.img_event);
 
@@ -289,6 +280,110 @@ public class EventDetailOrgFragment extends Fragment {
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
         });
+    }
+
+    public Task<Integer> getWaitingCount() {
+        if (eventId == null) {
+            return Tasks.forResult(0);
+        }
+
+        return waitingListService.getReference().child(eventId).get()
+                .continueWith(task -> {
+                    int total = 0;
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DataSnapshot obj : task.getResult().getChildren()) {
+                            if ("WAITING".equals(obj.getKey())) {
+                                total++;
+                            }
+                        }
+                    }
+                    return total;
+                });
+    }
+
+
+    private void loadEventDetails(String eventId) {
+        if (eventId == null) return;
+
+        eventService.getReference().child(eventId).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        String name = snapshot.child("name").getValue(String.class);
+                        String details = snapshot.child("eventDetails").getValue(String.class);
+                        String startTime = snapshot.child("eventStartTime").getValue(String.class);
+                        String endTime = snapshot.child("eventEndTime").getValue(String.class);
+                        String startDateStr = snapshot.child("eventStartDate").getValue(String.class);
+                        String endDateStr = snapshot.child("eventEndDate").getValue(String.class);
+                        String startReg = snapshot.child("registrationStartDate").getValue(String.class);
+                        String endReg = snapshot.child("registrationEndDate").getValue(String.class);
+
+                        Long limitLong = snapshot.child("entrantLimit").getValue(Long.class);
+                        String limit = limitLong != null ? String.valueOf(limitLong) : "0";
+
+                        // Populate UI
+                        binding.tvDate.setText(startDateStr);
+                        binding.tvEventName.setText(name);
+                        binding.tvEventDetails.setText(details);
+                        binding.tvStartTime.setText(startTime);
+                        binding.tvEndTime.setText(endTime);
+                        binding.tvStartDate.setText(formatDatePretty(startDateStr));
+                        binding.tvEndDate.setText(formatDatePretty(endDateStr));
+                        binding.tvRegistrationOpen.setText(startReg);
+                        binding.tvRegistrationDeadline.setText(endReg);
+
+                        if (startDateStr != null) {
+                            try {
+                                // Parse the date string
+                                SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+                                Date date = inputFormat.parse(startDateStr);
+
+                                // Format month abbreviation
+                                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+                                String month = monthFormat.format(date).toUpperCase(); // e.g., "OCT"
+
+                                // Get day
+                                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
+                                String day = dayFormat.format(date); // e.g., "30"
+
+                                // Combine
+                                String display = month + "\n" + day;
+
+                                // Set TextView
+                                binding.tvDate.setText(display);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                binding.tvDate.setText(startDateStr); // fallback
+                            }
+                        }
+
+
+                        // Waiting count
+                        getWaitingCount().addOnSuccessListener(count -> {
+                            binding.tvEntrantsCount.setText(count + " / " + limit);
+                        });
+                    } else {
+                        Log.e("EventDetail", "Event not found for id: " + eventId);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("EventDetail", "Failed to load event: " + e.getMessage()));
+    }
+
+    private String formatDatePretty(String dateStr) {
+        if (dateStr == null) return "";
+
+        try {
+            // Input format from Firebase: "MM-dd-yyyy"
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+            Date date = inputFormat.parse(dateStr);
+
+            // Desired output format: "MMM d, yyyy" (e.g., "Oct 30, 2025")
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+            return outputFormat.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return dateStr; // fallback
+        }
     }
 
     @Override
