@@ -11,8 +11,13 @@ import android.widget.TextView;
 import com.example.chicksevent.misc.Notification;
 import com.example.chicksevent.enums.NotificationType;
 import com.example.chicksevent.R;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Adapter class for displaying {@link Notification} objects in a {@link android.widget.ListView}.
@@ -77,12 +82,26 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         TextView time = view.findViewById(R.id.tv_time);
         ImageButton btnDelete = view.findViewById(R.id.btn_delete);
         ImageButton btnArrow = view.findViewById(R.id.btn_arrow);
+        TextView tv_date = view.findViewById(R.id.tv_date);
 
         notification.getEventName().addOnCompleteListener(t -> {
             eventName.setText(t.getResult());
         });
 
         time.setText(notification.getMessage());
+
+        String eventId = notification.getEventId();
+
+        FirebaseDatabase.getInstance()
+                .getReference("Event")
+                .child(eventId)
+                .child("eventStartDate")
+                .get()
+                .addOnCompleteListener(task -> {
+                    String startDateStr = task.getResult().getValue(String.class);
+                    bindDate(startDateStr, tv_date);
+                });
+
 
 
 
@@ -97,4 +116,26 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
 
         return view;
     }
+
+    private void bindDate(String startDateStr, TextView tv_date) {
+        if (startDateStr != null) {
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+                Date date = inputFormat.parse(startDateStr);
+
+                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
+
+                String display = monthFormat.format(date).toUpperCase() + "\n" + dayFormat.format(date);
+                tv_date.setText(display);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                tv_date.setText(startDateStr);
+            }
+        } else {
+            tv_date.setText("");
+        }
+    }
+
 }

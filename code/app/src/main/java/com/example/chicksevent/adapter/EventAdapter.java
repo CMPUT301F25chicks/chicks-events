@@ -16,8 +16,12 @@ import com.example.chicksevent.R;
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Custom {@link EventAdapter} subclass for displaying events
@@ -94,6 +98,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView event_name = view.findViewById(R.id.tv_event_name);
         TextView tv_startTime = view.findViewById(R.id.tv_startTime);
         TextView tv_endTime = view.findViewById(R.id.tv_endTime);
+        TextView tv_date = view.findViewById(R.id.tv_date);
         ImageButton btn_arrow = view.findViewById(R.id.btn_arrow);
 //        ImageView posterImageView = view.findViewById(R.id.img_event);
 
@@ -117,6 +122,38 @@ public class EventAdapter extends ArrayAdapter<Event> {
                 imageCache.put(event.getId(), bitmap);
             });
         }
+        // ----- Format tv_date as "MMM\ndd" -----
+        String startDateStr = event.getEventStartDate(); // e.g., "03-15-2025"
+
+        if (startDateStr != null) {
+            try {
+                // Parse incoming date
+                SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+                Date date = inputFormat.parse(startDateStr);
+
+                // Format month abbreviation (uppercase)
+                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+                String month = monthFormat.format(date).toUpperCase(); // "MAR"
+
+                // Format day
+                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
+                String day = dayFormat.format(date); // "15"
+
+                // Combine exactly like your fragment
+                String display = month + "\n" + day;
+
+                tv_date.setText(display);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                tv_date.setText(startDateStr); // fallback
+            }
+        } else {
+            tv_date.setText(""); // or "N/A"
+        }
+
+
+
 
 
         event_name.setText(event.getName());
