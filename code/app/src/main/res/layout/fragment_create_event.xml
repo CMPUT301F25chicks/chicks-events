@@ -134,15 +134,6 @@
                     android:focusable="true"
                     android:id="@+id/event_start_date_container">
 
-                <Spinner
-                    android:id="@+id/spinner_ampm1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/ampm_choices"
-                    android:spinnerMode="dropdown"
-                    />
->>>>>>> origin/main
-
                     <EditText
                         android:id="@+id/et_event_StartDate"
                         android:layout_width="0dp"
@@ -159,7 +150,6 @@
                         android:fontFamily="sans-serif"
                         android:background="@null" />
 
-<<<<<<< HEAD
                     <ImageView
                         android:id="@+id/icon_event_start_date"
                         android:layout_width="24dp"
