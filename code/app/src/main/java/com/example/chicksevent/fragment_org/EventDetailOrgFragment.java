@@ -1,5 +1,8 @@
 package com.example.chicksevent.fragment_org;
 
+import android.content.Intent; // <-- Add this
+import android.net.Uri;        // <-- Add this
+import android.widget.Toast;// <-- Add this
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -187,6 +190,55 @@ public class EventDetailOrgFragment extends Fragment {
             navController.navigate(R.id.action_EventDetailOrgFragment_to_FinalListFragment, bundle);
         });
 
+        Button exportCsvButton = view.findViewById(R.id.btn_export_csv);
+        /**
+         * Sets up a click listener for the 'Export to CSV' button.
+         * <p>* When clicked, this listener retrieves the current event's ID from the fragment arguments.
+         * It then constructs a URL by appending the event ID as a query parameter
+         * to a predefined Firebase Cloud Function URL.
+         * </p>
+         * <p>
+         * An {@link Intent#ACTION_VIEW} is created with this URL, which opens a web browser.
+         * The Cloud Function is responsible for generating a CSV file and setting the
+         * appropriate HTTP headers to trigger a file download in the browser.
+         * </p>
+         * <p>
+         * Includes error handling for missing event data or if no web browser is installed
+         * on the device.
+         * </p>
+         **/
+        exportCsvButton.setOnClickListener(v -> {
+            // 1. Get the eventId from the fragment arguments
+            if (args == null) {
+                Toast.makeText(getContext(), "Error: Event data not found.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String eventId = args.getString("eventId");
+            if (eventId == null || eventId.isEmpty()) {
+                Toast.makeText(getContext(), "Error: Event ID is missing.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 2. Use the CORRECT Deployed Cloud Function URL
+            String functionUrl = "https://us-central1-listycity-friedchicken.cloudfunctions.net/exportFinalEntrants";
+
+            // 3. Build the final URL with the eventId as a query parameter
+            String downloadUrl = functionUrl + "?eventId=" + eventId;
+
+            // 4. Create an Intent to open the URL in a web browser.
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(downloadUrl));
+
+            // 5. Start the activity and handle potential errors
+            try {
+                startActivity(intent);
+            } catch (android.content.ActivityNotFoundException e) {
+                // This error occurs if no web browser is installed on the device.
+                Toast.makeText(getContext(), "Error: No web browser found.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         viewChosenListButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
 
@@ -238,8 +290,6 @@ public class EventDetailOrgFragment extends Fragment {
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
         });
     }
-
-
 
     @Override
     public void onDestroyView() {
