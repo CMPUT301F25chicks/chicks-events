@@ -31,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
@@ -401,8 +402,6 @@ public class CreateEventFragment extends Fragment {
                 geolocationRequired
         );
 
-        toast("Event created 🎉");
-
         // Push to Firebase
         String id = e.createEvent();
         String eventId = e.getId();
@@ -410,31 +409,39 @@ public class CreateEventFragment extends Fragment {
 
         // Generate and save QR code
         generateAndSaveQRCode(eventId, eventName);
-        Bitmap bitmap = null;
-
-        if (imageUri == null) return;
-//
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), imageUri);
-                bitmap = ImageDecoder.decodeBitmap(source);
-            } else {
-                // fallback for older versions
-                bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
+        
+        // Handle image upload if present (async, don't block navigation)
+        if (imageUri != null) {
+            Bitmap bitmap = null;
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), imageUri);
+                    bitmap = ImageDecoder.decodeBitmap(source);
+                } else {
+                    // fallback for older versions
+                    bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
+                }
+            } catch (IOException err) {
+                err.printStackTrace();
             }
-        } catch (IOException err) {
-            err.printStackTrace();
+            
+            if (bitmap != null) {
+                String base64Image = bitmapToBase64(bitmap);
+                urlData.put("url", base64Image);
+                imageService.addEntry(urlData, id);
+            }
         }
-//
-        String base64Image = bitmapToBase64(bitmap);
-        urlData.put("url", base64Image);
 
-        imageService.addEntry(urlData, id);
-
-
-
-        // Optionally navigate back:
-//        requireActivity().onBackPressed();
+        // Show success message and navigate back to main screen
+        toast("Event has been created");
+        
+        // Navigate back to EventFragment (main screen) to prevent duplicate event creation
+        try {
+            NavHostFragment.findNavController(this).popBackStack();
+        } catch (Exception ex) {
+            // Fallback to activity back press if navigation fails
+            requireActivity().onBackPressed();
+        }
     }
 
     /**
