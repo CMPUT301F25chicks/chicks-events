@@ -31,7 +31,8 @@ import java.util.HashMap;
  *   entrantLimit: number,
  *   organizer: string, // organizerId
  *   poster: string | null, // URL
- *   tag: string | null     // space-separated tags
+ *   tag: string | null,     // space-separated tags
+ *   onHold: boolean         // whether event is on hold
  * }
  * </pre>
  *
@@ -91,6 +92,9 @@ public class Event {
     /** Whether geolocation is required for entrants to join the waiting list. Defaults to false. */
     private boolean geolocationRequired;
 
+    /** Whether this event is currently on hold (hidden from browsing, no join/leave allowed). Defaults to false. */
+    private boolean onHold;
+
     /** The user id of the account that created/owns this event (organizer). */
     private String entrantId;
 
@@ -106,7 +110,6 @@ public class Event {
      * @param id the Firebase key to use; may be {@code null} to generate a new key on create.
      * @param name the event's display name.
      * @param eventDetails a human-readable description of the event.
-     * @param eventDate a human-readable description of the event.
      * @param eventStartDate start date of the register in YYYY-MM-DD (nullable).
      * @param eventEndDate end date of the register in YYYY-MM-DD (nullable).
      * @param registrationStartDate registration open date in YYYY-MM-DD (nullable).
@@ -135,6 +138,7 @@ public class Event {
         this.poster = poster == null ? "" : tag;
         this.tag = tag == null ? "" : tag;
         this.geolocationRequired = geolocationRequired;
+        this.onHold = false;
 
         this.organizer = new Organizer(entrantId, id);
 
@@ -159,6 +163,7 @@ public class Event {
         map.put("poster", getPoster());              // null is fine; it will simply be omitted
         map.put("tag", getTag());
         map.put("geolocationRequired", isGeolocationRequired());
+        map.put("onHold", isOnHold());
         id = eventService.addEntry(map, id);
 
         this.organizer = new Organizer(entrantId, id);
@@ -251,6 +256,12 @@ public class Event {
 
     /** @param geolocationRequired sets whether geolocation is required. */
     public void setGeolocationRequired(boolean geolocationRequired) { this.geolocationRequired = geolocationRequired; }
+
+    /** @return whether this event is currently on hold. */
+    public boolean isOnHold() { return onHold; }
+
+    /** @param onHold sets whether this event is on hold. */
+    public void setOnHold(boolean onHold) { this.onHold = onHold; }
 
     // Generate QR for chicks://event/{eventId}
     //try {

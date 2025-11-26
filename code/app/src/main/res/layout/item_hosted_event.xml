@@ -70,15 +70,10 @@
             tools:layout_editor_absoluteY="12dp" />
 
         <LinearLayout
-            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
             android:orientation="horizontal"
-            tools:layout_editor_absoluteX="155dp"
-            tools:layout_editor_absoluteY="12dp"
-            app:layout_constraintStart_toEndOf="@id/tv_date"
-            app:layout_constraintTop_toBottomOf="@id/tv_event_name">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_startTime"
@@ -86,17 +81,17 @@
                 android:layout_height="wrap_content"
                 android:text="LOADING..."
                 android:textColor="@color/purpleText"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/tv_dash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
                 android:text=" - "
                 android:textColor="@color/purpleText"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"/>
 
             <TextView
                 android:id="@+id/tv_endTime"
@@ -104,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="LOADING..."
                 android:textColor="@color/purpleText"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
         </LinearLayout>
 

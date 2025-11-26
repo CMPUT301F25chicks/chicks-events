@@ -1,5 +1,7 @@
 package com.example.chicksevent.fragment;
 
+import static android.view.View.VISIBLE;
+
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -7,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -62,7 +66,7 @@ public class SearchEventFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Back arrow
-        ImageButton back = view.findViewById(R.id.btn_back);
+        ImageButton back = view.findViewById(R.id.btn_check);
         if (back != null) back.setOnClickListener(v ->
                 NavHostFragment.findNavController(this).popBackStack()
         );
@@ -72,6 +76,9 @@ public class SearchEventFragment extends Fragment {
         Spinner  spAvailability   = view.findViewById(R.id.spinner_availability);
         Button   btnApply         = view.findViewById(R.id.btn_apply_filter);
         Button   btnClear         = view.findViewById(R.id.btn_clear_filter);
+        ImageButton   btnFilter        = view.findViewById(R.id.btn_filter);
+        LinearLayout filterPanel = view.findViewById(R.id.filter_panel);
+
 
         // Create a User using device id (same pattern you used elsewhere)
         String androidId = Settings.Secure.getString(
@@ -79,6 +86,10 @@ public class SearchEventFragment extends Fragment {
                 Settings.Secure.ANDROID_ID
         );
         User user = new User(androidId);
+
+        btnFilter.setOnClickListener(v -> {
+            filterPanel.setVisibility(VISIBLE);
+        });
 
         // Apply filter -> call your User.filterEvents(ArrayList<String>)
         btnApply.setOnClickListener(v -> {

@@ -78,6 +78,11 @@ public class Organizer extends User {
         sendWaitingListNotification(EntrantStatus.INVITED, message);
     }
 
+    public void sendCancelledNotification(String message) {
+        sendWaitingListNotification(EntrantStatus.CANCELLED, message);
+
+    }
+
 
     /**
      * Returns the organizer's user id.
@@ -173,6 +178,9 @@ public class Organizer extends User {
                         break;
                     case INVITED:
                         notifType = NotificationType.INVITED;
+                        break;
+                    case CANCELLED:
+                        notifType = NotificationType.CANCELLED;
                         break;
                     default:
                         notifType = NotificationType.UNINVITED;

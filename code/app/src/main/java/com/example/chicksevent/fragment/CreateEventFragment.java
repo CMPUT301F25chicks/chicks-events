@@ -37,6 +37,7 @@ import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentCreateEventBinding;
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
+import com.example.chicksevent.misc.User;
 import com.example.chicksevent.util.FirebaseStorageHelper;
 import com.example.chicksevent.util.QRCodeGenerator;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,7 +48,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -55,7 +55,7 @@ import java.util.Locale;
  * Fragment that provides the user interface for creating a new event in the ChicksEvent app.
  * <p>
  * This fragment allows users to input event details such as name, description, start and end
- * registration dates, and optionally specify a maximum number of entrants. The event is then
+ * registration dates, and optionally specify a maximum enumber of entrants. The event is then
  * persisted to Firebase through the {@link Event#createEvent()} method.
  * </p>
  *
@@ -113,6 +113,18 @@ public class CreateEventFragment extends Fragment {
         adapter.setDropDownViewResource(R.layout.spinner_item);
         binding.spinnerAmpm1.setAdapter(adapter);
         binding.spinnerAmpm2.setAdapter(adapter);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.ampm_choices,
+                R.layout.spinner_item
+        );
+        adapter.setDropDownViewResource(R.layout.spinner_item_dropdown);
+        Spinner a = view.findViewById(R.id.spinner_ampm1);
+        Spinner b = view.findViewById(R.id.spinner_ampm2);
+        a.setAdapter(adapter);
+        b.setAdapter(adapter);
+//        .setAdapter(adapter);
 
         // Show/hide "max entrants" field when checkbox changes
         binding.cbLimitWaitingList.setOnCheckedChangeListener((btn, checked) -> {
@@ -186,7 +198,19 @@ public class CreateEventFragment extends Fragment {
 
         // Hook up CREATE button
         binding.btnCreateEvent.setOnClickListener(v -> {
-            createEventFromForm();
+            // Check if user is banned from creating events
+            String entrantId = Settings.Secure.getString(
+                    requireContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            );
+            User currentUser = new User(entrantId);
+            currentUser.isBannedFromOrganizer().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult()) {
+                    toast("You are banned from creating events. Please contact an administrator.");
+                } else {
+                    createEventFromForm();
+                }
+            });
         });
 
         // Optional: Cancel just pops back
@@ -303,6 +327,7 @@ public class CreateEventFragment extends Fragment {
             toast("Please enter end date as MM-DD-YYYY");
             return;
         }
+<<<<<<< HEAD
         
         // Validate that end date is >= start date
         if (endDate.before(startDate)) {
@@ -409,6 +434,7 @@ public class CreateEventFragment extends Fragment {
 
         // Generate and save QR code
         generateAndSaveQRCode(eventId, eventName);
+<<<<<<< HEAD
         
         // Handle image upload if present (async, don't block navigation)
         if (imageUri != null) {

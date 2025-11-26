@@ -1,5 +1,8 @@
 package com.example.chicksevent.fragment_org;
 
+import android.content.Intent; // <-- Add this
+import android.net.Uri;        // <-- Add this
+import android.widget.Toast;// <-- Add this
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,15 +24,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.chicksevent.R;
 import com.example.chicksevent.databinding.FragmentEventDetailOrgBinding;
 import com.example.chicksevent.misc.FirebaseService;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Fragment displaying detailed information about an event from the organizer's perspective.
@@ -60,10 +57,15 @@ public class EventDetailOrgFragment extends Fragment {
     private FragmentEventDetailOrgBinding binding;
 
     private FirebaseService eventService;
-    private FirebaseService waitingListService;
-    String eventId;
+    private FirebaseService imageService;
 
+    private TextView startTime;
+    private TextView endTime;
+    private TextView startDate;
+    private TextView endDate;
 
+    private TextView registrationStart;
+    private TextView registrationEnd;
 
 
     /**
@@ -93,16 +95,24 @@ public class EventDetailOrgFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventService = new FirebaseService("Event");
-        waitingListService = new FirebaseService("WaitingList");
+        imageService = new FirebaseService("Image");
+
+        TextView eventName = view.findViewById(R.id.tv_event_name);
 
         Bundle args = getArguments();
         if (args != null) {
-            eventId = args.getString("eventId");
-            loadEventDetails(eventId);
-        } else {
-            Log.e("EventDetail", "No eventId passed to fragment!");
+            eventName.setText(args.getString("eventId"));
+            // Use it to populate UI
         }
 
+        startTime = view.findViewById(R.id.tv_startTime);
+        startDate = view.findViewById(R.id.tv_startDate);
+        endTime = view.findViewById(R.id.tv_endTime);
+        endDate = view.findViewById(R.id.tv_endDate);
+        registrationStart = view.findViewById(R.id.tv_registration_open);
+        registrationEnd = view.findViewById(R.id.tv_registration_deadline);
+        
+        
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
         Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
@@ -111,7 +121,7 @@ public class EventDetailOrgFragment extends Fragment {
 
         Button viewMapButton = view.findViewById(R.id.btn_map);
         TextView eventDetails = view.findViewById(R.id.tv_event_details);
-        TextView eventNameReal = view.findViewById(R.id.tv_time);
+        TextView eventNameReal = view.findViewById(R.id.tv_event_name);
 
 
 
@@ -122,9 +132,32 @@ public class EventDetailOrgFragment extends Fragment {
                     HashMap<String, String> hash = (HashMap<String, String>) ds.getValue();
                     eventNameReal.setText(hash.get("name"));
                     eventDetails.setText(hash.get("eventDetails"));
+                    startTime.setText((String) hash.get("eventStartTime"));
+                    startDate.setText((String) hash.get("eventStartDate"));
+                    endTime.setText((String) hash.get("eventEndTime"));
+                    endDate.setText((String) hash.get("eventEndDate"));
+                    registrationStart.setText((String) hash.get("registrationStartDate"));
+                    registrationEnd.setText((String) hash.get("registrationEndDate"));
                 }
             }
             return null;
+        });
+
+        ImageView posterImageView = view.findViewById(R.id.img_event);
+
+        imageService.getReference().child(args.getString("eventId")).get().addOnSuccessListener(task -> {
+//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+//            if (!eventIdString.equals(holder.eventId) || task.getValue() == null) return;
+
+            try {
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                posterImageView.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                Log.i("image error", ":(");
+            }
+//            imageCache.put(event.getId(), bitmap);
         });
 
         viewWaitingListButton.setOnClickListener(v -> {
@@ -156,6 +189,55 @@ public class EventDetailOrgFragment extends Fragment {
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_FinalListFragment, bundle);
         });
+
+        Button exportCsvButton = view.findViewById(R.id.btn_export_csv);
+        /**
+         * Sets up a click listener for the 'Export to CSV' button.
+         * <p>* When clicked, this listener retrieves the current event's ID from the fragment arguments.
+         * It then constructs a URL by appending the event ID as a query parameter
+         * to a predefined Firebase Cloud Function URL.
+         * </p>
+         * <p>
+         * An {@link Intent#ACTION_VIEW} is created with this URL, which opens a web browser.
+         * The Cloud Function is responsible for generating a CSV file and setting the
+         * appropriate HTTP headers to trigger a file download in the browser.
+         * </p>
+         * <p>
+         * Includes error handling for missing event data or if no web browser is installed
+         * on the device.
+         * </p>
+         **/
+        exportCsvButton.setOnClickListener(v -> {
+            // 1. Get the eventId from the fragment arguments
+            if (args == null) {
+                Toast.makeText(getContext(), "Error: Event data not found.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String eventId = args.getString("eventId");
+            if (eventId == null || eventId.isEmpty()) {
+                Toast.makeText(getContext(), "Error: Event ID is missing.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 2. Use the CORRECT Deployed Cloud Function URL
+            String functionUrl = "https://us-central1-listycity-friedchicken.cloudfunctions.net/exportFinalEntrants";
+
+            // 3. Build the final URL with the eventId as a query parameter
+            String downloadUrl = functionUrl + "?eventId=" + eventId;
+
+            // 4. Create an Intent to open the URL in a web browser.
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(downloadUrl));
+
+            // 5. Start the activity and handle potential errors
+            try {
+                startActivity(intent);
+            } catch (android.content.ActivityNotFoundException e) {
+                // This error occurs if no web browser is installed on the device.
+                Toast.makeText(getContext(), "Error: No web browser found.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         viewChosenListButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailOrgFragment.this);
@@ -207,127 +289,7 @@ public class EventDetailOrgFragment extends Fragment {
 
             navController.navigate(R.id.action_EventDetailOrgFragment_to_EntrantLocationMapFragment, bundle);
         });
-
-        ImageView posterImageView = view.findViewById(R.id.img_event);
-
-        new FirebaseService("Image").getReference().child(args.getString("eventId")).get().addOnCompleteListener(task -> {
-            if (task.getResult().getValue() == null) return;
-            String base64Image = ((HashMap<String, String>) task.getResult().getValue()).get("url");
-            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            posterImageView.setImageBitmap(bitmap);
-        });
     }
-
-    public Task<Integer> getWaitingCount() {
-        if (eventId == null) {
-            return Tasks.forResult(0);
-        }
-
-        return waitingListService.getReference().child(eventId).get()
-                .continueWith(task -> {
-                    int total = 0;
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (DataSnapshot obj : task.getResult().getChildren()) {
-                            if ("WAITING".equals(obj.getKey())) {
-                                total++;
-                            }
-                        }
-                    }
-                    return total;
-                });
-    }
-
-
-    private void loadEventDetails(String eventId) {
-        if (eventId == null) return;
-
-        eventService.getReference().child(eventId).get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.exists()) {
-                        String name = snapshot.child("name").getValue(String.class);
-                        String details = snapshot.child("eventDetails").getValue(String.class);
-                        String startTime = snapshot.child("eventStartTime").getValue(String.class);
-                        String endTime = snapshot.child("eventEndTime").getValue(String.class);
-                        String startDateStr = snapshot.child("eventStartDate").getValue(String.class);
-                        String endDateStr = snapshot.child("eventEndDate").getValue(String.class);
-                        String startReg = snapshot.child("registrationStartDate").getValue(String.class);
-                        String endReg = snapshot.child("registrationEndDate").getValue(String.class);
-
-                        Long limitLong = snapshot.child("entrantLimit").getValue(Long.class);
-                        String limit = limitLong != null ? String.valueOf(limitLong) : "0";
-
-                        // Populate UI
-                        binding.tvDate.setText(startDateStr);
-                        binding.tvEventName.setText(name);
-                        binding.tvEventDetails.setText(details);
-                        binding.tvStartTime.setText(startTime);
-                        binding.tvEndTime.setText(endTime);
-                        binding.tvStartDate.setText(formatDatePretty(startDateStr));
-                        binding.tvEndDate.setText(formatDatePretty(endDateStr));
-                        binding.tvRegistrationOpen.setText(startReg);
-                        binding.tvRegistrationDeadline.setText(endReg);
-
-                        if (startDateStr != null) {
-                            try {
-                                // Parse the date string
-                                SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
-                                Date date = inputFormat.parse(startDateStr);
-
-                                // Format month abbreviation
-                                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
-                                String month = monthFormat.format(date).toUpperCase(); // e.g., "OCT"
-
-                                // Get day
-                                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
-                                String day = dayFormat.format(date); // e.g., "30"
-
-                                // Combine
-                                String display = month + "\n" + day;
-
-                                // Set TextView
-                                binding.tvDate.setText(display);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                                binding.tvDate.setText(startDateStr); // fallback
-                            }
-                        }
-
-
-                        // Waiting count
-                        getWaitingCount().addOnSuccessListener(count -> {
-                            binding.tvEntrantsCount.setText(count + " / " + limit);
-                        });
-                    } else {
-                        Log.e("EventDetail", "Event not found for id: " + eventId);
-                    }
-                })
-                .addOnFailureListener(e -> Log.e("EventDetail", "Failed to load event: " + e.getMessage()));
-    }
-
-    private String formatDatePretty(String dateStr) {
-        if (dateStr == null) return "";
-
-        try {
-            // Input format from Firebase: "MM-dd-yyyy"
-            SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
-            Date date = inputFormat.parse(dateStr);
-
-            // Desired output format: "MMM d, yyyy" (e.g., "Oct 30, 2025")
-            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
-            return outputFormat.format(date);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return dateStr; // fallback
-        }
-    }
-
-
-
-
-
-
 
     @Override
     public void onDestroyView() {

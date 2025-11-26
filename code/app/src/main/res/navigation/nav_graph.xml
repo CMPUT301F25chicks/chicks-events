@@ -15,6 +15,11 @@
         android:id="@+id/AdminHomeFragment"
         android:name="com.example.chicksevent.fragment_admin.AdminHomeFragment"
         android:label="Admin Home" >
+
+        <action
+            android:id="@+id/action_AdminHomeFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+
         <action
             android:id="@+id/action_adminHomeFragment_to_NotificationFragment"
             app:destination="@id/NotificationFragment" />
@@ -68,6 +73,7 @@
         android:name="com.example.chicksevent.fragment.NotificationFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_notification">
+
         <action
             android:id="@+id/action_NotificationFragment_to_AdminHomeFragment"
             app:destination="@id/AdminHomeFragment" />

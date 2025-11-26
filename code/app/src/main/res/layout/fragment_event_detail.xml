@@ -509,6 +509,35 @@
                                 android:textSize="14sp"
                                 android:layout_marginBottom="8dp"/>
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_cancelled_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:background="@drawable/bg_notification_item"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tv_cancelled_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:text="Status: Cancelled"
+                                android:textColor="@color/purpleText"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_cancelled_message"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You are cancelled by the organizers. Sorry :((("
+                                android:textColor="@color/dateBox"
+                                android:textSize="14sp"
+                                android:layout_marginBottom="8dp"/>
+                        </LinearLayout>
                     </FrameLayout>
                 </LinearLayout>
             </LinearLayout>

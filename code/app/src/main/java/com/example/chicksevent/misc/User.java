@@ -60,7 +60,7 @@ public class User {
     private FirebaseService eventService;
 
     /** Firebase service for the "Notification" root. */
-    private FirebaseService notificationService;
+    FirebaseService notificationService;
 
     /** Firebase service for admin-related operations (reserved). */
     private FirebaseService adminService;
@@ -80,6 +80,9 @@ public class User {
     /** Whether this user has enabled notifications. Defaults to {@code true}. */
     private boolean notificationsEnabled;
 
+    /** Whether this user is banned from creating events as an organizer. Defaults to {@code false}. */
+    private boolean bannedFromOrganizer;
+
 
 
     String TAG = "RTD8";
@@ -97,6 +100,7 @@ public class User {
         notificationService = new FirebaseService("Notification");
         adminService = new FirebaseService("Admin");
         this.notificationsEnabled = true;
+        this.bannedFromOrganizer = false;
     }
 
     /**
@@ -235,6 +239,12 @@ public class User {
                             case "UNINVITED":
                                 notificationType = NotificationType.UNINVITED;
                                 break;
+                            case "CANCELLED":
+                                notificationType = NotificationType.CANCELLED;
+                                break;
+                            case "SYSTEM":
+                                notificationType = NotificationType.SYSTEM;
+                                break;
                             default:
                                 notificationType = NotificationType.WAITING;
                                 break;
@@ -299,6 +309,7 @@ public class User {
         updates.put("phoneNumber", this.phoneNumber);
         updates.put("uid", this.userId); // Store UID in the record itself
         updates.put("notificationsEnabled", this.notificationsEnabled);
+        updates.put("bannedFromOrganizer", this.bannedFromOrganizer);
 
         // Call the editEntry method from existing FirebaseService
         userService.editEntry(userId, updates);
@@ -334,5 +345,30 @@ public class User {
      */
     public Boolean isOrganizer() {
         return false;
+    }
+
+    /**
+     * Checks if this user is banned from creating events as an organizer.
+     *
+     * @return a Task that resolves to {@code true} if the user is banned, {@code false} otherwise
+     */
+    public Task<Boolean> isBannedFromOrganizer() {
+        return userService.getReference().child(userId).get().continueWith(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                Object banned = task.getResult().child("bannedFromOrganizer").getValue();
+                return banned instanceof Boolean && (Boolean) banned;
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Sets the banned from organizer status locally (does not persist to Firebase).
+     * Use Admin.banUserFromOrganizer() or Admin.unbanUserFromOrganizer() to persist changes.
+     *
+     * @param banned whether the user should be banned from organizing
+     */
+    public void setBannedFromOrganizer(boolean banned) {
+        this.bannedFromOrganizer = banned;
     }
 }

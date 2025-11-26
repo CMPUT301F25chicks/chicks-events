@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,11 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -76,13 +80,22 @@ public class EventDetailFragment extends Fragment {
     String userId;
     String eventId;
 
-    String eventNameString;
+    String eventIdString;
 
     private FirebaseService waitingListService;
     private TextView eventDetails;
-    private TextView eventNameReal;
+    private TextView eventName;
+
+    private TextView startTime;
+    private TextView endTime;
+    private TextView startDate;
+    private TextView endDate;
+
+    private TextView registrationStart;
+    private TextView registrationEnd;
     private Integer waitingListCount;
     private boolean geolocationRequired = false;
+    private boolean eventOnHold = false;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final long LOCATION_TIMEOUT_MS = 30000; // 30 seconds
     private LocationManager locationManager;
@@ -90,6 +103,8 @@ public class EventDetailFragment extends Fragment {
     private Handler locationTimeoutHandler;
     private Runnable locationTimeoutRunnable;
     private ProgressBar locationProgressBar;
+    private FirebaseService imageService;
+
 
     /**
      * Default constructor required for Fragment instantiation.
@@ -128,19 +143,24 @@ public class EventDetailFragment extends Fragment {
         userService = new FirebaseService("User");
         eventService = new FirebaseService("Event");
         waitingListService = new FirebaseService("WaitingList");
+        imageService = new FirebaseService("Image");
 
-
-        TextView eventName = view.findViewById(R.id.tv_event_name);
+        eventName = view.findViewById(R.id.tv_event_name);
         eventDetails = view.findViewById(R.id.tv_event_details);
-        eventNameReal = view.findViewById(R.id.tv_time);
+        startTime = view.findViewById(R.id.tv_startTime);
+        startDate = view.findViewById(R.id.tv_startDate);
+        endTime = view.findViewById(R.id.tv_endTime);
+        endDate = view.findViewById(R.id.tv_endDate);
+        registrationStart = view.findViewById(R.id.tv_registration_open);
+        registrationEnd = view.findViewById(R.id.tv_registration_deadline);
+//        eventNameReal = view.findViewById(R.id.tv_event_name);
+        
 
         Bundle args = getArguments();
         if (args != null) {
-            eventNameString = args.getString("eventId");
-            eventName.setText(eventNameString);
+            eventIdString = args.getString("eventId");
+//            eventName.setText(eventIdString);
         }
-
-
 
         userId = Settings.Secure.getString(
                 getContext().getContentResolver(),
@@ -159,7 +179,24 @@ public class EventDetailFragment extends Fragment {
         LinearLayout uninvitedStatus = view.findViewById(R.id.layout_not_chosen_status);
         LinearLayout acceptedStatus = view.findViewById(R.id.layout_accepted_status);
         LinearLayout declinedStatus = view.findViewById(R.id.layout_declined_status);
+        ImageView posterImageView = view.findViewById(R.id.img_event);
+        LinearLayout cancelledStatus = view.findViewById(R.id.layout_cancelled_status);
 
+        imageService.getReference().child(eventIdString).get().addOnSuccessListener(task -> {
+//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
+//            if (!eventIdString.equals(holder.eventId) || task.getValue() == null) return;
+            try {
+                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
+                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                posterImageView.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                Log.i("image error", ":(");
+            }
+
+//            imageCache.put(event.getId(), bitmap);
+        });
+        
         if (locationProgressBar != null) {
             locationProgressBar.setVisibility(View.GONE);
         }
@@ -182,12 +219,12 @@ public class EventDetailFragment extends Fragment {
                 eventService.getReference().get().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (DataSnapshot ds : task.getResult().getChildren()) {
-                            if (ds.getKey().equals(eventNameString)) {
+                            if (ds.getKey().equals(eventIdString)) {
                                 Object idObj = ds.child("id").getValue();
                                 Object nameObj = ds.child("name").getValue();
 
-                                String eventId = idObj != null ? idObj.toString() : eventNameString;
-                                String eventNameValue = nameObj != null ? nameObj.toString() : eventNameString;
+                                String eventId = idObj != null ? idObj.toString() : eventIdString;
+                                String eventNameValue = nameObj != null ? nameObj.toString() : eventIdString;
 
                                 Bundle bundle = new Bundle();
                                 bundle.putString("eventId", eventId);
@@ -202,9 +239,10 @@ public class EventDetailFragment extends Fragment {
                 });
             });
         }
-
+        loadEventInfo();
         getEventDetail().addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
+//            if (!t.isSuccessful()) return;
             if (t.getResult()==1) {
                 waitingStatus.setVisibility(View.VISIBLE);
                 waitingCount.setText("Number of Entrants: " + waitingListCount);
@@ -226,11 +264,22 @@ public class EventDetailFragment extends Fragment {
                 declinedStatus.setVisibility(View.VISIBLE);
                 joinButton.setVisibility(View.INVISIBLE);
             }
-
+            if (t.getResult()==6) {
+                cancelledStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
+            }
             waitingCount.setText("Number of Entrants: " + waitingListCount);
         });
 
         joinButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot join the waiting list.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             userExists().continueWithTask(boole -> {
                 if (boole.getResult()) {
                     // Check if geolocation is required
@@ -260,6 +309,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         leaveButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot leave the waiting list.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.leaveWaitingList();
@@ -273,6 +330,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         acceptButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot accept the invitation.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.acceptWaitingList();
@@ -284,6 +349,14 @@ public class EventDetailFragment extends Fragment {
         });
 
         declineButton.setOnClickListener(v -> {
+            // Check if event is on hold
+            if (eventOnHold) {
+                Toast.makeText(getContext(),
+                        "This event is currently on hold. You cannot decline the invitation.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             Entrant e = new Entrant(userId, args.getString("eventId"));
 
             e.declineWaitingList();
@@ -308,32 +381,53 @@ public class EventDetailFragment extends Fragment {
         });
     }
 
+    private void loadEventInfo() {
+        waitingListService.getReference()
+                .child(eventIdString)
+                .child("Event")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+
+                    if (!snapshot.exists()) return;
+
+                    eventDetails.setText(snapshot.child("eventDetails").getValue(String.class));
+                    registrationEnd.setText(snapshot.child("registrationEndDate").getValue(String.class));
+                    registrationStart.setText(snapshot.child("registrationStartDate").getValue(String.class));
+                    endDate.setText(snapshot.child("eventEndDate").getValue(String.class));
+                    startDate.setText(snapshot.child("eventStartDate").getValue(String.class));
+                    endTime.setText(snapshot.child("eventEndTime").getValue(String.class));
+                    startTime.setText(snapshot.child("eventStartTime").getValue(String.class));
+                });
+    }
+
 
     public Task<Integer> getWaitingCount() {
-        return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
-            Integer total = 0;
-            for (DataSnapshot obj : task.getResult().getChildren()) {
-
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
-                    if (obj.getKey().equals("WAITING")) {
-                        total += 1;
+        return waitingListService.getReference().child(eventId).child("WAITING").get()
+                .continueWith(task -> {
+                    int total = 0;
+                    for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
+                        total++;
                     }
-                }
-            }
-            waitingListCount = total;
-            return total;
-        });
+                    waitingListCount = total;
+                    return total;
+                });
     }
+
     public Task<Integer> getEventDetail() {
         return eventService.getReference().get().continueWithTask(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
 
-                Log.i("browaiting", ds.getKey() + " : " + eventNameString + " ");
-                if (ds.getKey().equals(eventNameString)) {
+                Log.i("browaiting", ds.getKey() + " : " + eventIdString + " ");
+                if (ds.getKey().equals(eventIdString)) {
                     HashMap<String, Object> hash = (HashMap<String, Object>) ds.getValue();
-                    eventNameReal.setText((String) hash.get("name"));
+                    eventName.setText((String) hash.get("name"));
                     eventDetails.setText((String) hash.get("eventDetails"));
+                    startTime.setText((String) hash.get("eventStartTime"));
+                    startDate.setText((String) hash.get("eventStartDate"));
+                    endTime.setText((String) hash.get("eventEndTime"));
+                    endDate.setText((String) hash.get("eventEndDate"));
+                    registrationStart.setText((String) hash.get("registrationStartDate"));
+                    registrationEnd.setText((String) hash.get("registrationEndDate"));
                     eventId = (String) hash.get("id");
 
                     // Check if geolocation is required
@@ -342,6 +436,14 @@ public class EventDetailFragment extends Fragment {
                         geolocationRequired = (Boolean) geoRequired;
                     } else {
                         geolocationRequired = false; // Default to false if not set
+                    }
+                    
+                    // Check if event is on hold
+                    Object onHoldObj = hash.get("onHold");
+                    if (onHoldObj instanceof Boolean) {
+                        eventOnHold = (Boolean) onHoldObj;
+                    } else {
+                        eventOnHold = false; // Default to false if not set
                     }
 
                     getWaitingCount();
@@ -357,35 +459,19 @@ public class EventDetailFragment extends Fragment {
     }
 
     public Task<Integer> lookWaitingList() {
-        Log.i("browaiting", "out waiting " + eventId);
-
         return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
-            for (DataSnapshot obj : task.getResult().getChildren()) {
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("WAITING")) {
-                        return 1;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("INVITED")) {
-                        return 2;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("UNINVITED")) {
-                        return 3;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("ACCEPTED")) {
-                        return 4;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("DECLINED")) {
-                        return 5;
-                    }
-                }
-            }
+            DataSnapshot root = task.getResult();
+
+            if (root.child("WAITING").hasChild(userId)) return 1;
+            if (root.child("INVITED").hasChild(userId)) return 2;
+            if (root.child("UNINVITED").hasChild(userId)) return 3;
+            if (root.child("ACCEPTED").hasChild(userId)) return 4;
+            if (root.child("DECLINED").hasChild(userId)) return 5;
+            if (root.child("CANCELLED").hasChild(userId)) return 6;
+
             return 0;
         });
     }
-
-
-
 
     /**
      * Checks whether a user profile exists in Firebase for the current {@link #userId}.

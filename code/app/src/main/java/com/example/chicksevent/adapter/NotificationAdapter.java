@@ -32,6 +32,7 @@ import java.util.ArrayList;
  */
 public class NotificationAdapter extends ArrayAdapter<Notification> {
     OnItemButtonClickListener listener;
+    OnItemButtonClickListener listener2;
 
     public interface OnItemButtonClickListener {
         void onItemButtonClick(Notification notification);
@@ -42,9 +43,10 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
      * @param context the current context used to inflate the layout
      * @param notifArray the list of {@link Notification} objects to display
      */
-    public NotificationAdapter(Context context, ArrayList<Notification> notifArray, OnItemButtonClickListener listener) {
+    public NotificationAdapter(Context context, ArrayList<Notification> notifArray, OnItemButtonClickListener listener, OnItemButtonClickListener listener2) {
         super(context, 0, notifArray);
         this.listener = listener;
+        this.listener2 = listener2;
     }
 
     /**
@@ -74,6 +76,7 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         TextView eventName = view.findViewById(R.id.tv_event_name);
         TextView time = view.findViewById(R.id.tv_time);
         ImageButton btnDelete = view.findViewById(R.id.btn_delete);
+        ImageButton btnArrow = view.findViewById(R.id.btn_arrow);
 
         notification.getEventName().addOnCompleteListener(t -> {
             eventName.setText(t.getResult());
@@ -81,9 +84,15 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
 
         time.setText(notification.getMessage());
 
-        status.setText(notification.getNotificationType() == NotificationType.WAITING ? "WAITING" : notification.getNotificationType() == NotificationType.INVITED ? "INVITED" : "NOT CHOSEN");
+
+
+        status.setText(notification.getNotificationType() == NotificationType.WAITING ? "WAITING" : notification.getNotificationType() == NotificationType.INVITED ? "INVITED" : notification.getNotificationType() == NotificationType.CANCELLED ? "CANCELLED" : notification.getNotificationType() == NotificationType.SYSTEM ? "SYSTEM" : "NOT CHOSEN");
         btnDelete.setOnClickListener(v -> {
             if (listener != null) listener.onItemButtonClick(notification);
+        });
+
+        btnArrow.setOnClickListener(v -> {
+            if (listener != null) listener2.onItemButtonClick(notification);
         });
 
         return view;

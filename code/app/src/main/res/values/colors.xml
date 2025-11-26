@@ -9,5 +9,8 @@
     <color name="dateBox">#EADDFF</color>
     <color name="lightRed">#E78282</color>
     <color name="darkGreen">#38AE7B</color>
-
+    <color name="switchThumbOn">#EFADF9</color>
+    <color name="switchThumbOff">#EFADF9</color>
+    <color name="switchTrackOn">#593160</color>
+    <color name="switchTrackOff">#EADDFF</color>
 </resources>
