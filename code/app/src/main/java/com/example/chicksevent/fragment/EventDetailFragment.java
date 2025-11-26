@@ -162,8 +162,6 @@ public class EventDetailFragment extends Fragment {
 //            eventName.setText(eventIdString);
         }
 
-
-
         userId = Settings.Secure.getString(
                 getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID
@@ -182,6 +180,7 @@ public class EventDetailFragment extends Fragment {
         LinearLayout acceptedStatus = view.findViewById(R.id.layout_accepted_status);
         LinearLayout declinedStatus = view.findViewById(R.id.layout_declined_status);
         ImageView posterImageView = view.findViewById(R.id.img_event);
+        LinearLayout cancelledStatus = view.findViewById(R.id.layout_cancelled_status);
 
         imageService.getReference().child(eventIdString).get().addOnSuccessListener(task -> {
 //            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
@@ -240,7 +239,7 @@ public class EventDetailFragment extends Fragment {
                 });
             });
         }
-
+        loadEventInfo();
         getEventDetail().addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
 //            if (!t.isSuccessful()) return;
@@ -265,7 +264,10 @@ public class EventDetailFragment extends Fragment {
                 declinedStatus.setVisibility(View.VISIBLE);
                 joinButton.setVisibility(View.INVISIBLE);
             }
-
+            if (t.getResult()==6) {
+                cancelledStatus.setVisibility(View.VISIBLE);
+                joinButton.setVisibility(View.INVISIBLE);
+            }
             waitingCount.setText("Number of Entrants: " + waitingListCount);
         });
 
@@ -379,23 +381,38 @@ public class EventDetailFragment extends Fragment {
         });
     }
 
+    private void loadEventInfo() {
+        waitingListService.getReference()
+                .child(eventIdString)
+                .child("Event")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+
+                    if (!snapshot.exists()) return;
+
+                    eventDetails.setText(snapshot.child("eventDetails").getValue(String.class));
+                    registrationEnd.setText(snapshot.child("registrationEndDate").getValue(String.class));
+                    registrationStart.setText(snapshot.child("registrationStartDate").getValue(String.class));
+                    endDate.setText(snapshot.child("eventEndDate").getValue(String.class));
+                    startDate.setText(snapshot.child("eventStartDate").getValue(String.class));
+                    endTime.setText(snapshot.child("eventEndTime").getValue(String.class));
+                    startTime.setText(snapshot.child("eventStartTime").getValue(String.class));
+                });
+    }
+
 
     public Task<Integer> getWaitingCount() {
-        return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
-            Integer total = 0;
-            for (DataSnapshot obj : task.getResult().getChildren()) {
-
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
-                    if (obj.getKey().equals("WAITING")) {
-                        total += 1;
+        return waitingListService.getReference().child(eventId).child("WAITING").get()
+                .continueWith(task -> {
+                    int total = 0;
+                    for (DataSnapshot userSnapshot : task.getResult().getChildren()) {
+                        total++;
                     }
-                }
-            }
-            waitingListCount = total;
-            return total;
-        });
+                    waitingListCount = total;
+                    return total;
+                });
     }
+
     public Task<Integer> getEventDetail() {
         return eventService.getReference().get().continueWithTask(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
@@ -442,35 +459,19 @@ public class EventDetailFragment extends Fragment {
     }
 
     public Task<Integer> lookWaitingList() {
-        Log.i("browaiting", "out waiting " + eventId);
-
         return waitingListService.getReference().child(eventId).get().continueWith(task -> {
-            Log.i("browaiting", "in waiting");
-            for (DataSnapshot obj : task.getResult().getChildren()) {
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) obj.getValue()).entrySet()) {
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("WAITING")) {
-                        return 1;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("INVITED")) {
-                        return 2;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("UNINVITED")) {
-                        return 3;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("ACCEPTED")) {
-                        return 4;
-                    }
-                    if (userId.equals(entry.getKey()) && obj.getKey().equals("DECLINED")) {
-                        return 5;
-                    }
-                }
-            }
+            DataSnapshot root = task.getResult();
+
+            if (root.child("WAITING").hasChild(userId)) return 1;
+            if (root.child("INVITED").hasChild(userId)) return 2;
+            if (root.child("UNINVITED").hasChild(userId)) return 3;
+            if (root.child("ACCEPTED").hasChild(userId)) return 4;
+            if (root.child("DECLINED").hasChild(userId)) return 5;
+            if (root.child("CANCELLED").hasChild(userId)) return 6;
+
             return 0;
         });
     }
-
-
-
 
     /**
      * Checks whether a user profile exists in Firebase for the current {@link #userId}.
