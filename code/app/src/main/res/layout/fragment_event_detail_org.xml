@@ -183,7 +183,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
 
-
                 <TextView
                     android:id="@+id/tv_event_name"
                     android:layout_width="wrap_content"
@@ -282,6 +281,31 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
+                <TextView
+                    android:id="@+id/event_tag_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Event Tag:"
+                    android:textColor="@color/purpleText"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_event_details" />
+
+                <TextView
+                    android:id="@+id/et_event_tag"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="bruh"
+                    android:textColor="@color/dateBox"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_tag_text" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout

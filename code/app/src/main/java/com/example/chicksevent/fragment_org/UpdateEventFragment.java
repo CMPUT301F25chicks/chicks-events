@@ -247,7 +247,7 @@ public class UpdateEventFragment extends Fragment {
                         Boolean geo = snapshot.child("geolocationRequired").getValue(Boolean.class);
                         Long limitLong = snapshot.child("entrantLimit").getValue(Long.class);
                         String limit = limitLong != null ? String.valueOf(limitLong) : "0";
-
+                        String tagText = snapshot.child("tag").getValue(String.class);
 
                         // Read inputs
                         binding.etEventName.setText(name);
@@ -260,6 +260,7 @@ public class UpdateEventFragment extends Fragment {
                         binding.etStartDate.setText(startReg);
                         binding.etEndDate.setText(endReg);
                         binding.switchGeo.setChecked(geo);
+                        binding.etEventTag.setText(tagText);
 
                         if (limitLong != 999) {
                             binding.cbLimitWaitingList.setChecked(true);
@@ -326,6 +327,7 @@ public class UpdateEventFragment extends Fragment {
         String endAMPM = binding.spinnerAmpm2.getSelectedItem().toString();
         String regStart = s(binding.etStartDate.getText()); // Registration Start (from your UI)
         String regEnd = s(binding.etEndDate.getText()); // Registration End (from your UI)
+        String tagText = s(binding.etEventTag.getText()); // Registration End (from your UI)
 
         // Optional max entrants with validation
         int entrantLimit = 999;
@@ -471,7 +473,7 @@ public class UpdateEventFragment extends Fragment {
 
         // Poster/tag are optional for now
         String poster = null;
-        String tag    = null;
+//        String tag    = null;
 
         // id will be generated in createEvent(), pass a placeholder for constructor param
         String placeholderId = null;
@@ -489,7 +491,7 @@ public class UpdateEventFragment extends Fragment {
                 regEnd,
                 entrantLimit,
                 poster,
-                tag,
+                tagText,
                 geolocationRequired
         );
 

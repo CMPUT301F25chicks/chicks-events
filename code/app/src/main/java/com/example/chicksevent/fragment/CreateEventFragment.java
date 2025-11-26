@@ -246,6 +246,7 @@ public class CreateEventFragment extends Fragment {
         String endAMPM = binding.spinnerAmpm2.getSelectedItem().toString();
         String regStart = s(binding.etStartDate.getText()); // Registration Start (from your UI)
         String regEnd = s(binding.etEndDate.getText()); // Registration End (from your UI)
+        String tagText = s(binding.etEventTag.getText()); // event tag
 
         // Optional max entrants with validation
         int entrantLimit = 999;
@@ -391,7 +392,7 @@ public class CreateEventFragment extends Fragment {
 
         // Poster/tag are optional for now
         String poster = null;
-        String tag    = null;
+//        String tag    = null;
 
         // id will be generated in createEvent(), pass a placeholder for constructor param
         String placeholderId = null;
@@ -409,7 +410,7 @@ public class CreateEventFragment extends Fragment {
                 regEnd,
                 entrantLimit,
                 poster,
-                tag,
+                tagText,
                 geolocationRequired
         );
 

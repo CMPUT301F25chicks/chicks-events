@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -98,10 +97,14 @@ public class SearchEventFragment extends Fragment {
             // interests: split by spaces or commas
             String interest = etInterest.getText().toString().trim();
             if (!interest.isEmpty()) {
-                for (String token : interest.split("[,\\s]+")) {
+                for (String token : interest.split("[,]+")) {
                     if (!token.isEmpty()) filters.add(token);
                 }
             }
+//            for (String z : filters) {
+//                Log.i("what is filter", z);
+//
+//            }
 
             // availability (optional): if not "Any", add as a tag
 //            if (spAvailability != null && spAvailability.getSelectedItem() != null) {

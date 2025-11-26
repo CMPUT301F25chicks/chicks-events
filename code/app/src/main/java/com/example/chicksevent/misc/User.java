@@ -122,7 +122,7 @@ public class User {
             // Iterate through all children
             for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
                 String key = childSnapshot.getKey();
-                String[] value = ((Map<String, String>) childSnapshot.getValue()).get("tag").split(" ");
+                String[] value = ((Map<String, String>) childSnapshot.getValue()).get("tag").split(",");
 
 
                 Log.d(TAG, "Key: " + key);

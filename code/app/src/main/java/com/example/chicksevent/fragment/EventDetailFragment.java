@@ -383,6 +383,7 @@ public class EventDetailFragment extends Fragment {
                         String endDateStr = snapshot.child("eventEndDate").getValue(String.class);
                         String startReg = snapshot.child("registrationStartDate").getValue(String.class);
                         String endReg = snapshot.child("registrationEndDate").getValue(String.class);
+                        String tag = snapshot.child("tag").getValue(String.class);
 
                         Long limitLong = snapshot.child("entrantLimit").getValue(Long.class);
                         String limit = limitLong != null ? String.valueOf(limitLong) : "0";
@@ -397,6 +398,8 @@ public class EventDetailFragment extends Fragment {
                         binding.tvEndDate.setText(formatDatePretty(endDateStr));
                         binding.tvRegistrationOpen.setText(formatDatePretty(startReg));
                         binding.tvRegistrationDeadline.setText(formatDatePretty(endReg));
+                        binding.etEventTag.setText(tag);
+
 
                         if (startDateStr != null) {
                             try {
