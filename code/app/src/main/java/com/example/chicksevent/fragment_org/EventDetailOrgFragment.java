@@ -67,13 +67,6 @@ public class EventDetailOrgFragment extends Fragment {
 
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
 
-    private TextView startTime;
-    private TextView endTime;
-    private TextView startDate;
-    private TextView endDate;
-
-    private TextView registrationStart;
-    private TextView registrationEnd;
 
     private String eventId;
 
@@ -107,7 +100,6 @@ public class EventDetailOrgFragment extends Fragment {
         eventService = new FirebaseService("Event");
         imageService = new FirebaseService("Image");
 
-        TextView eventName = view.findViewById(R.id.tv_event_name);
         Bundle args = getArguments();
         if (args != null) {
             eventId = args.getString("eventId");
@@ -116,14 +108,6 @@ public class EventDetailOrgFragment extends Fragment {
             Log.e("EventDetail", "No eventId passed to fragment!");
         }
 
-        startTime = view.findViewById(R.id.tv_startTime);
-        startDate = view.findViewById(R.id.tv_startDate);
-        endTime = view.findViewById(R.id.tv_endTime);
-        endDate = view.findViewById(R.id.tv_endDate);
-        registrationStart = view.findViewById(R.id.tv_registration_open);
-        registrationEnd = view.findViewById(R.id.tv_registration_deadline);
-        
-        
 
         Button viewWaitingListButton = view.findViewById(R.id.btn_waiting_list);
         Button viewChosenListButton = view.findViewById(R.id.btn_chosen_entrants);
@@ -328,8 +312,8 @@ public class EventDetailOrgFragment extends Fragment {
                         binding.tvEndTime.setText(endTime);
                         binding.tvStartDate.setText(formatDatePretty(startDateStr));
                         binding.tvEndDate.setText(formatDatePretty(endDateStr));
-                        binding.tvRegistrationOpen.setText(startReg);
-                        binding.tvRegistrationDeadline.setText(endReg);
+                        binding.tvRegistrationOpen.setText(formatDatePretty(startReg));
+                        binding.tvRegistrationDeadline.setText(formatDatePretty(endReg));
 
                         if (startDateStr != null) {
                             try {

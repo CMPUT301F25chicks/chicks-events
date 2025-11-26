@@ -124,11 +124,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingVertical="12dp"
+                    android:paddingVertical="8dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -168,62 +168,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingVertical="12dp"
-                    android:paddingHorizontal="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:id="@+id/event_start_time_container">
-
-                    <EditText
-                        android:id="@+id/et_StartTime"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:hint="Start Time"
-                        android:inputType="time"
-                        android:textColorHint="@color/darkPurple"
-                        android:textColor="@color/darkPurple"
-                        android:textSize="16sp"
-                        android:textStyle="normal"
-                        android:typeface="normal"
-                        android:fontFamily="sans-serif"
-                        android:background="@null"
-                        android:paddingEnd="8dp" />
-
-                    <Spinner
-                        android:id="@+id/spinner_ampm1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="60dp"
-                        android:entries="@array/ampm_choices"
-                        android:spinnerMode="dropdown"
-                        android:backgroundTint="@color/darkPurple" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Event End Date -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2"
-                android:layout_marginBottom="12dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minHeight="48dp"
-                    android:background="@drawable/bg_date_box"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="12dp"
+                    android:paddingVertical="8dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -254,6 +203,68 @@
                         android:padding="4dp" />
                 </LinearLayout>
 
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="379dp"
+                android:layout_height="wrap_content"
+                android:text="Event Time *:"
+                android:textColor="@color/purpleText"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Event End Date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="40dp"
+                    android:background="@drawable/bg_date_box"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/event_start_time_container">
+
+                    <EditText
+                        android:id="@+id/et_StartTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:hint="Start Time"
+                        android:inputType="time"
+                        android:textColorHint="@color/darkPurple"
+                        android:textColor="@color/darkPurple"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:typeface="normal"
+                        android:fontFamily="sans-serif"
+                        android:background="@null"
+                        android:paddingEnd="8dp" />
+
+                    <Spinner
+                        android:id="@+id/spinner_ampm1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="50dp"
+                        android:entries="@array/ampm_choices"
+                        android:spinnerMode="dropdown"
+                        android:backgroundTint="@color/darkPurple" />
+                </LinearLayout>
+
+
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
@@ -263,11 +274,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingVertical="12dp"
+                    android:paddingVertical="8dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -295,7 +306,7 @@
                         android:id="@+id/spinner_ampm2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minWidth="60dp"
+                        android:minWidth="50dp"
                         android:entries="@array/ampm_choices"
                         android:spinnerMode="dropdown"
                         android:backgroundTint="@color/darkPurple" />
@@ -355,11 +366,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingVertical="12dp"
+                    android:paddingVertical="8dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
@@ -399,11 +410,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:background="@drawable/bg_date_box"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingVertical="12dp"
+                    android:paddingVertical="8dp"
                     android:paddingHorizontal="8dp"
                     android:clickable="true"
                     android:focusable="true"
