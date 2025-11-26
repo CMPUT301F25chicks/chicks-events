@@ -113,15 +113,6 @@ public class CreateEventFragment extends Fragment {
         adapter.setDropDownViewResource(R.layout.spinner_item);
         binding.spinnerAmpm1.setAdapter(adapter);
         binding.spinnerAmpm2.setAdapter(adapter);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.ampm_choices,
-                R.layout.spinner_item
-        );
-        adapter.setDropDownViewResource(R.layout.spinner_item_dropdown);
-        Spinner a = view.findViewById(R.id.spinner_ampm1);
-        Spinner b = view.findViewById(R.id.spinner_ampm2);
         a.setAdapter(adapter);
         b.setAdapter(adapter);
 //        .setAdapter(adapter);
@@ -327,7 +318,6 @@ public class CreateEventFragment extends Fragment {
             toast("Please enter end date as MM-DD-YYYY");
             return;
         }
-<<<<<<< HEAD
         
         // Validate that end date is >= start date
         if (endDate.before(startDate)) {
@@ -434,7 +424,6 @@ public class CreateEventFragment extends Fragment {
 
         // Generate and save QR code
         generateAndSaveQRCode(eventId, eventName);
-<<<<<<< HEAD
         
         // Handle image upload if present (async, don't block navigation)
         if (imageUri != null) {
