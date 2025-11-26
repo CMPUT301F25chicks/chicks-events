@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -65,7 +66,7 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
         TextView eventName;
         ImageButton btnDelete;
 
-        ImageButton posterImageView;
+        ImageView posterImageView;
         String eventId; // track which event this view belongs to
 
         public ViewHolder(@NonNull View itemView) {

@@ -133,24 +133,35 @@ public class Admin extends User {
     public Task<List<Organizer>> browseOrganizers() {
         TaskCompletionSource<List<Organizer>> tcs = new TaskCompletionSource<>();
 
-        organizerService.getReference().get().addOnSuccessListener(snapshot -> {
+        // Get all events and extract unique organizer IDs
+        eventsService.getReference().get().addOnSuccessListener(snapshot -> {
             List<Organizer> organizers = new ArrayList<>();
-            for (DataSnapshot child : snapshot.getChildren()) {
-                Organizer o = child.getValue(Organizer.class);
-                if (o != null) {
-                    try {
-                        o.setOrganizerId(child.getKey());
-                    } catch (Exception ignored) {
-                        // Ignore if setter fails (e.g., no such method)
+            java.util.Set<String> organizerIds = new java.util.HashSet<>();
+
+            // Collect all unique organizer IDs from events
+            for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                HashMap<String, Object> eventData = (HashMap<String, Object>) eventSnapshot.getValue();
+                if (eventData != null) {
+                    Object organizerId = eventData.get("organizer");
+                    if (organizerId != null && !organizerId.toString().isEmpty()) {
+                        organizerIds.add(organizerId.toString());
                     }
-                    organizers.add(o);
                 }
             }
+
+            // Create Organizer objects for each unique organizer ID
+            // Use a placeholder eventId since Organizer constructor requires it
+            for (String organizerId : organizerIds) {
+                Organizer organizer = new Organizer(organizerId, "");
+                organizers.add(organizer);
+            }
+
             tcs.setResult(organizers);
         }).addOnFailureListener(tcs::setException);
 
         return tcs.getTask();
     }
+
 
     /**
      * Browses (reads) the admin's profile.
