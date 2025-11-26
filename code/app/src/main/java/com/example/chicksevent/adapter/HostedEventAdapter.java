@@ -130,7 +130,6 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
 //
         Event event = getItem(position);
 
-        TextView status = view.findViewById(R.id.tv_status);
         TextView event_name = view.findViewById(R.id.tv_event_name);
         TextView tv_startTime = view.findViewById(R.id.tv_startTime);
         TextView tv_endTime = view.findViewById(R.id.tv_endTime);

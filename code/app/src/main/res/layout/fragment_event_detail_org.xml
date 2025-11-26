@@ -49,16 +49,6 @@
                 android:background="@drawable/bg_notification_item"
                 android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/tv_registration_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Oct 2nd"
-                    android:textColor="@color/dateBox"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
 
                 <ImageView
                     android:id="@+id/img_event"
@@ -192,16 +182,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="224dp"
-                    android:layout_height="22dp"
-                    android:layout_marginStart="16dp"
-                    android:text="Registration Deadline:"
-                    android:textColor="@color/purpleText"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_registration_open" />
+
 
                 <TextView
                     android:id="@+id/tv_event_name"
@@ -222,11 +203,50 @@
                     android:layout_height="22dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="12dp"
-                    android:text="Registration Open:"
+                    android:text="Registration Period:"
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/period" />
+
+                <LinearLayout
+                    android:id="@+id/reg_period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView">
+
+                    <TextView
+                        android:id="@+id/tv_registration_open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="Oct 2nd"
+                        android:textColor="@color/dateBox"
+                        android:textSize="16sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_dash2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:text=" - "
+                        android:textColor="@color/dateBox"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:id="@+id/tv_registration_deadline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Oct 15th"
+                        android:textColor="@color/dateBox"
+                        android:textSize="16sp"/>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/textView9"
@@ -239,16 +259,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_entrants_count" />
 
-                <TextView
-                    android:id="@+id/tv_registration_deadline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Oct 15th"
-                    android:textColor="@color/dateBox"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
 
                 <TextView
                     android:id="@+id/textView8"
@@ -259,7 +270,7 @@
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_registration_deadline" />
+                    app:layout_constraintTop_toBottomOf="@+id/reg_period" />
 
                 <TextView
                     android:id="@+id/tv_entrants_count"
