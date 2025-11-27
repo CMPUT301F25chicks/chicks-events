@@ -267,16 +267,24 @@ public class UpdateEventFragment extends Fragment {
                             binding.etMaxEntrants.setText(limit);
 
                         }
-
-                        imageService.getReference().child(eventId).get().addOnSuccessListener(task -> {
+                        try {
+                            imageService.getReference().child(eventId).get().addOnSuccessListener(task -> {
 //            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
 //                            if (!event.getId().equals(holder.eventId) || task.getValue() == null) return;
 
-                            String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
-                            byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            binding.imgEventPoster.setImageBitmap(bitmap);
-                        });
+                                HashMap<String, String> hash = ((HashMap<String, String>) task.getValue());
+                                if (hash != null) {
+                                    String base64Image = hash.get("url");
+                                    byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    binding.imgEventPoster.setImageBitmap(bitmap);
+                                }
+
+                            });
+                        } catch (Exception e) {
+                            Log.i("image", "no image");
+                        }
+
 
                     } else {
                         Log.e("EventDetail", "Event not found for id: " + eventId);

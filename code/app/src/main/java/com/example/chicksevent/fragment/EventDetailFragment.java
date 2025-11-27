@@ -228,7 +228,7 @@ public class EventDetailFragment extends Fragment {
             });
         }
 
-        getEventDetail().addOnCompleteListener(t -> {
+        getWaitingCount().continueWithTask(wc -> getEventDetail()).addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
 //            if (!t.isSuccessful()) return;
             if (t.getResult()==1) {
@@ -456,6 +456,7 @@ public class EventDetailFragment extends Fragment {
                             }
                         }
                     }
+                    waitingListCount = total;
                     return total;
                 });
     }
