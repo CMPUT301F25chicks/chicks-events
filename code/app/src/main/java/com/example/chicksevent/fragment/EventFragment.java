@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,6 +82,11 @@ public class EventFragment extends Fragment {
     /** The Android device ID (used to correlate joined events). */
     private String androidId;
 
+    private String filterAvailability;
+
+    private LocalDate filterStart;
+    private LocalDate filterEnd;
+
 
     /**
      * Inflates the fragment layout using ViewBinding.
@@ -109,6 +115,8 @@ public class EventFragment extends Fragment {
         if (args != null) {
             filterApplied = true;
             eventFilterList = args.getStringArrayList("eventList");
+            filterAvailability = args.getString("filterAvailability");
+
             // Use it to populate UI
         }
 
@@ -200,6 +208,8 @@ public class EventFragment extends Fragment {
         });
     }
 
+
+
     /**
      * Lists only the events whose ids are present in {@link #eventFilterList}. Results are read
      * in one shot from the <code>Event</code> root and bound to the list view.
@@ -207,6 +217,9 @@ public class EventFragment extends Fragment {
     public void listFilteredEvents() {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
+//        Log.i("what is filter", filterAvailability);
+
+
         eventDataList = new ArrayList<>();
         eventService.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -221,9 +234,12 @@ public class EventFragment extends Fragment {
 
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
+
+
                     if (eventFilterList.contains(key)) {
                         Event e = new Event("e", value.get("id"), value.get("name"),  value.get("eventDetails"), value.get("eventStartTime"), value.get("eventEndTime"), value.get("eventStartDate"), "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
                         eventDataList.add(e);
+
                     }
 
 

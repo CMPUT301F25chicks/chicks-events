@@ -1,5 +1,10 @@
 package com.example.chicksevent.misc;
 
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
+import static java.time.temporal.TemporalAdjusters.nextOrSame;
+import static java.time.temporal.TemporalAdjusters.previousOrSame;
+
 import android.util.Log;
 
 import com.example.chicksevent.enums.NotificationType;
@@ -8,6 +13,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +110,43 @@ public class User {
         this.bannedFromOrganizer = false;
     }
 
+    public ArrayList<LocalDate> getFilterDate(String filterAvailability) {
+        LocalDate today = LocalDate.now();
+        LocalDate filterStart;
+        LocalDate filterEnd;
+        ArrayList<LocalDate> filterArr = new ArrayList<>();
+        if (filterAvailability.equals("This Week")) {
+
+            filterStart = today.with(previousOrSame(SUNDAY));
+            filterEnd = today.with(nextOrSame(SUNDAY));
+        } else if (filterAvailability.equals("This Weekend")) {
+            filterStart = today.with(nextOrSame(SATURDAY));
+            filterEnd = today.with(nextOrSame(SUNDAY));
+        } else if (filterAvailability.equals("Next Week")) {
+            filterStart = today.with(nextOrSame(SUNDAY));
+            filterEnd = today.with(nextOrSame(SUNDAY)).with(nextOrSame(SUNDAY));
+        } else if (filterAvailability.equals("Next Month")) {
+            LocalDate firstOfNextMonth = today
+                    .plusMonths(1)
+                    .withDayOfMonth(1);
+
+            LocalDate firstOfNextNextMonth = today
+                    .plusMonths(2)
+                    .withDayOfMonth(1);
+
+            filterStart = firstOfNextMonth;
+
+            filterEnd = firstOfNextNextMonth;
+        } else {
+            filterStart = today;
+            filterEnd = today;
+        }
+
+        filterArr.add(filterStart);
+        filterArr.add(filterEnd);
+        return filterArr;
+    }
+
     /**
      * Returns a list of event IDs whose tags match any of the provided filter tokens.
      * <p>
@@ -112,9 +156,12 @@ public class User {
      * @param filterList case-sensitive tokens to match against event tags
      * @return a task resolving to a list of matching event IDs
      */
-    public Task<ArrayList<String>> filterEvents(ArrayList<String> filterList) {
+    public Task<ArrayList<String>> filterEvents(ArrayList<String> filterList, String filterAvailability) {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
+        ArrayList<LocalDate> filterArr = getFilterDate(filterAvailability);
+        LocalDate filterStart = filterArr.get(0);
+        LocalDate filterEnd = filterArr.get(1);
         return eventService.getReference().get().continueWith(task -> {
             Log.d(TAG, "=== filtering events ===");
             ArrayList<String> eventList = new ArrayList<>();
@@ -123,15 +170,54 @@ public class User {
             for (DataSnapshot childSnapshot : task.getResult().getChildren()) {
                 String key = childSnapshot.getKey();
                 String[] value = ((Map<String, String>) childSnapshot.getValue()).get("tag").split(",");
+                Map<String, String> value2 = ((Map<String, String>) childSnapshot.getValue());
+                boolean addEvent = false;
 
 
                 Log.d(TAG, "Key: " + key);
                 for (String val : value) {
                     Log.d(TAG, "Value: " + val);
                     if (filterList.contains(val)) {
-                        eventList.add(key);
+                        addEvent = true;
+//                        eventList.add(key);
 //                        return eventList;
                     }
+                }
+                if (filterList.size() == 0 || filterList.contains(((Map<String, String>) childSnapshot.getValue()).get("name"))) {
+//                    eventList.add(key);
+                    addEvent = true;
+                }
+
+                Log.i("filter event", addEvent ? "yes" : "no");
+
+                try {
+                    if (value2.get("eventStartDate") != null) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+                        LocalDate date = LocalDate.parse(value2.get("eventStartDate"), formatter);
+                        if (date.isBefore(filterStart)) addEvent = false;
+                        Log.i("filter event", "set false a" );
+                        Log.i("filter event", date.toString());
+                        Log.i("filter event", filterStart.toString());
+
+
+                    }
+                    if (value2.get("eventEndDate") != null) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+                        LocalDate date = LocalDate.parse(value2.get("eventEndDate"), formatter);
+                        if (date.isAfter(filterEnd)) addEvent = false;
+                        Log.i("filter event", "set false b");
+                        Log.i("filter event", date.toString());
+                        Log.i("filter event", filterEnd.toString());
+
+                    }
+                } catch (Exception e) {
+                    Log.i("filter error", e.toString());
+                    addEvent = false;
+                }
+
+                if (addEvent) {
+//                    Event e = new Event("e", value.get("id"), value.get("name"),  value.get("eventDetails"), value.get("eventStartTime"), value.get("eventEndTime"), value.get("eventStartDate"), "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
+                    eventList.add(key);
                 }
 
                 Log.d(TAG, "---");

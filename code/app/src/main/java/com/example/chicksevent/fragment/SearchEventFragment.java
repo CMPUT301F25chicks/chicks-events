@@ -1,11 +1,13 @@
 package com.example.chicksevent.fragment;
 
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -46,6 +48,9 @@ import java.util.ArrayList;
  */
 public class SearchEventFragment extends Fragment {
 
+    ArrayList<String> filters = new ArrayList<>();
+    String filterAvailability = null;
+
     /** Default constructor inflating the search event layout. */
     public SearchEventFragment() {
         super(R.layout.fragment_search_event);
@@ -77,7 +82,15 @@ public class SearchEventFragment extends Fragment {
         Button   btnClear         = view.findViewById(R.id.btn_clear_filter);
         ImageButton   btnFilter        = view.findViewById(R.id.btn_filter);
         LinearLayout filterPanel = view.findViewById(R.id.filter_panel);
+        Button btnSave = view.findViewById(R.id.btn_save);
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.availability_options,
+                R.layout.spinner_item
+        );
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        spAvailability.setAdapter(adapter);
 
         // Create a User using device id (same pattern you used elsewhere)
         String androidId = Settings.Secure.getString(
@@ -87,12 +100,17 @@ public class SearchEventFragment extends Fragment {
         User user = new User(androidId);
 
         btnFilter.setOnClickListener(v -> {
-            filterPanel.setVisibility(VISIBLE);
+            if (filterPanel.getVisibility() == VISIBLE) {
+                filterPanel.setVisibility(INVISIBLE);
+            } else {
+                filterPanel.setVisibility(VISIBLE);
+            }
+
         });
 
         // Apply filter -> call your User.filterEvents(ArrayList<String>)
         btnApply.setOnClickListener(v -> {
-            ArrayList<String> filters = new ArrayList<>();
+            filters = new ArrayList<>();
 
             // interests: split by spaces or commas
             String interest = etInterest.getText().toString().trim();
@@ -101,22 +119,34 @@ public class SearchEventFragment extends Fragment {
                     if (!token.isEmpty()) filters.add(token);
                 }
             }
+
+
 //            for (String z : filters) {
 //                Log.i("what is filter", z);
 //
 //            }
 
             // availability (optional): if not "Any", add as a tag
-//            if (spAvailability != null && spAvailability.getSelectedItem() != null) {
-//                String opt = spAvailability.getSelectedItem().toString().trim();
-//                if (!opt.equalsIgnoreCase("Any") && !opt.isEmpty()) {
-//                    filters.add(opt);
-//                }
-//            }
+            if (spAvailability != null && spAvailability.getSelectedItem() != null) {
+                filterAvailability = spAvailability.getSelectedItem().toString();
+            }
+
+            Toast.makeText(getContext(),
+                    "filter applied",
+                    Toast.LENGTH_SHORT).show();
+
+            filterPanel.setVisibility(INVISIBLE);
+        });
+
+        btnSave.setOnClickListener(v -> {
+            EditText searchBar = view.findViewById(R.id.search_bar);
+            if (!searchBar.getText().toString().equals("")) {
+                filters.add(searchBar.getText().toString());
+            }
 
             Log.i("filteringthing", "what is this filter " + filters);
 
-            user.filterEvents(filters).addOnCompleteListener(task -> {
+            user.filterEvents(filters, filterAvailability).addOnCompleteListener(task -> {
                 if (!isAdded()) return;
 //                boolean ok = task.isSuccessful() && Boolean.TRUE.equals(task.getResult());
 
@@ -129,6 +159,7 @@ public class SearchEventFragment extends Fragment {
                 NavController navController = NavHostFragment.findNavController(SearchEventFragment.this);
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("eventList", eventList);
+                bundle.putString("filterAvailability", filterAvailability);
                 navController.navigate(R.id.action_SearchEventFragment_to_EventFragment, bundle);
 
                 // TODO: if ok, you can now refresh your RecyclerView with matching events
