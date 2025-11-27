@@ -5,14 +5,13 @@ const {Parser} = require("json2csv");
 admin.initializeApp();
 
 /**
- * HTTP-triggered function to export the INVITED entrants list for an event.
+ * HTTP-triggered function to export the ACCEPTED entrants list for an event.
  *
- * Reads entrant IDs from `/WaitingList/{eventId}/INVITED`, fetches user details
- * for each ID from the `/User` root, converts the data to CSV format, and
- * triggers a file download in the browser.
+ * Reads entrant IDs from `/WaitingList/{eventId}/ACCEPTED`, fetches user
+ * details for each ID from `/User`, converts to CSV, and triggers download.
  *
  * @param {functions.https.Request} request The HTTP request object.
- * Expects an 'eventId' query parameter.
+ *   Expects an 'eventId' query parameter.
  * @param {functions.https.Response} response The HTTP response object.
  */
 exports.exportFinalEntrants = functions.https.onRequest(async (request,
@@ -28,14 +27,14 @@ exports.exportFinalEntrants = functions.https.onRequest(async (request,
 
     functions.logger.info(`Starting CSV export for eventId: ${eventId}`);
 
-    // Point to the INVITED list
-    const invitedEntrantsRef = admin.database()
-        .ref(`/WaitingList/${eventId}/INVITED`);
-    const snapshot = await invitedEntrantsRef.once("value");
+    // --- FIX: Point to the ACCEPTED list ---
+    const finalEntrantsRef = admin.database()
+        .ref(`/WaitingList/${eventId}/ACCEPTED`);
+    const snapshot = await finalEntrantsRef.once("value");
 
     if (!snapshot.exists()) {
       functions.logger.warn(
-          `No entrants in INVITED list for ${eventId}`,
+          `No entrants in ACCEPTED list for ${eventId}`,
       );
       // Send an empty CSV with headers so the user knows it worked.
       const fields = ["userId", "name", "email", "phone"];
@@ -43,18 +42,19 @@ exports.exportFinalEntrants = functions.https.onRequest(async (request,
       const csv = json2csvParser.parse([]); // Empty array
 
       response.setHeader("Content-disposition",
-          "attachment; filename=invited-entrants.csv");
+          "attachment; filename=final-entrants.csv");
       response.setHeader("Content-type", "text/csv");
       response.status(200).send(csv);
       return;
     }
 
     const entrantIds = Object.keys(snapshot.val());
-    functions.logger.info(`Found ${entrantIds.length} entrant(s) in INVITED.`);
+    functions.logger.info(`Found ${entrantIds.length} entrant(s) in ACCEPTED.`);
 
-    const userPromises = entrantIds.map((userId) =>
-      admin.database().ref(`/User/${userId}`).once("value"),
-    );
+    const userPromises = entrantIds
+        .map((userId) =>
+          admin.database().ref(`/User/${userId}`).once("value"),
+        );
 
     const userSnapshots = await Promise.all(userPromises);
 
@@ -73,7 +73,7 @@ exports.exportFinalEntrants = functions.https.onRequest(async (request,
     const json2csvParser = new Parser({fields});
     const csv = json2csvParser.parse(entrantsData);
 
-    const fileName = `invited-entrants-${eventId}.csv`;
+    const fileName = `final-entrants-${eventId}.csv`;
     response.setHeader("Content-disposition",
         `attachment; filename=${fileName}`);
     response.setHeader("Content-type", "text/csv");
