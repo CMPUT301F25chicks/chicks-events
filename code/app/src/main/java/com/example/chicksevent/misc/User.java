@@ -5,6 +5,7 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.time.temporal.TemporalAdjusters.nextOrSame;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.chicksevent.enums.NotificationType;
@@ -110,6 +111,7 @@ public class User {
         this.bannedFromOrganizer = false;
     }
 
+    @SuppressLint("NewApi")
     public ArrayList<LocalDate> getFilterDate(String filterAvailability) {
         LocalDate today = LocalDate.now();
         LocalDate filterStart;
@@ -156,6 +158,7 @@ public class User {
      * @param filterList case-sensitive tokens to match against event tags
      * @return a task resolving to a list of matching event IDs
      */
+    @SuppressLint("NewApi")
     public Task<ArrayList<String>> filterEvents(ArrayList<String> filterList, String filterAvailability) {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);

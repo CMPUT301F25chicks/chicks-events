@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * Fragment that allows users to search and filter events by interests and availability.
  * <p>
  * This screen collects user-defined search filters and invokes
- * {@link User#filterEvents(ArrayList)} to retrieve matching event IDs
+ * filterEvents to retrieve matching event IDs
  * from Firebase. Results are passed to {@link EventFragment} for display.
  * </p>
  *
