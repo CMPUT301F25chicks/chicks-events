@@ -38,6 +38,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp" />
 
+
             <!-- Event Box -->
 
             <!-- Action Buttons -->
@@ -124,7 +125,21 @@
                         android:textColor="@color/purpleText"
                         android:textSize="14sp" />
 
+
+
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/help_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Help"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/time"
+                    android:backgroundTint="@color/purpleText"
+                    android:textColor="@color/black"/>
 
                 <TextView
                     android:id="@+id/eventPeriod"
@@ -136,7 +151,8 @@
                     android:textColor="@color/purpleText"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/time" />
+                    app:layout_constraintTop_toBottomOf="@id/help_button" />
+
 
                 <LinearLayout
                     android:id="@+id/period"
@@ -429,17 +445,7 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <ImageButton
-                                            android:id="@+id/help_button"
-                                            android:layout_width="60dp"
-                                            android:layout_height="48dp"
-                                            android:layout_marginTop="264dp"
-                                            android:scaleType="centerCrop"
-                                            android:src="@drawable/sample_image"
-                                            app:layout_constraintEnd_toEndOf="parent"
-                                            app:layout_constraintHorizontal_bias="1.0"
-                                            app:layout_constraintStart_toStartOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent" />
+
 
                         <LinearLayout
                             android:id="@+id/layout_not_chosen_status"

@@ -1,7 +1,9 @@
 package com.example.chicksevent.fragment;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -399,6 +401,19 @@ public class EventDetailFragment extends Fragment {
                         binding.tvRegistrationOpen.setText(formatDatePretty(startReg));
                         binding.tvRegistrationDeadline.setText(formatDatePretty(endReg));
                         binding.etEventTag.setText(tag);
+
+                        binding.helpButton.setOnClickListener(l -> {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Lottery Info")
+                                    .setMessage("Join the waiting list and wait for the organizer to pool. then accept the invite and you will be in the event.")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .show();
+                        });
 
 
                         if (startDateStr != null) {
