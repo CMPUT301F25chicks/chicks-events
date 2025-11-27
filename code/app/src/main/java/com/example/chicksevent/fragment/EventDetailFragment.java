@@ -404,8 +404,12 @@ public class EventDetailFragment extends Fragment {
 
                         binding.helpButton.setOnClickListener(l -> {
                             new AlertDialog.Builder(getContext())
-                                    .setTitle("Lottery Info")
-                                    .setMessage("Join the waiting list and wait for the organizer to pool. then accept the invite and you will be in the event.")
+                                    .setTitle("LOTTERY SELECTION GUIDELINE")
+                                    .setMessage("1. Join the waiting list and wait for the organizer to pool.\n " +
+                                            "2. You may receive a notification about the pooling result.\n" +
+                                            "3. If you are selected, you may choose to accept or decline the invitation.\n" +
+                                            "4. If you are not selected, you may choose to rejoin the waiting list (repool may occur if the number of participants does not exceed the limit).\n" +
+                                            "5. If you accept your invitation, congratulations, you are in the final list for the event.")
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
