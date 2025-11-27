@@ -8,6 +8,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.view.View;
+
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
@@ -17,6 +19,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -348,21 +351,51 @@ public class AdminBrowseImagesUITest {
      * via the action_NotificationFragment_to_AdminHomeFragment. In a full test setup,
      * this would require admin user authentication.
      */
-    private void navigateToAdminHome() {
-        // Note: In a full implementation, navigation to admin home would be:
-        // 1. From NotificationFragment, there should be a way to navigate to admin home
-        // 2. This might require admin authentication or a specific user role
-        // 
-        // For testing purposes, we assume we can navigate to admin home.
-        // If the screen is not accessible, the tests will fail gracefully when
-        // trying to find the image browsing button.
+    private boolean navigateToAdminHome() {
         try {
-            // Try to navigate if there's a direct way
-            // For now, we'll assume we're on NotificationFragment or can navigate there
-            // and then to admin home
+            try {
+                Thread.sleep(3000); // Wait for app to check admin status and navigate
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+            
+            // Wait for AdminHomeFragment elements to appear
+            try {
+                waitForView(withId(R.id.btn_admin_notification), 15);
+                waitForView(withId(R.id.btn_admin_event), 10);
+                waitForView(withId(R.id.btn_admin_org), 10);
+                return true;
+            } catch (Exception e) {
+                // Admin navigation might have failed (user might not be admin)
+                return false;
+            }
         } catch (Exception e) {
-            // If navigation fails, assume we're already on admin home
-            // or handle navigation differently
+            return false;
+        }
+    }
+    
+    /**
+     * Waits for a view to be displayed with retries.
+     */
+    private void waitForView(Matcher<View> viewMatcher, int maxAttempts) {
+        int attempts = 0;
+        while (attempts < maxAttempts) {
+            try {
+                onView(viewMatcher).check(matches(isDisplayed()));
+                return;
+            } catch (Exception e) {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(ie);
+                }
+            }
         }
     }
 

@@ -7,11 +7,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.not;
 
+import android.view.View;
+
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.chicksevent.fragment.CreateEventFragment;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,11 +44,39 @@ public class CreateEventFragmentTest {
     @Test
     public void testButtonsDisplayed() {
         onView(withId(R.id.btn_addEvent)).perform(click());
+        
+        // Wait for CreateEventFragment to load
+        waitForView(withId(R.id.et_event_name), 15);
+        
         onView(withId(R.id.btn_notification)).check(matches(isDisplayed()));
         onView(withId(R.id.btn_events)).check(matches(isDisplayed()));
         onView(withId(R.id.cb_limit_waiting_list)).check(matches(isDisplayed()));
         onView(withId(R.id.btn_create_event)).check(matches(isDisplayed()));
         onView(withId(R.id.btn_cancel)).check(matches(isDisplayed()));
+    }
+    
+    /**
+     * Waits for a view to be displayed with retries.
+     */
+    private void waitForView(Matcher<View> viewMatcher, int maxAttempts) {
+        int attempts = 0;
+        while (attempts < maxAttempts) {
+            try {
+                onView(viewMatcher).check(matches(isDisplayed()));
+                return; // View is displayed, exit
+            } catch (Exception e) {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    throw e; // Re-throw if max attempts reached
+                }
+                try {
+                    Thread.sleep(500); // Wait for 500ms before retrying
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(ie);
+                }
+            }
+        }
     }
 
     /**
