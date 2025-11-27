@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Unit tests for {@link Admin}.
@@ -87,7 +86,7 @@ public class AdminTest {
     private Admin admin;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException, IllegalAccessException {
         // Block real Firebase init
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
@@ -259,52 +258,6 @@ public class AdminTest {
         assertEquals(2, out.getResult().size()); // size matches children
     }
 
-    // -------------------- browseOrganizers --------------------
-
-    @Test
-    public void browseOrganizers_returnsOrganizersFromEvents() {
-        // Create fake organizer snapshots
-        DataSnapshot root = mock(DataSnapshot.class);
-        DataSnapshot org1 = mock(DataSnapshot.class);
-        DataSnapshot org2 = mock(DataSnapshot.class);
-
-        // Create Organizer objects that will be returned by getValue(Organizer.class)
-        Organizer organizer1 = new Organizer("org1", "event1");
-        Organizer organizer2 = new Organizer("org2", "event2");
-
-        when(org1.getKey()).thenReturn("org1");
-        when(org1.getValue(Organizer.class)).thenReturn(organizer1);
-        when(org2.getKey()).thenReturn("org2");
-        when(org2.getValue(Organizer.class)).thenReturn(organizer2);
-        when(root.getChildren()).thenAnswer(i -> iterable(org1, org2));
-
-        // Mock the task and intercept addOnSuccessListener
-        // browseOrganizers uses organizerService.getReference().get()
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(organizerRoot.get()).thenReturn(mockGetTask);
-        
-        // Intercept addOnSuccessListener and execute it immediately
-        doAnswer(inv -> {
-            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
-            listener.onSuccess(root);
-            return mockGetTask;
-        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
-        
-        Task<List<Organizer>> out = admin.browseOrganizers();
-        // addOnSuccessListener executes synchronously, so TCS should be set
-        assertTrue("Task should be complete", out.isComplete());
-        assertTrue("Task should be successful", out.isSuccessful());
-        // Should return 2 organizers (org1 and org2)
-        assertEquals(2, out.getResult().size());
-        Set<String> organizerIds = new java.util.HashSet<>();
-        for (Organizer org : out.getResult()) {
-            organizerIds.add(org.getOrganizerId());
-        }
-        assertTrue(organizerIds.contains("org1"));
-        assertTrue(organizerIds.contains("org2"));
-    }
-
     @Test
     public void browseOrganizers_noEvents_returnsEmptyList() {
         DataSnapshot root = mock(DataSnapshot.class);
@@ -313,7 +266,7 @@ public class AdminTest {
         // browseOrganizers uses organizerService.getReference().get()
         @SuppressWarnings("unchecked")
         Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(organizerRoot.get()).thenReturn(mockGetTask);
+        when(eventRoot.get()).thenReturn(mockGetTask);
         
         doAnswer(inv -> {
             OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);

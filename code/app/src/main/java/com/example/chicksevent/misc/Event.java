@@ -135,7 +135,7 @@ public class Event {
         this.registrationEndDate = registrationEndDate;
         this.entrantLimit = entrantLimit;
 
-        this.poster = poster == null ? "" : tag;
+        this.poster = poster == null ? "" : poster;
         this.tag = tag == null ? "" : tag;
         this.geolocationRequired = geolocationRequired;
         this.onHold = false;
