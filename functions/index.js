@@ -5,79 +5,83 @@ const {Parser} = require("json2csv");
 admin.initializeApp();
 
 /**
- * HTTP-triggered function to export the final list of entrants for an event.
- * It reads the list from WaitingList/{eventId}/FINAL and fetches user details.
- * @param {functions.https.Request} req - The HTTP request object.
- * @param {functions.https.Response} res - The HTTP response object.
+ * HTTP-triggered function to export the INVITED entrants list for an event.
+ *
+ * Reads entrant IDs from `/WaitingList/{eventId}/INVITED`, fetches user details
+ * for each ID from the `/User` root, converts the data to CSV format, and
+ * triggers a file download in the browser.
+ *
+ * @param {functions.https.Request} request The HTTP request object.
+ * Expects an 'eventId' query parameter.
+ * @param {functions.https.Response} response The HTTP response object.
  */
-exports.exportFinalEntrants = functions.https.onRequest(async (req, res) => {
-  // Get the eventId from the request URL (e.g., ?eventId=some-event-id)
-  const eventId = req.query.eventId;
-  if (!eventId) {
-    return res.status(400).send("Query parameter 'eventId' is required.");
-  }
-
+exports.exportFinalEntrants = functions.https.onRequest(async (request,
+    response) => {
   try {
-    const db = admin.database();
-    const finalEntrantsRef = db.ref(`WaitingList/${eventId}/FINAL`);
-
-    const finalEntrantsSnapshot = await finalEntrantsRef.once("value");
-    if (!finalEntrantsSnapshot.exists()) {
-      // If no final list exists, send a valid but empty CSV file
-      res.setHeader("Content-Type", "text/csv");
-      const fileName = `final-entrants-${eventId}.csv`;
-      // This line was broken up to pass the linting check.
-      const disposition = `attachment; filename="${fileName}"`;
-      res.setHeader("Content-Disposition", disposition);
-      // Send only the headers
-      return res.status(200).send("Name,Email\n");
+    const eventId = request.query.eventId;
+    if (!eventId) {
+      functions.logger.error("Request is missing eventId query parameter.");
+      response.status(400)
+          .send("Bad Request: Missing eventId query parameter.");
+      return;
     }
 
-    // Get all user IDs from the FINAL list
-    const finalEntrantIds = Object.keys(finalEntrantsSnapshot.val());
+    functions.logger.info(`Starting CSV export for eventId: ${eventId}`);
 
-    // Fetch all users at once for efficiency
-    const usersRef = db.ref("User");
-    const allUsersSnapshot = await usersRef.once("value");
-    const allUsers = allUsersSnapshot.val();
+    // Point to the INVITED list
+    const invitedEntrantsRef = admin.database()
+        .ref(`/WaitingList/${eventId}/INVITED`);
+    const snapshot = await invitedEntrantsRef.once("value");
 
-    const attendeesData = [];
+    if (!snapshot.exists()) {
+      functions.logger.warn(
+          `No entrants in INVITED list for ${eventId}`,
+      );
+      // Send an empty CSV with headers so the user knows it worked.
+      const fields = ["userId", "name", "email", "phone"];
+      const json2csvParser = new Parser({fields});
+      const csv = json2csvParser.parse([]); // Empty array
 
-    // For each entrant ID, find their details in the "User" root
-    for (const userId of finalEntrantIds) {
-      if (allUsers && allUsers[userId]) {
-        const userData = allUsers[userId];
-        attendeesData.push({
-          name: userData.name || "N/A",
-          email: userData.email || "N/A",
-          // You can add more fields here if they exist
-        });
-      } else {
-        // Handle case where user might be in FINAL list but deleted from User
-        attendeesData.push({
-          name: "User not found",
-          email: userId, // Use ID as an identifier
-        });
-      }
+      response.setHeader("Content-disposition",
+          "attachment; filename=invited-entrants.csv");
+      response.setHeader("Content-type", "text/csv");
+      response.status(200).send(csv);
+      return;
     }
 
-    // Convert the JSON data to a CSV string using json2csv library
-    const fields = ["name", "email"]; // The columns for your CSV
-    const json2csvParser = new Parser({fields});
-    const csv = json2csvParser.parse(attendeesData);
+    const entrantIds = Object.keys(snapshot.val());
+    functions.logger.info(`Found ${entrantIds.length} entrant(s) in INVITED.`);
 
-    // Set HTTP headers to trigger a file download in the browser
-    const fileName = `final-entrants-${eventId}.csv`;
-    res.setHeader("Content-Type", "text/csv");
-    const disposition = `attachment; filename="${fileName}"`;
-    res.setHeader("Content-Disposition", disposition);
-
-    // Send the CSV data as the response
-    res.status(200).send(csv);
-  } catch (error) {
-    functions.logger.error("Error exporting final entrants:", error);
-    res.status(500).send(
-        "An error occurred while generating the CSV file.",
+    const userPromises = entrantIds.map((userId) =>
+      admin.database().ref(`/User/${userId}`).once("value"),
     );
+
+    const userSnapshots = await Promise.all(userPromises);
+
+    const entrantsData = userSnapshots.map((userSnapshot) => {
+      const userId = userSnapshot.key;
+      const userData = userSnapshot.val() || {};
+      return {
+        userId: userId,
+        name: userData.name || "N/A",
+        email: userData.email || "N/A",
+        phone: userData.phone || "N/A",
+      };
+    });
+
+    const fields = ["userId", "name", "email", "phone"];
+    const json2csvParser = new Parser({fields});
+    const csv = json2csvParser.parse(entrantsData);
+
+    const fileName = `invited-entrants-${eventId}.csv`;
+    response.setHeader("Content-disposition",
+        `attachment; filename=${fileName}`);
+    response.setHeader("Content-type", "text/csv");
+    response.status(200).send(csv);
+
+    functions.logger.info(`Successfully sent CSV for eventId: ${eventId}`);
+  } catch (error) {
+    functions.logger.error("Error generating CSV:", error);
+    response.status(500).send("Internal Server Error: Could not make CSV.");
   }
 });
