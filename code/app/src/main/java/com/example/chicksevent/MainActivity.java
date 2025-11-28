@@ -1,5 +1,6 @@
 package com.example.chicksevent;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     /** ViewBinding instance for accessing layout components. */
     private ActivityMainBinding binding;
+
+    /** MediaPlayer instance for playing background music. */
+    private MediaPlayer mediaPlayer;
 
     /**
      * Called when the activity is first created.
@@ -90,6 +94,36 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.ProfileFragment);
 
         });
+
+        // Play "Stand By Me" when the app starts
+        playStandByMe();
+    }
+
+    /**
+     * Plays the "Stand By Me" song when the app starts.
+     */
+    private void playStandByMe() {
+        try {
+            mediaPlayer = MediaPlayer.create(this, R.raw.stand_by_me);
+            if (mediaPlayer != null) {
+                mediaPlayer.setLooping(false);
+                mediaPlayer.start();
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error playing Stand By Me", e);
+        }
+    }
+
+    /**
+     * Releases the MediaPlayer when the activity is destroyed.
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     /**
