@@ -164,7 +164,7 @@ public class User {
         Log.i(TAG, "e" + eventService);
         LocalDate filterStart;
         LocalDate filterEnd;
-        if (filterAvailability != null) {
+        if (filterAvailability != null && !filterAvailability.equals("Anytime")) {
             ArrayList<LocalDate> filterArr = getFilterDate(filterAvailability);
             filterStart = filterArr.get(0);
             filterEnd = filterArr.get(1);
