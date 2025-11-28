@@ -210,7 +210,7 @@ public class ProfileFragment extends Fragment {
         HashMap<String, Object> data = new HashMap<>();
 
         userService.getReference().child(userId).get().continueWith(v -> {
-            if (v.getResult() != null) {
+            if (v.getResult() != null && v.getResult().getValue() != null) {
                 return ((HashMap<String, Object>) v.getResult().getValue()).get("bannedFromOrganizer");
             }
 

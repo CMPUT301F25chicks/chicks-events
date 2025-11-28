@@ -174,17 +174,26 @@ public class EventFragment extends Fragment {
         ArrayList<String> arr = new ArrayList<>();
         waitingListService.getReference().get().continueWith(task -> {
             for (DataSnapshot ds : task.getResult().getChildren()) {
-                HashMap<String, HashMap<String, Object>> waitingList = (HashMap<String, HashMap<String, Object>>) ds.getValue();
-                for (Map.Entry<String, HashMap<String, Object>> entry : waitingList.entrySet()) {
-                    for (Map.Entry<String, Object> entry2 : ((HashMap<String, Object>) entry.getValue()).entrySet()) {
-                        String uid = entry2.getKey();
-                        if (androidId.compareTo(uid) == 0) {
-                            arr.add(ds.getKey());
-                            Log.i("RTD10", "found event " + ds.getKey());
+                try {
+                    HashMap<String, HashMap<String, Object>> waitingList = (HashMap<String, HashMap<String, Object>>) ds.getValue();
+                    for (Map.Entry<String, HashMap<String, Object>> entry : waitingList.entrySet()) {
+                        for (Map.Entry<String, Object> entry2 : ((HashMap<String, Object>) entry.getValue()).entrySet()) {
+                            String uid = entry2.getKey();
+//                        Log.i(uid, )
+                            if (androidId.equals(uid)) {
+                                arr.add(ds.getKey());
+                                Log.i("RTD10", "found event " + ds.getKey());
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    Log.i("RTD10" , e.toString());
                 }
+
             }
+
+            Log.i("RTD10", "hi");
+
 
 
             ArrayList<Event> newEventDataList = new ArrayList<>();
@@ -201,7 +210,19 @@ public class EventFragment extends Fragment {
 
             }
 
-            eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {});
+            Log.i("RTD10", "" + newEventDataList.size());
+
+
+            EventAdapter eventAdapter = new EventAdapter(getContext(), newEventDataList, item -> {
+                NavController navController = NavHostFragment.findNavController(EventFragment.this);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("eventId", item.getId());
+
+                navController.navigate(R.id.action_EventFragment_to_EventDetailFragment, bundle);
+
+            });
+
             eventView.setAdapter(eventAdapter);
 
             return null;
@@ -256,6 +277,7 @@ public class EventFragment extends Fragment {
                 });
 
                 eventView.setAdapter(eventAdapter);
+
 
 
 //                Log.d(TAG, "Total children: " + dataSnapshot.getChildrenCount());

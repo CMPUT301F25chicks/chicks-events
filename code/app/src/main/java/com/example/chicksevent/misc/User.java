@@ -162,9 +162,17 @@ public class User {
     public Task<ArrayList<String>> filterEvents(ArrayList<String> filterList, String filterAvailability) {
         Log.i(TAG, "what");
         Log.i(TAG, "e" + eventService);
-        ArrayList<LocalDate> filterArr = getFilterDate(filterAvailability);
-        LocalDate filterStart = filterArr.get(0);
-        LocalDate filterEnd = filterArr.get(1);
+        LocalDate filterStart;
+        LocalDate filterEnd;
+        if (filterAvailability != null) {
+            ArrayList<LocalDate> filterArr = getFilterDate(filterAvailability);
+            filterStart = filterArr.get(0);
+            filterEnd = filterArr.get(1);
+        } else {
+            filterStart = null;
+            filterEnd = null;
+        }
+
         return eventService.getReference().get().continueWith(task -> {
             Log.d(TAG, "=== filtering events ===");
             ArrayList<String> eventList = new ArrayList<>();
@@ -194,7 +202,7 @@ public class User {
                 Log.i("filter event", addEvent ? "yes" : "no");
 
                 try {
-                    if (value2.get("eventStartDate") != null) {
+                    if (filterStart != null && value2.get("eventStartDate") != null) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                         LocalDate date = LocalDate.parse(value2.get("eventStartDate"), formatter);
                         if (date.isBefore(filterStart)) addEvent = false;
@@ -204,7 +212,7 @@ public class User {
 
 
                     }
-                    if (value2.get("eventEndDate") != null) {
+                    if (filterEnd != null && value2.get("eventEndDate") != null) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                         LocalDate date = LocalDate.parse(value2.get("eventEndDate"), formatter);
                         if (date.isAfter(filterEnd)) addEvent = false;
