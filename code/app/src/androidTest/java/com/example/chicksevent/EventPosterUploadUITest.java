@@ -9,6 +9,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.view.View;
+
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
@@ -18,6 +20,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,11 +107,47 @@ public class EventPosterUploadUITest {
     public void organizer_posterUploadButton_displaysPlaceholder() {
         // Navigate to create event screen
         navigateToCreateEvent();
+        
+        // Wait for CreateEventFragment to load
+        try {
+            waitForView(withId(R.id.et_event_name), 15);
+        } catch (Exception e) {
+            // If et_event_name is not available, try waiting for img_event_poster directly
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
 
         // Verify poster upload button is visible (with placeholder)
         scrollToView(onView(withId(R.id.img_event_poster)));
         onView(withId(R.id.img_event_poster))
                 .check(matches(isDisplayed()));
+    }
+    
+    /**
+     * Waits for a view to be displayed with retries.
+     */
+    private void waitForView(Matcher<View> viewMatcher, int maxAttempts) {
+        int attempts = 0;
+        while (attempts < maxAttempts) {
+            try {
+                onView(viewMatcher).check(matches(isDisplayed()));
+                return; // View is displayed, exit
+            } catch (Exception e) {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    throw e; // Re-throw if max attempts reached
+                }
+                try {
+                    Thread.sleep(500); // Wait for 500ms before retrying
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(ie);
+                }
+            }
+        }
     }
 
     /**
