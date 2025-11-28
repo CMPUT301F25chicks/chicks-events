@@ -30,7 +30,7 @@
         android:text="START SCANNING"
         android:textSize="18sp"
         android:textColor="@color/purpleText"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/darkPurple"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

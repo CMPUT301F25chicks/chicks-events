@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.firebase.database)
+    implementation(libs.espresso.contrib)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -70,6 +71,10 @@ dependencies {
 
     // Espresso for UI interaction testing
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1") // Use the latest stable version
+    // Fragment testing library for FragmentScenario
+    androidTestImplementation ("androidx.fragment:fragment-testing:1.6.1") // latest stable
+
+
 
     implementation("org.osmdroid:osmdroid-android:6.1.18")
     implementation("org.osmdroid:osmdroid-wms:6.1.18")

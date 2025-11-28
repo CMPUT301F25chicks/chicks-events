@@ -121,4 +121,15 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
 
         return view;
     }
+
+    // Test helper (ignored by app)
+    public void cancelEntrantForTest(Entrant e) {
+        DatabaseReference root = FirebaseDatabase.getInstance()
+                .getReference("WaitingList")
+                .child(e.getEventId());
+
+        root.child("INVITED").child(e.getEntrantId()).removeValue();
+        root.child("CANCELLED").child(e.getEntrantId()).setValue(true);
+    }
+
 }

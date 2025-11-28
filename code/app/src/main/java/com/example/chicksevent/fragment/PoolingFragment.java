@@ -48,7 +48,7 @@ import java.util.ArrayList;
  *
  * @author Jordan Kwan
  */
-public class PoolingFragment extends Fragment {
+public abstract class PoolingFragment extends Fragment {
 
     /** View binding for the pooling layout. */
     private FragmentPoolingBinding binding;
@@ -59,16 +59,17 @@ public class PoolingFragment extends Fragment {
     /** Adapter bridging entrant user ids to the list. */
     private EntrantAdapter waitingListAdapter;
 
+
     /** Backing list of users in the chosen status bucket. */
-    private ArrayList<Entrant> entrantDataList = new ArrayList<>();
+    public ArrayList<Entrant> entrantDataList = new ArrayList<>();
 
     /** Firebase service for reading/writing waiting-list buckets. */
-    private FirebaseService waitingListService = new FirebaseService("WaitingList");
+    private FirebaseService waitingListService;
 
     /** Log tag. */
     private static final String TAG = "RTD8";
 
-    private int targetEntrants;
+    public int targetEntrants;
 
 
     /** The event id whose waiting list is being managed. */
@@ -95,6 +96,10 @@ public class PoolingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (waitingListService == null) {
+            waitingListService = createWaitingListService();
+        }
 
         Bundle args = getArguments();
         if (args != null) eventId = args.getString("eventId");
@@ -125,11 +130,15 @@ public class PoolingFragment extends Fragment {
         listEntrants(EntrantStatus.INVITED);
         updateCounters();
     }
+    protected FirebaseService createWaitingListService() {
+        return new FirebaseService("WaitingList");
+    }
+
 
     /**
      * Pools replacement entrants if current chosen < target.
      */
-    private void poolReplacementIfNeeded() {
+    public void poolReplacementIfNeeded() {
         int target = getTargetEntrants();
         int current = getCurrentChosen();
 

@@ -63,13 +63,13 @@ public class ChosenListFragment extends Fragment {
     private FragmentChosenListBinding binding;
 
     /** ListView displaying the list of invited users. */
-    private ListView userView;
+    protected ListView userView;
 
     /** Adapter that binds user data to the ListView. */
     private EntrantAdapter waitingListAdapter;
 
     /** List holding all {@link User} objects currently in the invited list. */
-    private ArrayList<Entrant> entrantDataList = new ArrayList<>();
+    protected ArrayList<Entrant> entrantDataList = new ArrayList<>();
 
     /** Firebase service wrapper scoped to the "WaitingList" root node. */
     private FirebaseService waitingListService = new FirebaseService("WaitingList");
@@ -217,6 +217,7 @@ public class ChosenListFragment extends Fragment {
                     }
                 });
     }
+
 
     /**
      * Utility method to safely convert a {@link CharSequence} to a trimmed string.

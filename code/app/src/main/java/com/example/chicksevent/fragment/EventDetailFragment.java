@@ -146,7 +146,6 @@ public class EventDetailFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             eventIdString = args.getString("eventId");
-            loadEventInfo(eventIdString);
 //            eventName.setText(eventIdString);
         }
 
@@ -369,72 +368,6 @@ public class EventDetailFragment extends Fragment {
         });
     }
 
-    private void loadEventInfo(String eventId) {
-        if (eventId == null) return;
-
-        eventService.getReference().child(eventId).get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.exists()) {
-                        String name = snapshot.child("name").getValue(String.class);
-                        String details = snapshot.child("eventDetails").getValue(String.class);
-                        String startTime = snapshot.child("eventStartTime").getValue(String.class);
-                        String endTime = snapshot.child("eventEndTime").getValue(String.class);
-                        String startDateStr = snapshot.child("eventStartDate").getValue(String.class);
-                        String endDateStr = snapshot.child("eventEndDate").getValue(String.class);
-                        String startReg = snapshot.child("registrationStartDate").getValue(String.class);
-                        String endReg = snapshot.child("registrationEndDate").getValue(String.class);
-
-                        Long limitLong = snapshot.child("entrantLimit").getValue(Long.class);
-                        String limit = limitLong != null ? String.valueOf(limitLong) : "0";
-
-                        // Populate UI
-                        binding.tvDate.setText(startDateStr);
-                        binding.tvEventName.setText(name);
-                        binding.tvEventDetails.setText(details);
-                        binding.tvStartTime.setText(startTime);
-                        binding.tvEndTime.setText(endTime);
-                        binding.tvStartDate.setText(formatDatePretty(startDateStr));
-                        binding.tvEndDate.setText(formatDatePretty(endDateStr));
-                        binding.tvRegistrationOpen.setText(formatDatePretty(startReg));
-                        binding.tvRegistrationDeadline.setText(formatDatePretty(endReg));
-
-                        if (startDateStr != null) {
-                            try {
-                                // Parse the date string
-                                SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
-                                Date date = inputFormat.parse(startDateStr);
-
-                                // Format month abbreviation
-                                SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
-                                String month = monthFormat.format(date).toUpperCase(); // e.g., "OCT"
-
-                                // Get day
-                                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
-                                String day = dayFormat.format(date); // e.g., "30"
-
-                                // Combine
-                                String display = month + "\n" + day;
-
-                                // Set TextView
-                                binding.tvDate.setText(display);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                                binding.tvDate.setText(startDateStr); // fallback
-                            }
-                        }
-
-
-                        // Waiting count
-                        getWaitingCount().addOnSuccessListener(count -> {
-                            binding.tvEntrantsCount.setText(count + " / " + limit);
-                        });
-                    } else {
-                        Log.e("EventDetail", "Event not found for id: " + eventId);
-                    }
-                })
-                .addOnFailureListener(e -> Log.e("EventDetail", "Failed to load event: " + e.getMessage()));
-    }
-
 
 
 
@@ -458,41 +391,82 @@ public class EventDetailFragment extends Fragment {
     }
 
     public Task<Integer> getEventDetail() {
-        return eventService.getReference().get().continueWithTask(task -> {
-            for (DataSnapshot ds : task.getResult().getChildren()) {
+        return eventService.getReference().child(eventIdString).get().continueWithTask(task -> {
 
-                Log.i("browaiting", ds.getKey() + " : " + eventIdString + " ");
-                if (ds.getKey().equals(eventIdString)) {
-                    HashMap<String, Object> hash = (HashMap<String, Object>) ds.getValue();
-                    eventId = (String) hash.get("id");
+            DataSnapshot snapshot = task.getResult();
 
-                    // Check if geolocation is required
-                    Object geoRequired = hash.get("geolocationRequired");
-                    if (geoRequired instanceof Boolean) {
-                        geolocationRequired = (Boolean) geoRequired;
-                    } else {
-                        geolocationRequired = false; // Default to false if not set
-                    }
+            if (!snapshot.exists()) {
+                Log.e("EventDetail", "Event not found: " + eventIdString);
+                return Tasks.forResult(0);
+            }
 
-                    // Check if event is on hold
-                    Object onHoldObj = hash.get("onHold");
-                    if (onHoldObj instanceof Boolean) {
-                        eventOnHold = (Boolean) onHoldObj;
-                    } else {
-                        eventOnHold = false; // Default to false if not set
-                    }
+            // === Read event fields ===
+            String name = snapshot.child("name").getValue(String.class);
+            String details = snapshot.child("eventDetails").getValue(String.class);
+            String startTime = snapshot.child("eventStartTime").getValue(String.class);
+            String endTime = snapshot.child("eventEndTime").getValue(String.class);
 
-                    getWaitingCount();
+            String startDateStr = snapshot.child("eventStartDate").getValue(String.class);
+            String endDateStr = snapshot.child("eventEndDate").getValue(String.class);
+            String startReg = snapshot.child("registrationStartDate").getValue(String.class);
+            String endReg = snapshot.child("registrationEndDate").getValue(String.class);
 
-                    // Return Task<Boolean> directly (no extra wrapping)
-                    return lookWaitingList();
+            Long limitLong = snapshot.child("entrantLimit").getValue(Long.class);
+            String limit = limitLong != null ? String.valueOf(limitLong) : "0";
+
+            // Store ID
+            eventId = snapshot.child("id").getValue(String.class);
+
+            // === Check booleans ===
+            geolocationRequired = snapshot.child("geolocationRequired").getValue(Boolean.class) != null
+                    ? snapshot.child("geolocationRequired").getValue(Boolean.class)
+                    : false;
+
+            eventOnHold = snapshot.child("onHold").getValue(Boolean.class) != null
+                    ? snapshot.child("onHold").getValue(Boolean.class)
+                    : false;
+
+            // === Populate UI ===
+            binding.tvEventName.setText(name);
+            binding.tvEventDetails.setText(details);
+            binding.tvStartTime.setText(startTime);
+            binding.tvEndTime.setText(endTime);
+            binding.tvEntrantsCount.setText(limit);
+            binding.tvStartDate.setText(formatDatePretty(startDateStr));
+            binding.tvEndDate.setText(formatDatePretty(endDateStr));
+            binding.tvRegistrationOpen.setText(formatDatePretty(startReg));
+            binding.tvRegistrationDeadline.setText(formatDatePretty(endReg));
+
+            // === MONTH / DAY block in tvDate ===
+            if (startDateStr != null) {
+                try {
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+                    Date date = inputFormat.parse(startDateStr);
+
+                    SimpleDateFormat monthFormat = new SimpleDateFormat("MMM", Locale.ENGLISH);
+                    SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
+
+                    String month = monthFormat.format(date).toUpperCase();
+                    String day = dayFormat.format(date);
+
+                    binding.tvDate.setText(month + "\n" + day);
+
+                } catch (ParseException e) {
+                    binding.tvDate.setText(startDateStr);
                 }
             }
 
-            // No matching event found, return a completed Task with 'false'
-            return Tasks.forResult(0);
+            // === Async waiting count update ===
+            return getWaitingCount().continueWithTask(countTask -> {
+                int count = countTask.getResult();
+                binding.tvEntrantsCount.setText(count + " / " + limit);
+
+                // Continue to your existing waiting list check
+                return lookWaitingList();
+            });
         });
     }
+
 
     public Task<Integer> lookWaitingList() {
         return waitingListService.getReference().child(eventId).get().continueWith(task -> {
