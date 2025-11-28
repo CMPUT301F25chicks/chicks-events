@@ -9,19 +9,6 @@
     android:padding="16dp"
     tools:context=".fragment.SearchEventFragment">
 
-    <ImageButton
-        android:id="@+id/btn_back"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:contentDescription="Go back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/header_title"
-        android:padding="4dp"
-        app:tint="@color/purpleText" />
-
     <!-- Title -->
     <TextView
         android:id="@+id/header_title"
