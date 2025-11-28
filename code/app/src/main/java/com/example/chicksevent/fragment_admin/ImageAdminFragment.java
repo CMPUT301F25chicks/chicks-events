@@ -189,6 +189,7 @@ public class ImageAdminFragment extends Fragment {
 //        admin.deleteEvent(event.getId());
 //        eventList.remove(event);
         adapter.notifyDataSetChanged();
+        adapter.removeCache(event.getId());
         loadEvents();
         Toast.makeText(getContext(), "Poster deleted", Toast.LENGTH_SHORT).show();
     }

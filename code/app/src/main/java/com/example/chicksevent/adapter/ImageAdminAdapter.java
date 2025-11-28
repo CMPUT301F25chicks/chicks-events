@@ -159,5 +159,9 @@ public class ImageAdminAdapter extends RecyclerView.Adapter<ImageAdminAdapter.Vi
         return events.size();
     }
 
+    public void removeCache(String eventId) {
+        imageCache.remove(eventId);
+    }
+
 
 }
