@@ -263,6 +263,9 @@
         <action
             android:id="@+id/action_SearchEventFragment_to_CreateEventFragment"
             app:destination="@id/CreateEventFragment" />
+        <action
+            android:id="@+id/action_SearchEventFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
     </fragment>
 
     <fragment

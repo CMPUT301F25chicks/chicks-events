@@ -9,19 +9,6 @@
     android:padding="16dp"
     tools:context=".fragment.SearchEventFragment">
 
-    <ImageButton
-        android:id="@+id/btn_back"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:contentDescription="Go back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/header_title"
-        android:padding="4dp"
-        app:tint="@color/purpleText" />
-
     <!-- Title -->
     <TextView
         android:id="@+id/header_title"
@@ -37,37 +24,39 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Search bar -->
+
     <EditText
         android:id="@+id/search_bar"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="16dp"
-        android:hint="Search..."
-        android:textColor="#FFFFFF"
-        android:textColorHint="#80FFFFFF"
+        android:layout_width="295dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/darkPurple"
         android:drawableStart="@android:drawable/ic_menu_search"
-        android:drawableTint="#FFFFFF"
+        android:drawableTint="@color/purpleText"
+        android:hint="Search..."
+        android:inputType="text"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/header_title"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#80FFFFFF"
+        app:layout_constraintEnd_toStartOf="@+id/btn_filter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_filter" />
+        app:layout_constraintTop_toBottomOf="@id/header_title" />
 
-    <ImageButton
+    <Button
         android:id="@+id/btn_filter"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/black"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/darkPurple"
+        android:drawableTop="@drawable/filter"
         android:padding="8dp"
         android:scaleType="centerInside"
-        android:src="@drawable/filter"
+        app:drawableTint="@color/purpleText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/search_bar"
-        app:layout_constraintTop_toBottomOf="@id/header_title"
-        app:tint="@color/purpleText" />
+        app:layout_constraintHorizontal_bias="0.882"
+        app:layout_constraintStart_toEndOf="@+id/tv_event_name"
+        app:layout_constraintTop_toBottomOf="@+id/btn_save" />
 
     <LinearLayout
         android:id="@+id/filter_panel"
@@ -170,22 +159,49 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Save"
-        android:backgroundTint="@color/purpleText"
-        android:textColor="#000000"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
-
 
     <!-- Bottom navigation buttons -->
+
+    <ListView
+        android:id="@+id/recycler_notifications"
+        android:layout_width="369dp"
+        android:layout_height="488dp"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_event_name"
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/item_event" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="67dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="52dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/purpleText"
+        android:text="OK"
+        android:textColor="#000000"
+        app:layout_constraintStart_toEndOf="@+id/search_bar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_event_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:text="Suggested Events"
+        android:textColor="@color/purpleText"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar" />
 
     <LinearLayout
         android:id="@+id/bottom_buttons_layout"
