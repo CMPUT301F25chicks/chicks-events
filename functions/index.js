@@ -13,6 +13,7 @@ admin.initializeApp();
  * @param {functions.https.Request} request The HTTP request object.
  *   Expects an 'eventId' query parameter.
  * @param {functions.https.Response} response The HTTP response object.
+ * @author Juan Rea
  */
 exports.exportFinalEntrants = functions.https.onRequest(async (request,
     response) => {
@@ -27,7 +28,7 @@ exports.exportFinalEntrants = functions.https.onRequest(async (request,
 
     functions.logger.info(`Starting CSV export for eventId: ${eventId}`);
 
-    // --- FIX: Point to the ACCEPTED list ---
+    // --- Point to the ACCEPTED list ---
     const finalEntrantsRef = admin.database()
         .ref(`/WaitingList/${eventId}/ACCEPTED`);
     const snapshot = await finalEntrantsRef.once("value");

@@ -56,6 +56,7 @@ import java.util.Locale;
  * </p>
  *
  * @author Jordan Kwan
+ * @author Juan Rea
  */
 public class EventDetailOrgFragment extends Fragment {
 
@@ -184,21 +185,18 @@ public class EventDetailOrgFragment extends Fragment {
          **/
         exportCsvButton.setOnClickListener(v -> {
             // 1. Get the eventId from the fragment arguments
-            if (args == null) {
-                Toast.makeText(getContext(), "Error: Event data not found.", Toast.LENGTH_SHORT).show();
+            String currentEventId = (args != null) ? args.getString("eventId") : null;
+
+            // 2. Use the simple, testable helper to build the URL
+            String downloadUrl = CsvExportHelper.buildUrl(currentEventId);
+
+            // 3. Check if the URL is valid before proceeding
+            if (downloadUrl == null) {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Error: Event ID is missing.", Toast.LENGTH_SHORT).show();
+                }
                 return;
             }
-            String eventId = args.getString("eventId");
-            if (eventId == null || eventId.isEmpty()) {
-                Toast.makeText(getContext(), "Error: Event ID is missing.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // 2. Use the CORRECT Deployed Cloud Function URL
-            String functionUrl = "https://us-central1-listycity-friedchicken.cloudfunctions.net/exportFinalEntrants";
-
-            // 3. Build the final URL with the eventId as a query parameter
-            String downloadUrl = functionUrl + "?eventId=" + eventId;
 
             // 4. Create an Intent to open the URL in a web browser.
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -209,7 +207,9 @@ public class EventDetailOrgFragment extends Fragment {
                 startActivity(intent);
             } catch (android.content.ActivityNotFoundException e) {
                 // This error occurs if no web browser is installed on the device.
-                Toast.makeText(getContext(), "Error: No web browser found.", Toast.LENGTH_SHORT).show();
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Error: No web browser found.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -368,10 +368,13 @@ public class EventDetailOrgFragment extends Fragment {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            return dateStr; // fallback
+            return dateStr;
         }
     }
 
+    /**
+     * Called when the view previously created by onCreateView() has been detached from the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
