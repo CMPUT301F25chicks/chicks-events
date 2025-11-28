@@ -18,15 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chicksevent.R;
 import com.example.chicksevent.adapter.EventAdminAdapter;
+import com.example.chicksevent.adapter.ImageAdminAdapter;
 import com.example.chicksevent.misc.Admin;
 import com.example.chicksevent.misc.Event;
 
 import java.util.ArrayList;
 
 /**
- * Fragment that displays a list of all events for administrative management.
+ * Fragment that displays a list of all event images for admin management.
  * <p>
- * Allows an admin to view all events in the system and delete them via a confirmation dialog.
+ * Allows an admin to view all images in the system and delete them via a confirmation dialog.
  * Events are loaded from Firebase using {@link Admin#browseEvents()} and displayed using
  * {@link EventAdminAdapter}.
  * </p>
@@ -40,7 +41,7 @@ import java.util.ArrayList;
  * @see Event
  * @see EventAdminAdapter
  */
-public class EventAdminFragment extends Fragment {
+public class ImageAdminFragment extends Fragment {
 
 
     /**
@@ -53,7 +54,7 @@ public class EventAdminFragment extends Fragment {
      * Adapter responsible for binding {@link Event} data to RecyclerView items.
      * Configured with a delete click listener.
      */
-    private EventAdminAdapter adapter;
+    private ImageAdminAdapter adapter;
 
     /**
      * List holding all {@link Event} objects loaded from Firebase.
@@ -81,7 +82,7 @@ public class EventAdminFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_admin_event, container, false);
+        View view = inflater.inflate(R.layout.fragment_admin_image, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_notifications);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -89,7 +90,7 @@ public class EventAdminFragment extends Fragment {
         eventList = new ArrayList<>();
         admin = new Admin("ADMIN_DEFAULT");
 
-        adapter = new EventAdminAdapter(requireContext(), eventList, this::goToEvent, this::confirmDeleteEvent);
+        adapter = new ImageAdminAdapter(requireContext(), eventList, this::goToEvent, this::confirmDeletePoster);
         recyclerView.setAdapter(adapter);
 
         loadEvents();
@@ -117,16 +118,6 @@ public class EventAdminFragment extends Fragment {
                 });
     }
 
-    private void goToEvent(Event event) {
-        NavController navController = NavHostFragment.findNavController(EventAdminFragment.this);
-
-        Bundle bundle = new Bundle();
-        bundle.putString("eventId", event.getId());
-
-        navController.navigate(R.id.action_EventAdminFragment_to_EventDetailFragment, bundle);
-    }
-
-
     /**
      * Shows a confirmation dialog before deleting an event.
      * <p>
@@ -139,11 +130,20 @@ public class EventAdminFragment extends Fragment {
         Log.i("DEL", "back in time " + event.getId());
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Delete Event")
-                .setMessage("Are you sure you want to delete \"" + event.getName() + "\"?")
+                .setTitle("Delete Image")
+                .setMessage("Are you sure you want to delete the image of \"" + event.getName() + "\"?")
                 .setPositiveButton("Delete", (dialog, which) -> deleteEvent(event))
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void goToEvent(Event event) {
+        NavController navController = NavHostFragment.findNavController(ImageAdminFragment.this);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("eventId", event.getId());
+
+        navController.navigate(R.id.action_ImageAdmin_to_EventDetailFragment, bundle);
     }
 
     /**

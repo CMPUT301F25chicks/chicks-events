@@ -119,17 +119,17 @@
                 android:drawableTop="@drawable/profile"
                 android:drawableTint="@color/purpleText" />
 
-            <Button
-                android:id="@+id/btn_admin_scan"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="3dp"
-                android:backgroundTint="@color/black"
-                android:contentDescription="admin scan"
-                android:drawableTop="@drawable/ic_small_scan"
-                android:drawablePadding="4dp"
-                android:drawableTint="@color/purpleText"
-                android:padding="3dp" />
+<!--            <Button-->
+<!--                android:id="@+id/btn_admin_scan"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginHorizontal="3dp"-->
+<!--                android:backgroundTint="@color/black"-->
+<!--                android:contentDescription="admin scan"-->
+<!--                android:drawableTop="@drawable/ic_small_scan"-->
+<!--                android:drawablePadding="4dp"-->
+<!--                android:drawableTint="@color/purpleText"-->
+<!--                android:padding="3dp" />-->
 
         </LinearLayout>
 

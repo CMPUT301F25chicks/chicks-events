@@ -197,8 +197,8 @@ public class Admin extends User {
                                 eventHash.get("id"),
                                 eventHash.get("name"),
                                 "d",
-                                "g", // placeholder
-                                "OCT/n30",
+                                eventHash.get("eventStartTime"), // placeholder
+                                eventHash.get("eventEndTime"),
                                 "s", // placeholder
                                 "w", // placeholder
                                 "q", // placeholder

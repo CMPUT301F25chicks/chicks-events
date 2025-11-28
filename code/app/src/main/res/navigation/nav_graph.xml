@@ -4,6 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/NotificationFragment">
+    <fragment
+        android:id="@+id/ImageAdminFragment"
+        android:name="com.example.chicksevent.fragment_admin.ImageAdminFragment"
+        android:label="Images Admin" >
+
+        <action
+            android:id="@+id/action_ImageAdmin_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/NotificationAdminFragment"
@@ -35,6 +45,12 @@
             app:destination="@id/ProfileAdminFragment"/>
 
         <action
+            android:id="@+id/action_adminHome_to_imageAdminFragment"
+            app:destination="@id/ImageAdminFragment"/>
+
+
+
+        <action
             android:id="@+id/action_adminHome_to_notificationAdminFragment"
             app:destination="@id/NotificationAdminFragment"/>
 
@@ -58,7 +74,12 @@
     <fragment
         android:id="@+id/EventAdminFragment"
         android:name="com.example.chicksevent.fragment_admin.EventAdminFragment"
-        android:label="Events Admin"/>
+        android:label="Events Admin">
+
+        <action
+            android:id="@+id/action_EventAdminFragment_to_EventDetailFragment"
+            app:destination="@id/EventDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/OrgAdminFragment"
         android:name="com.example.chicksevent.fragment_admin.OrgAdminFragment"

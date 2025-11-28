@@ -45,8 +45,9 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
 
     private ArrayList<Event> events;
     private OnDeleteClickListener listener;
-    private OnDeleteClickPosterListener listenerPoster;
+    private OnDeleteClickEventListener listenerEvent;
     private Context context;
+    private View view;
 
     private final HashMap<String, Bitmap> imageCache = new HashMap<>();
 
@@ -54,12 +55,12 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
     private FirebaseService imageService = new FirebaseService("Image");
 
     public interface OnDeleteClickListener {
-        void onDeleteClick(Event event);
+        void onArrowClick(Event event);
 
     }
 
-    public interface OnDeleteClickPosterListener {
-        void onDeletePosterClick(Event event);
+    public interface OnDeleteClickEventListener {
+        void onDeleteEventClick(Event event);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -67,6 +68,7 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
         ImageButton btnDelete;
 
         ImageView posterImageView;
+        ImageButton btnArrow;
         String eventId; // track which event this view belongs to
 
         public ViewHolder(@NonNull View itemView) {
@@ -74,31 +76,35 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
             eventName = itemView.findViewById(R.id.tv_event_name);
             btnDelete = itemView.findViewById(R.id.btn_delete);
             posterImageView = itemView.findViewById(R.id.img_event);
+            btnArrow = itemView.findViewById(R.id.btn_arrow);
+
         }
     }
 
-    public EventAdminAdapter(Context context, ArrayList<Event> events, OnDeleteClickListener listener, OnDeleteClickPosterListener listenerPoster) {
+    public EventAdminAdapter(Context context, ArrayList<Event> events, OnDeleteClickListener listener, OnDeleteClickEventListener listenerEvent) {
         this.context = context;
         this.events = events;
         this.listener = listener;
-        this.listenerPoster = listenerPoster;
+        this.listenerEvent = listenerEvent;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_event_deletable, parent, false);
+        this.view = view;
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         Event event = events.get(position);
         holder.eventName.setText(event.getName());
-
-        holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDeleteClick(event);
-        });
+        TextView tv_startTime = view.findViewById(R.id.tv_startTime);
+        TextView tv_endTime = view.findViewById(R.id.tv_endTime);
+        tv_startTime.setText(event.getEventStartTime());
+        tv_endTime.setText(event.getEventEndTime());
 
         holder.eventId = event.getId();
 
@@ -131,12 +137,12 @@ public class EventAdminAdapter extends RecyclerView.Adapter<EventAdminAdapter.Vi
             });
         }
 //
-        holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDeleteClick(event);
+        holder.btnArrow.setOnClickListener(v -> {
+            if (listener != null) listener.onArrowClick(event);
         });
 
-        holder.posterImageView.setOnClickListener(v -> {
-            if (listener != null) listenerPoster.onDeletePosterClick(event);
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) listenerEvent.onDeleteEventClick(event);
 
         });
 

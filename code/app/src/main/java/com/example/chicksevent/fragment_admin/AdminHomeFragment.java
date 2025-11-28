@@ -91,7 +91,7 @@ public class AdminHomeFragment extends Fragment {
         Button btnEvents = view.findViewById(R.id.btn_admin_event);
         Button btnOrganizers = view.findViewById(R.id.btn_admin_org);
         Button btnProfiles = view.findViewById(R.id.btn_admin_profile);
-
+        Button btnImages = view.findViewById(R.id.btn_admin_avatar);
         // Current user identified by Android ID
         userToUpdate = new User(Settings.Secure.getString(
                 getContext().getContentResolver(),
@@ -134,7 +134,9 @@ public class AdminHomeFragment extends Fragment {
         btnProfiles.setOnClickListener(v ->
                 NavHostFragment.findNavController(AdminHomeFragment.this)
                         .navigate(R.id.action_adminHome_to_profileAdminFragment));
-
+        btnImages.setOnClickListener(v ->
+                NavHostFragment.findNavController(AdminHomeFragment.this)
+                        .navigate(R.id.action_adminHome_to_imageAdminFragment));
         btnNotification.setOnClickListener(v -> NavHostFragment.findNavController(AdminHomeFragment.this)
                 .navigate(R.id.action_adminHome_to_notificationAdminFragment));
     }
