@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Unit tests for {@link Admin}.
@@ -64,6 +65,17 @@ import java.util.List;
  *
  * <p>All assertions are synchronous and deterministic.</p>
  *
+ * <h2>User stories handled</h2>
+ * <ul>
+ *   <li>US 03.01.01 - deleteEvent()</li>
+ *   <li>US 03.02.01 - deleteUserProfile()</li>
+ *   <li>US 03.02.01 - deleteOrganizerProfile()</li>
+ *   <li>US 03.04.01 - browseEvents()</li>
+ *   <li>US 03.05.01 - browseUsers()</li>
+ *   <li>US 03.06.01 - browseOrganizers() / browseImages() (if implemented)</li>
+ *   <li>US 03.07.01 - banUserFromOrganizer() / deleteOrganizerProfile()</li>
+ *   <li>US 03.08.01 - Notification-related tasks (ban/unban user notifications)</li>
+ * </ul>
  * @author Jinn Kasai
  */
 public class AdminTest {
@@ -86,7 +98,7 @@ public class AdminTest {
     private Admin admin;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() {
         // Block real Firebase init
         firebaseDbStatic = mockStatic(FirebaseDatabase.class);
         mockDb = mock(FirebaseDatabase.class);
@@ -114,13 +126,16 @@ public class AdminTest {
         admin = new Admin(UID);
     }
 
+
     @After
     public void tearDown() {
         if (firebaseDbStatic != null) firebaseDbStatic.close();
     }
 
-    // -------------------- deleteEvent --------------------
-
+    // -------------------- US 03.01.01 --------------------
+    /**
+     * US 03.01.01 - As an administrator, I want to be able to remove events.
+     */
     @Test
     public void deleteEvent_nonEmpty_callsRemoveOnEventPath() {
         DatabaseReference eventIdRef = mock(DatabaseReference.class);
@@ -141,8 +156,10 @@ public class AdminTest {
         verify(eventRoot, never()).child(anyString());
     }
 
-    // -------------------- deleteUserProfile --------------------
-
+    // -------------------- US 03.02.01 --------------------
+    /**
+     * US 03.02.01 - As an administrator, I want to be able to remove profiles.
+     */
     @Test
     public void deleteUserProfile_nonEmpty_callsRemoveOnUserPath() {
         DatabaseReference userIdRef = mock(DatabaseReference.class);
@@ -156,6 +173,11 @@ public class AdminTest {
         verify(userIdRef, times(1)).removeValue();
     }
 
+    // -------------------- US 03.02.01 / US 03.07.01 --------------------
+    /**
+     * US 03.02.01 - As an administrator, I want to be able to remove organizer profiles.
+     * US 03.07.01 - As an administrator, I want to remove organizers that violate app policy.
+     */
     @Test
     public void deleteUserProfile_empty_isNoop() {
         admin.deleteUserProfile(null);
@@ -191,8 +213,41 @@ public class AdminTest {
         assertNull(t.getException());
     }
 
-    // -------------------- browseEntrants --------------------
+    // -------------------- US 03.03.01 --------------------
+    /**
+     * US 03.03.01 - As an administrator, I want to be able to remove images (posters).
+     */
+    @Test
+    public void deletePoster_nonEmpty_callsRemoveOnImagePath() {
+        // Mock child reference for the poster ID
+        DatabaseReference posterRef = mock(DatabaseReference.class);
+        when(imageRoot.child("IMG123")).thenReturn(posterRef);
 
+        // Assume deleteEntry() calls removeValue() internally
+        when(posterRef.removeValue()).thenReturn(Tasks.forResult(null));
+
+        // Call deletePoster
+        admin.deletePoster("IMG123");
+
+        // Verify removeValue() is called
+        verify(posterRef, times(1)).removeValue();
+    }
+
+    @Test
+    public void deletePoster_emptyOrNull_isNoop() {
+        admin.deletePoster(null);
+        admin.deletePoster("");
+
+        // Ensure imageRoot.child() is never called
+        verify(imageRoot, never()).child(anyString());
+    }
+
+
+
+    // -------------------- US 03.05.01 --------------------
+    /**
+     * US 03.05.01 - As an administrator, I want to be able to browse profiles.
+     */
     @Test
     public void browseUsers_returnsUsersFromSnapshot() {
         // Fake /User snapshot: children with keys U1, U2
@@ -224,7 +279,10 @@ public class AdminTest {
         assertEquals("U2", out.getResult().get(1).getUserId());
     }
 
-    // -------------------- browseEvents --------------------
+    // -------------------- US 03.04.01 --------------------
+    /**
+     * US 03.04.01 - As an administrator, I want to be able to browse events.
+     */
 
     @Test
     public void browseEvents_returnsListSizeMatchingChildren() {
@@ -258,29 +316,78 @@ public class AdminTest {
         assertEquals(2, out.getResult().size()); // size matches children
     }
 
+    // -------------------- US 03.06.01 --------------------
+    /**
+     * US 03.06.01 - As an administrator, I want to browse organizers (or images) for review/removal.
+     */
+
+    @Test
+    public void browseOrganizers_returnsOrganizersFromEvents() {
+        // Fake /Organizer snapshot with two organizers
+        DataSnapshot root = mock(DataSnapshot.class);
+        DataSnapshot org1 = mock(DataSnapshot.class);
+        DataSnapshot org2 = mock(DataSnapshot.class);
+
+        Organizer organizer1 = new Organizer("org1", "event1");
+        Organizer organizer2 = new Organizer("org2", "event2");
+
+        when(org1.getValue(Organizer.class)).thenReturn(organizer1);
+        when(org2.getValue(Organizer.class)).thenReturn(organizer2);
+        when(root.getChildren()).thenAnswer(i -> iterable(org1, org2));
+
+        @SuppressWarnings("unchecked")
+        Task<DataSnapshot> mockGetTask = mock(Task.class);
+        when(organizerRoot.get()).thenReturn(mockGetTask);
+
+        when(mockGetTask.continueWithTask(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Task<List<Organizer>>> cont =
+                    (Continuation<DataSnapshot, Task<List<Organizer>>>) inv.getArgument(0);
+            return cont.then(Tasks.forResult(root));
+        });
+
+        Task<List<Organizer>> out = admin.browseOrganizers();
+
+        assertTrue(out.isComplete());
+        assertTrue(out.isSuccessful());
+        assertEquals(2, out.getResult().size());
+
+        Set<String> organizerIds = new java.util.HashSet<>();
+        for (Organizer org : out.getResult()) {
+            organizerIds.add(org.getOrganizerId());
+        }
+        assertTrue(organizerIds.contains("org1"));
+        assertTrue(organizerIds.contains("org2"));
+    }
+
     @Test
     public void browseOrganizers_noEvents_returnsEmptyList() {
         DataSnapshot root = mock(DataSnapshot.class);
         when(root.getChildren()).thenAnswer(i -> iterable());
 
-        // browseOrganizers uses organizerService.getReference().get()
         @SuppressWarnings("unchecked")
         Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(eventRoot.get()).thenReturn(mockGetTask);
-        
-        doAnswer(inv -> {
-            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
-            listener.onSuccess(root);
-            return mockGetTask;
-        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
-        
+        when(organizerRoot.get()).thenReturn(mockGetTask);
+
+        when(mockGetTask.continueWithTask(any())).thenAnswer(inv -> {
+            @SuppressWarnings("unchecked")
+            Continuation<DataSnapshot, Task<List<Organizer>>> cont =
+                    (Continuation<DataSnapshot, Task<List<Organizer>>>) inv.getArgument(0);
+            return cont.then(Tasks.forResult(root));
+        });
+
         Task<List<Organizer>> out = admin.browseOrganizers();
-        assertTrue("Task should be complete", out.isComplete());
-        assertTrue("Task should be successful", out.isSuccessful());
+
+        assertTrue(out.isComplete());
+        assertTrue(out.isSuccessful());
         assertEquals(0, out.getResult().size());
     }
 
-    // -------------------- getEventsByOrganizer --------------------
+
+    // -------------------- US 03.06.01 / US 03.04.01 --------------------
+    /**
+     * US 03.06.01 / US 03.04.01 - Get events by organizer.
+     */
 
     @Test
     public void getEventsByOrganizer_returnsEventIdsForOrganizer() {
@@ -331,7 +438,10 @@ public class AdminTest {
         assertFalse(eventIds.contains("event2"));
     }
 
-    // -------------------- banUserFromOrganizer --------------------
+    // -------------------- US 03.07.01 --------------------
+    /**
+     * US 03.07.01 - Ban a user from an organizer (policy violation)
+     */
 
     @Test
     public void banUserFromOrganizer_returnsTask() {
@@ -359,7 +469,9 @@ public class AdminTest {
         // Task may not be complete immediately due to async operations
     }
 
-    // -------------------- unbanUserFromOrganizer --------------------
+    /**
+     * US 03.07.01 - Unban a user from an organizer (policy reversal)
+     */
 
     @Test
     public void unbanUserFromOrganizer_returnsTask() {

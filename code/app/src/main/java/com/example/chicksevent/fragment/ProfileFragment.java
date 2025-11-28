@@ -216,7 +216,7 @@ public class ProfileFragment extends Fragment {
 
             return false;
         }).addOnCompleteListener(t -> {
-            boolean banned = (boolean) t.getResult();
+            boolean banned = false;
 
             user = new User(userId);
             user.setBannedFromOrganizer(banned);

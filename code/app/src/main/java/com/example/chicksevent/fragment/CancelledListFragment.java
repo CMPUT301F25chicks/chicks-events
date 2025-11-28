@@ -163,6 +163,8 @@ public class CancelledListFragment extends Fragment {
         });
     }
 
+
+
     /**
      * Loads entrants for the current event filtered by the provided status.
      *
