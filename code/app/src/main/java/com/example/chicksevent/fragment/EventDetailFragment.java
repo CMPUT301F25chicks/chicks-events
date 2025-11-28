@@ -373,6 +373,7 @@ public class EventDetailFragment extends Fragment {
 
     private void loadEventInfo(String eventId) {
         if (eventId == null) return;
+//        eventId = eventId;
 
         eventService.getReference().child(eventId).get()
                 .addOnSuccessListener(snapshot -> {
@@ -447,7 +448,7 @@ public class EventDetailFragment extends Fragment {
 
 
                         // Waiting count
-                        getWaitingCount().addOnSuccessListener(count -> {
+                        getFinalCount().addOnSuccessListener(count -> {
                             binding.tvEntrantsCount.setText(count + " / " + limit);
                         });
                     } else {
@@ -476,6 +477,31 @@ public class EventDetailFragment extends Fragment {
                         }
                     }
                     waitingListCount = total;
+                    return total;
+                });
+    }
+
+    public Task<Integer> getFinalCount() {
+        Log.i("RTD10", "calling");
+
+        if (eventIdString == null) {
+            Log.i("RTD10", "calling3");
+
+            return Tasks.forResult(0);
+        }
+
+        return waitingListService.getReference().child(eventIdString).get()
+                .continueWith(task -> {
+                    int total = 0;
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DataSnapshot obj : task.getResult().getChildren()) {
+                            Log.i("RTD10", "we out here");
+                            if ("ACCEPTED".equals(obj.getKey())) {
+                                total++;
+                            }
+                        }
+                    }
+//                    waitingListCount = total;
                     return total;
                 });
     }

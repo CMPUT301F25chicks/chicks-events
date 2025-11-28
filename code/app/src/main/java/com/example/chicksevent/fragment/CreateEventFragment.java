@@ -28,6 +28,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -117,6 +118,27 @@ public class CreateEventFragment extends Fragment {
         // Show/hide "max entrants" field when checkbox changes
         binding.cbLimitWaitingList.setOnCheckedChangeListener((btn, checked) -> {
             binding.etMaxEntrants.setVisibility(checked ? View.VISIBLE : View.GONE);
+        });
+
+        androidx.appcompat.widget.SwitchCompat switchGeo = view.findViewById(R.id.switch_geo);
+
+
+        switchGeo.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                switchGeo.setThumbTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchThumbOn)
+                );
+                switchGeo.setTrackTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchTrackOn)
+                );
+            } else {
+                switchGeo.setThumbTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchThumbOff)
+                );
+                switchGeo.setTrackTintList(
+                        ContextCompat.getColorStateList(getContext(), R.color.switchTrackOff)
+                );
+            }
         });
 
         // Add validation for max entrants field

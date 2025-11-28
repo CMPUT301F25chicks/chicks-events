@@ -344,7 +344,7 @@ public class EventDetailOrgFragment extends Fragment {
 
 
                         // Waiting count
-                        getWaitingCount().addOnSuccessListener(count -> {
+                        getFinalCount().addOnSuccessListener(count -> {
                             binding.tvEntrantsCount.setText(count + " / " + limit);
                         });
                     } else {
@@ -352,6 +352,26 @@ public class EventDetailOrgFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> Log.e("EventDetail", "Failed to load event: " + e.getMessage()));
+    }
+
+    public Task<Integer> getFinalCount() {
+        if (eventId == null) {
+            return Tasks.forResult(0);
+        }
+
+        return waitingListService.getReference().child(eventId).get()
+                .continueWith(task -> {
+                    int total = 0;
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DataSnapshot obj : task.getResult().getChildren()) {
+                            if ("ACCEPTED".equals(obj.getKey())) {
+                                total++;
+                            }
+                        }
+                    }
+//                    waitingListCount = total;
+                    return total;
+                });
     }
 
     private String formatDatePretty(String dateStr) {
