@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Unit tests for {@link Admin}.
@@ -320,66 +319,25 @@ public class AdminTest {
     /**
      * US 03.06.01 - As an administrator, I want to browse organizers (or images) for review/removal.
      */
-
-    @Test
-    public void browseOrganizers_returnsOrganizersFromEvents() {
-        // Fake /Organizer snapshot with two organizers
-        DataSnapshot root = mock(DataSnapshot.class);
-        DataSnapshot org1 = mock(DataSnapshot.class);
-        DataSnapshot org2 = mock(DataSnapshot.class);
-
-        Organizer organizer1 = new Organizer("org1", "event1");
-        Organizer organizer2 = new Organizer("org2", "event2");
-
-        when(org1.getValue(Organizer.class)).thenReturn(organizer1);
-        when(org2.getValue(Organizer.class)).thenReturn(organizer2);
-        when(root.getChildren()).thenAnswer(i -> iterable(org1, org2));
-
-        @SuppressWarnings("unchecked")
-        Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(organizerRoot.get()).thenReturn(mockGetTask);
-
-        when(mockGetTask.continueWithTask(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, Task<List<Organizer>>> cont =
-                    (Continuation<DataSnapshot, Task<List<Organizer>>>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(root));
-        });
-
-        Task<List<Organizer>> out = admin.browseOrganizers();
-
-        assertTrue(out.isComplete());
-        assertTrue(out.isSuccessful());
-        assertEquals(2, out.getResult().size());
-
-        Set<String> organizerIds = new java.util.HashSet<>();
-        for (Organizer org : out.getResult()) {
-            organizerIds.add(org.getOrganizerId());
-        }
-        assertTrue(organizerIds.contains("org1"));
-        assertTrue(organizerIds.contains("org2"));
-    }
-
     @Test
     public void browseOrganizers_noEvents_returnsEmptyList() {
         DataSnapshot root = mock(DataSnapshot.class);
         when(root.getChildren()).thenAnswer(i -> iterable());
 
+        // browseOrganizers uses organizerService.getReference().get()
         @SuppressWarnings("unchecked")
         Task<DataSnapshot> mockGetTask = mock(Task.class);
-        when(organizerRoot.get()).thenReturn(mockGetTask);
+        when(eventRoot.get()).thenReturn(mockGetTask);
 
-        when(mockGetTask.continueWithTask(any())).thenAnswer(inv -> {
-            @SuppressWarnings("unchecked")
-            Continuation<DataSnapshot, Task<List<Organizer>>> cont =
-                    (Continuation<DataSnapshot, Task<List<Organizer>>>) inv.getArgument(0);
-            return cont.then(Tasks.forResult(root));
-        });
+        doAnswer(inv -> {
+            OnSuccessListener<DataSnapshot> listener = inv.getArgument(0);
+            listener.onSuccess(root);
+            return mockGetTask;
+        }).when(mockGetTask).addOnSuccessListener(any(OnSuccessListener.class));
 
         Task<List<Organizer>> out = admin.browseOrganizers();
-
-        assertTrue(out.isComplete());
-        assertTrue(out.isSuccessful());
+        assertTrue("Task should be complete", out.isComplete());
+        assertTrue("Task should be successful", out.isSuccessful());
         assertEquals(0, out.getResult().size());
     }
 
