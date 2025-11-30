@@ -405,7 +405,7 @@
                         android:clickable="false"
                         android:hint="Start Date"
                         android:textColorHint="@color/darkPurple"
-                        android:textColor="@color/darkPurple"
+                        android:textColor="@color/purpleText"
                         android:textSize="16sp"
                         android:textStyle="normal"
                         android:typeface="normal"
