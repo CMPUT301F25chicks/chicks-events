@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="230dp"
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/bg_notification_item"
+    android:padding="8dp">
+
+    <!-- Event image on top -->
+
+    <!-- Date box -->
+
+    <!-- Image info -->
+
+    <!-- Arrow button -->
+    <ImageView
+        android:id="@+id/img_event"
+        android:layout_width="397dp"
+        android:layout_height="168dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sample_image"
+        app:layout_constraintBottom_toTopOf="@+id/tv_event_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_event_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Halloween Party"
+        android:textColor="@color/purpleText"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_big_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/darkRed" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

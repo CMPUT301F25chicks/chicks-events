@@ -66,25 +66,9 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_bar"
-            app:layout_constraintBottom_toTopOf="@+id/btn_csv"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
             tools:listitem="@layout/item_user" />
 
-
-        <Button
-            android:id="@+id/btn_csv"
-            android:layout_width="71dp"
-            android:layout_height="68dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/purpleText"
-            android:drawableTop="@drawable/ic_csv"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/darkPurple"
-            android:padding="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recycler_finalList"
-            app:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
             android:id="@+id/bottom_buttons_layout"
@@ -96,66 +80,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-
-            <Button
-                android:id="@+id/btn_notification"
-                android:layout_width="2dp"
-                android:layout_height="58dp"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:drawableTop="@drawable/ic_notification"
-                android:drawablePadding="6dp"
-                android:drawableTint="@color/purpleText"
-                android:padding="8dp" />
-
-            <Button
-                android:id="@+id/btn_events"
-                android:layout_width="2dp"
-                android:layout_height="58dp"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:drawableTop="@drawable/ic_events"
-                android:drawablePadding="6dp"
-                android:drawableTint="@color/purpleText"
-                android:padding="8dp" />
-
-            <Button
-                android:id="@+id/btn_scan"
-                android:layout_width="2dp"
-                android:layout_height="58dp"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:drawableTop="@drawable/ic_scan"
-                android:drawablePadding="6dp"
-                android:drawableTint="@color/purpleText"
-                android:padding="8dp" />
-
-            <Button
-                android:id="@+id/btn_addEvent"
-                android:layout_width="2dp"
-                android:layout_height="58dp"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:drawableTop="@drawable/ic_addevents"
-                android:drawablePadding="6dp"
-                android:drawableTint="@color/purpleText"
-                android:padding="8dp" />
-
-            <Button
-                android:id="@+id/btn_profile"
-                android:layout_width="2dp"
-                android:layout_height="58dp"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:drawableTop="@drawable/ic_profile"
-                android:drawablePadding="6dp"
-                android:drawableTint="@color/purpleText"
-                android:padding="8dp" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

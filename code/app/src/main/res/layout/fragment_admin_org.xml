@@ -27,22 +27,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="376dp"
-            android:layout_height="41dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/darkPurple"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawableTint="@color/purpleText"
-            android:hint="Search..."
-            android:inputType="text"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:textColor="@color/purpleText"
-            android:textColorHint="@color/purpleText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_title" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_chosenUser"
@@ -50,13 +34,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingBottom="8dp"
+            android:paddingBottom="12dp"
             tools:listitem="@layout/item_facility"
+            android:paddingTop="15dp"
             app:layout_constraintBottom_toTopOf="@id/admin_bottom_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_bar"
+            app:layout_constraintTop_toBottomOf="@+id/header_title"
             app:layout_constraintVertical_bias="1.0" />
 
 

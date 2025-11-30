@@ -75,7 +75,6 @@ public class ImageAdminAdapter extends RecyclerView.Adapter<ImageAdminAdapter.Vi
             super(itemView);
             eventName = itemView.findViewById(R.id.tv_event_name);
             btnDelete = itemView.findViewById(R.id.btn_delete);
-            btnArrow = itemView.findViewById(R.id.btn_arrow);
             posterImageView = itemView.findViewById(R.id.img_event);
         }
     }
@@ -90,7 +89,7 @@ public class ImageAdminAdapter extends RecyclerView.Adapter<ImageAdminAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_event_deletable, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_image, parent, false);
         this.view = view;
         return new ViewHolder(view);
     }
@@ -100,12 +99,7 @@ public class ImageAdminAdapter extends RecyclerView.Adapter<ImageAdminAdapter.Vi
 
         Event event = events.get(position);
         holder.eventName.setText(event.getName());
-        TextView tv_startTime = view.findViewById(R.id.tv_startTime);
-        TextView tv_endTime = view.findViewById(R.id.tv_endTime);
-        TextView tv_dash = view.findViewById(R.id.tv_dash);
-        tv_dash.setText("");
-        tv_startTime.setText("");
-        tv_endTime.setText("");
+
 
         holder.eventId = event.getId();
 
@@ -147,10 +141,6 @@ public class ImageAdminAdapter extends RecyclerView.Adapter<ImageAdminAdapter.Vi
 
         });
 
-        holder.btnArrow.setOnClickListener(v -> {
-            if (listener != null) listener.onArrowClick(event);
-
-        });
 
     }
 
