@@ -230,6 +230,10 @@ public class EventDetailFragment extends Fragment {
             });
         }
 
+
+
+
+
         getWaitingCount().continueWithTask(wc -> getEventDetail()).addOnCompleteListener(t -> {
 //            Log.i("browaiting", t.getResult().toString());
 //            if (!t.isSuccessful()) return;
@@ -260,6 +264,46 @@ public class EventDetailFragment extends Fragment {
             }
             waitingCount.setText("Number of Entrants: " + waitingListCount);
         });
+
+        final Handler handler = new Handler();
+        final int delay = 5000;
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                getWaitingCount().continueWithTask(wc -> getEventDetail()).addOnCompleteListener(t -> {
+//            Log.i("browaiting", t.getResult().toString());
+//            if (!t.isSuccessful()) return;
+                    if (t.getResult()==1) {
+                        waitingStatus.setVisibility(View.VISIBLE);
+                        waitingCount.setText("Number of Entrants: " + waitingListCount);
+                        joinButton.setVisibility(View.INVISIBLE);
+                    }
+                    if (t.getResult()==2) {
+                        invitedStatus.setVisibility(View.VISIBLE);
+                        joinButton.setVisibility(View.INVISIBLE);
+                    }
+                    if (t.getResult()==3) {
+                        uninvitedStatus.setVisibility(View.VISIBLE);
+                        joinButton.setVisibility(View.INVISIBLE);
+                    }
+                    if (t.getResult()==4) {
+                        acceptedStatus.setVisibility(View.VISIBLE);
+                        joinButton.setVisibility(View.INVISIBLE);
+                    }
+                    if (t.getResult()==5) {
+                        declinedStatus.setVisibility(View.VISIBLE);
+                        joinButton.setVisibility(View.INVISIBLE);
+                    }
+                    if (t.getResult()==6) {
+                        cancelledStatus.setVisibility(View.VISIBLE);
+                        joinButton.setVisibility(View.INVISIBLE);
+                    }
+                    waitingCount.setText("Number of Entrants: " + waitingListCount);
+                });
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
+
 
         joinButton.setOnClickListener(v -> {
             // Check if event is on hold
@@ -472,10 +516,11 @@ public class EventDetailFragment extends Fragment {
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (DataSnapshot obj : task.getResult().getChildren()) {
                             if ("WAITING".equals(obj.getKey())) {
-                                total++;
+                                total += ((HashMap<String, Object>) obj.getValue()).values().size();
                             }
                         }
                     }
+                    Log.i("whatistotal", ""+total);
                     waitingListCount = total;
                     return total;
                 });
