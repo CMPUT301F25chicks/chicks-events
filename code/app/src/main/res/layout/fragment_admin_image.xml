@@ -14,13 +14,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/michroma"
-        android:text="Browse Events"
+        android:text="Browse Images"
         android:textColor="@color/purpleText"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/search_bar"
@@ -44,7 +44,7 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingBottom="8dp"
-        tools:listitem="@layout/item_event_deletable"
+        tools:listitem="@layout/item_image"
         app:layout_constraintTop_toBottomOf="@id/search_bar"
         app:layout_constraintBottom_toTopOf="@id/admin_bottom_buttons_layoute"
         app:layout_constraintStart_toStartOf="parent"
