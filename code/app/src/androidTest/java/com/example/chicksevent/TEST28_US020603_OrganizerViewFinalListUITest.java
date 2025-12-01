@@ -1,7 +1,7 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
@@ -10,7 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -109,6 +108,47 @@ public class TEST28_US020603_OrganizerViewFinalListUITest {
             scrollToView(onView(withId(R.id.btn_finalist)));
             onView(withId(R.id.btn_finalist)).perform(click());
             
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        } catch (Exception e) {
+            // Navigation might fail if no events exist
+            throw e;
+        }
+    }
+
+    /**
+     * Helper method to navigate to FinalListFragment.
+     */
+    private void navigateToEventOrgFragment() {
+        // Navigate: Events -> Hosted Events -> Event Detail -> Final List
+        try {
+            // Click Events button
+            onView(withId(R.id.btn_events)).perform(click());
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Click Hosted Events button
+            onView(withId(R.id.btn_hosted_events)).perform(click());
+
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Click on first event
+            onData(anything())
+                    .inAdapterView(withId(R.id.recycler_notifications))
+                    .atPosition(0)
+                    .perform(click());
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -443,11 +483,11 @@ public class TEST28_US020603_OrganizerViewFinalListUITest {
         
         // Navigate to FinalListFragment
         try {
-            navigateToFinalListFragment();
+            navigateToEventOrgFragment();
             
             // Verify CSV export button is displayed
-            scrollToView(onView(withId(R.id.btn_csv)));
-            onView(withId(R.id.btn_csv))
+            scrollToView(onView(withId(R.id.btn_export_csv)));
+            onView(withId(R.id.btn_export_csv))
                     .check(matches(isDisplayed()));
         } catch (Exception e) {
             // Fragment might not be loaded
@@ -641,10 +681,6 @@ public class TEST28_US020603_OrganizerViewFinalListUITest {
                     .check(matches(isDisplayed()));
             
             onView(withId(R.id.recycler_finalList))
-                    .check(matches(isDisplayed()));
-            
-            scrollToView(onView(withId(R.id.btn_csv)));
-            onView(withId(R.id.btn_csv))
                     .check(matches(isDisplayed()));
         } catch (Exception e) {
             // Fragment might not be loaded
@@ -849,11 +885,11 @@ public class TEST28_US020603_OrganizerViewFinalListUITest {
         
         // Navigate to FinalListFragment
         try {
-            navigateToFinalListFragment();
-            
-            // Verify CSV export button is displayed and accessible
-            scrollToView(onView(withId(R.id.btn_csv)));
-            onView(withId(R.id.btn_csv))
+            navigateToEventOrgFragment();
+
+            // Verify CSV export button is displayed
+            scrollToView(onView(withId(R.id.btn_export_csv)));
+            onView(withId(R.id.btn_export_csv))
                     .check(matches(isDisplayed()));
         } catch (Exception e) {
             // Fragment might not be loaded
