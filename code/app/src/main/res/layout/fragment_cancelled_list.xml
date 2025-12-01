@@ -30,10 +30,9 @@
             android:fontFamily="@font/michroma"
             android:text="Cancelled Entrants"
             android:textColor="@color/purpleText"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.74"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

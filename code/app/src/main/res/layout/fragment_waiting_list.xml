@@ -13,16 +13,6 @@
         android:background="#000000"
         android:padding="16dp">
 
-        <!-- Header -->
-
-        <!-- Notification List -->
-
-        <!-- Bottom button bar -->
-
-        <!-- Search bar -->
-
-        <!-- RecyclerView for notifications -->
-
         <TextView
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
@@ -30,7 +20,7 @@
             android:fontFamily="@font/michroma"
             android:text="Waiting List"
             android:textColor="@color/purpleText"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.42"
@@ -71,32 +61,32 @@
 
 
         <Button
-            android:id="@+id/btn_notification1"
-            android:layout_width="64dp"
-            android:layout_height="67dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/purpleText"
-            android:drawableTop="@drawable/ic_notification"
-            android:drawablePadding="6dp"
-            android:drawableTint="@color/darkPurple"
-            android:padding="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_pool"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recycler_notifications" />
-
-        <Button
             android:id="@+id/btn_pool"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="240dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:backgroundTint="@color/darkPurple"
             android:text="Pooling"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layoute"
-            tools:layout_editor_absoluteX="71dp" />
+            app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
+            app:layout_constraintEnd_toStartOf="@+id/btn_notification1"
+            app:layout_constraintHorizontal_bias="0.173"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_notifications"
+            app:layout_constraintVertical_bias="0.423" />
+
+        <Button
+            android:id="@+id/btn_notification1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="@color/purpleText"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawableTint="@color/darkPurple"
+            app:layout_constraintBottom_toTopOf="@id/bottom_buttons_layoute"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@id/btn_notification1"
+            app:layout_constraintTop_toBottomOf="@id/recycler_notifications" />
 
         <LinearLayout
             android:id="@+id/bottom_buttons_layoute"
