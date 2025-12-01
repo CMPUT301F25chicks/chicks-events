@@ -2,7 +2,6 @@ package com.example.chicksevent.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +91,7 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
             if (!task.isSuccessful() || task.getResult() == null) return;
 
             DataSnapshot snapshot = task.getResult();
-            EntrantStatus status = EntrantStatus.INVITED; // default fallback
+            EntrantStatus status = EntrantStatus.WAITING; // default fallback
 
             if (snapshot.child("ACCEPTED").hasChild(uid)) {
                 status = EntrantStatus.ACCEPTED;

@@ -204,7 +204,9 @@ public class ChosenListFragment extends Fragment {
                         if (getContext() == null) return;
                         entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
+                            Entrant e = new Entrant(childSnap.getKey(), eventId);
+                            e.setStatus(EntrantStatus.INVITED);
+                            entrantDataList.add(e);
                         }
 
                         waitingListAdapter = new EntrantAdapter(getContext(), entrantDataList);

@@ -185,7 +185,9 @@ public class CancelledListFragment extends Fragment {
                         if (getContext() == null) return;
                         entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : snapshot.getChildren()) {
-                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
+                            Entrant e = new Entrant(childSnap.getKey(), eventId);
+                            e.setStatus(EntrantStatus.CANCELLED);
+                            entrantDataList.add(e);
                         }
                         entrantAdapter = new EntrantAdapter(getContext(), entrantDataList);
                         userView.setAdapter(entrantAdapter);

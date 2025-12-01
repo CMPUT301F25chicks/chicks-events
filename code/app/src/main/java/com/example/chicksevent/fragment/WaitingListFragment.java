@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -185,7 +184,9 @@ public class WaitingListFragment extends Fragment {
                         }
                         entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
+                            Entrant e = new Entrant(childSnap.getKey(), eventId);
+                            e.setStatus(EntrantStatus.WAITING);
+                            entrantDataList.add(e);
 //                            Log.i(TAG, "child key: " + childSnap.getKey());
                         }
 

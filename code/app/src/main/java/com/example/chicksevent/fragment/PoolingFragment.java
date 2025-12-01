@@ -241,7 +241,10 @@ public class PoolingFragment extends Fragment {
 
                         if (dataSnapshot != null && dataSnapshot.exists()) {
                             for (DataSnapshot childSnap : dataSnapshot.getChildren()) {
-                                entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
+                                Entrant e = new Entrant(childSnap.getKey(), eventId);
+                                e.setStatus(EntrantStatus.INVITED);
+                                entrantDataList.add(e);
+//                                entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
                             }
                         }
 

@@ -184,7 +184,10 @@ public class FinalListFragment extends Fragment {
                         if (getContext() == null) return;
                         entrantDataList = new ArrayList<>();
                         for (DataSnapshot childSnap : snapshot.getChildren()) {
-                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
+                            Entrant e = new Entrant(childSnap.getKey(), eventId);
+                            e.setStatus(EntrantStatus.ACCEPTED);
+                            entrantDataList.add(e);
+//                            entrantDataList.add(new Entrant(childSnap.getKey(), eventId));
                         }
                         entrantAdapter = new EntrantAdapter(getContext(), entrantDataList);
                         userView.setAdapter(entrantAdapter);

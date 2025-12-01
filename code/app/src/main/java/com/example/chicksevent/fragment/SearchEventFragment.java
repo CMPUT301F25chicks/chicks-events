@@ -149,6 +149,10 @@ public class SearchEventFragment extends Fragment {
                     HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
                     String eventId = value.get("id");
 
+                    Boolean onHold = (Boolean) ((HashMap<String, Object>) childSnapshot.getValue()).get("onHold");
+
+                    if (onHold) continue;
+
                     if (filterIds != null && !filterIds.contains(eventId)) continue;
 
                     Event e = new Event(
@@ -198,8 +202,8 @@ public class SearchEventFragment extends Fragment {
 
     /** Apply interest + availability filters */
     private void applyFilters() {
-        Log.i("RTD10", filters.toString());
-        Log.i("RTD10", filterAvailability.toString());
+//        Log.i("RTD10", filters.toString());
+//        Log.i("RTD10", filterAvailability.toString());
         user.filterEvents(filters, filterAvailability)
                 .addOnCompleteListener(task -> {
                     if (!isAdded()) return;

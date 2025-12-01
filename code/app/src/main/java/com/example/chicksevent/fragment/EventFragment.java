@@ -308,6 +308,10 @@ public class EventFragment extends Fragment {
                     HashMap<String, String> value = (HashMap<String, String>) childSnapshot.getValue();
 //                    new Event();
 
+                    Boolean onHold = (Boolean) ((HashMap<String, Object>) childSnapshot.getValue()).get("onHold");
+
+                    if (onHold) continue;
+
                     Log.d(TAG, "Key: " + key);
                     Log.d(TAG, "Value: " + value);
                     Event e = new Event("e", value.get("id"), value.get("name"), value.get("eventDetails"), value.get("eventStartTime"), value.get("eventEndTime"), value.get("eventStartDate"), "N/A", value.get("registrationEndDate"), value.get("registrationStartDate"), 32, "N/A", value.get("tag"), false);
