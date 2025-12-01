@@ -336,6 +336,9 @@ public class User {
                             case "UNINVITED":
                                 notificationType = NotificationType.UNINVITED;
                                 break;
+                            case "ACCEPTED":
+                                notificationType = NotificationType.ACCEPTED;
+                                break;
                             case "CANCELLED":
                                 notificationType = NotificationType.CANCELLED;
                                 break;
