@@ -75,6 +75,8 @@ public class PoolingFragment extends Fragment {
     /** The event id whose waiting list is being managed. */
     String eventId;
 
+    public PoolingFragment() {}
+
     /**
      * Inflates the pooling layout using ViewBinding.
      */
