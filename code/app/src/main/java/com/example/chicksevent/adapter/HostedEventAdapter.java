@@ -3,8 +3,6 @@ package com.example.chicksevent.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.chicksevent.R;
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
@@ -189,32 +188,35 @@ public class HostedEventAdapter extends ArrayAdapter<Event> {
 //        Log.i("what event", event.getId() + " | " + holder.eventId);
 
         if (imageCache.containsKey(event.getId())) {
-            holder.posterImageView.setImageBitmap(imageCache.get(event.getId()));
-
+            Glide.with(holder.posterImageView.getContext())
+                    .load(imageCache.get(event.getId()))
+                    .into(holder.posterImageView);
         } else {
 
 
-            imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
+            try {
+                imageService.getReference()
+                        .child(event.getId())
+                        .child("poster")
+                        .get()
+                        .addOnSuccessListener(snapshot -> {
 
-                Log.i("what event", event.getId() + " | " + holder.eventId);
-                //            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
-                if (!event.getId().equals(holder.eventId)) return;
+                            if (!event.getId().equals(holder.eventId)) return;
 
-                if (task.getValue() == null) {
-                    // clearn image if does not exist
-                    holder.posterImageView.setImageResource(R.drawable.sample_image);
-                    return;
-                }
+                            String imageUrl = snapshot.getValue(String.class);
+                            if (imageUrl == null) return;
 
-                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
-                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.posterImageView.setImageBitmap(bitmap);
-                imageCache.put(event.getId(), bitmap);
-            }).addOnFailureListener(e -> {
-                Log.i("errorerror", e.getMessage());
+                            Glide.with(holder.posterImageView.getContext())
+                                    .load(imageUrl)
+                                    .into(holder.posterImageView);
+
+//                    imageCache.put(event.getId(), imageUrl); // optional
+                        });
+            } catch (Exception e) {
+                Log.i("errorthingprintthis", ""+e);
                 holder.posterImageView.setImageResource(R.drawable.sample_image);
-            });
+
+            }
         }
 
 

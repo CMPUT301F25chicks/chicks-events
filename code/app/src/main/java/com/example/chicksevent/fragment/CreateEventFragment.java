@@ -41,6 +41,8 @@ import com.example.chicksevent.util.FirebaseStorageHelper;
 import com.example.chicksevent.util.QRCodeGenerator;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -69,6 +71,7 @@ public class CreateEventFragment extends Fragment {
 
     /** View binding for accessing UI elements. */
     private FragmentCreateEventBinding binding;
+    private FirebaseService eventService = new FirebaseService("Event");
     private FirebaseService imageService = new FirebaseService("Image");
 
     private ActivityResultLauncher<Intent> pickImageLauncher;
@@ -464,6 +467,8 @@ public class CreateEventFragment extends Fragment {
                 urlData.put("url", base64Image);
                 imageService.addEntry(urlData, id);
             }
+
+            uploadImageToFirestore(imageUri, eventId);
         }
 
         // Show success message and navigate back to main screen
@@ -476,6 +481,25 @@ public class CreateEventFragment extends Fragment {
             // Fallback to activity back press if navigation fails
             requireActivity().onBackPressed();
         }
+    }
+
+    private void uploadImageToFirestore(Uri imageUri, String eventId) {
+        StorageReference storageRef = FirebaseStorage.getInstance()
+                .getReference(eventId + ".jpg");
+
+        storageRef.putFile(imageUri)
+                .addOnSuccessListener(task -> {
+
+                    storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+
+                        // Save the URL inside Realtime Database
+                        imageService.getReference()
+                                .child(eventId)
+                                .child("poster")
+                                .setValue(downloadUri.toString());
+                    });
+                })
+                .addOnFailureListener(e -> Log.i("errorfromimageupload", ""+e));
     }
 
     /**

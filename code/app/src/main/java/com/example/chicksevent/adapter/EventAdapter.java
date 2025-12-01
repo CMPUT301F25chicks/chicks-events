@@ -1,9 +1,6 @@
 package com.example.chicksevent.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.chicksevent.R;
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
@@ -33,7 +31,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
     FirebaseService imageService = new FirebaseService("Image");
 
     HostedEventAdapter.ViewHolder holder;
-    private final HashMap<String, Bitmap> imageCache = new HashMap<>();
+    private final HashMap<String, String> imageCache = new HashMap<>();
 
 
     /**
@@ -108,20 +106,39 @@ public class EventAdapter extends ArrayAdapter<Event> {
         holder.eventId = event.getId();
 
         if (imageCache.containsKey(event.getId())) {
-            holder.posterImageView.setImageBitmap(imageCache.get(event.getId()));
-
+            Glide.with(holder.posterImageView.getContext())
+                    .load(imageCache.get(event.getId()))
+                    .into(holder.posterImageView);
         } else {
-            imageService.getReference().child(event.getId()).get().addOnSuccessListener(task -> {
-//            if (task.getResult().getValue() == null || !event.getId().equals(task.getResult().getKey())) return;
-                if (!event.getId().equals(holder.eventId) || task.getValue() == null) return;
 
-                String base64Image = ((HashMap<String, String>) task.getValue()).get("url");
-                byte[] bytes = Base64.decode(base64Image, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.posterImageView.setImageBitmap(bitmap);
-                imageCache.put(event.getId(), bitmap);
-            });
+
+            try {
+                imageService.getReference()
+                        .child(event.getId())
+                        .child("poster")
+                        .get()
+                        .addOnSuccessListener(snapshot -> {
+
+                            if (!event.getId().equals(holder.eventId)) return;
+
+                            String imageUrl = snapshot.getValue(String.class);
+                            if (imageUrl == null) return;
+
+                            Glide.with(holder.posterImageView.getContext())
+                                    .load(imageUrl)
+                                    .into(holder.posterImageView);
+
+//                    imageCache.put(event.getId(), imageUrl); // optional
+                        });
+            } catch (Exception e) {
+                Log.i("errorthingprintthis", ""+e);
+                holder.posterImageView.setImageResource(R.drawable.sample_image);
+
+            }
         }
+
+
+
         // ----- Format tv_date as "MMM\ndd" -----
         String startDateStr = event.getEventStartDate(); // e.g., "03-15-2025"
 

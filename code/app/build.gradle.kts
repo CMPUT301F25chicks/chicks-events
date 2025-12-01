@@ -85,6 +85,8 @@ dependencies {
 
     // Firebase Storage for QR code image storage
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 //
 
 //    implementation(files("C:\\Users\\jorda\\AppData\\Local\\Android\\Sdk\\platforms\\android-36\\android.jar"));

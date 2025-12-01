@@ -41,6 +41,8 @@ import com.example.chicksevent.util.FirebaseStorageHelper;
 import com.example.chicksevent.util.QRCodeGenerator;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -505,7 +507,7 @@ public class UpdateEventFragment extends Fragment {
 
         // Push to Firebase
         String id = e.editEvent(eventId);
-        String eventId = e.getId();
+//        String eventId = e.getId();
         String eventName = e.getName();
 
         // Generate and save QR code
@@ -531,6 +533,8 @@ public class UpdateEventFragment extends Fragment {
                 urlData.put("url", base64Image);
                 imageService.addEntry(urlData, id);
             }
+
+            uploadImageToFirestore(imageUri, eventId);
         }
 
         // Show success message and navigate back to main screen
@@ -780,6 +784,26 @@ public class UpdateEventFragment extends Fragment {
                     }
                 }
         );
+    }
+
+    private void uploadImageToFirestore(Uri imageUri, String eventId) {
+        StorageReference storageRef = FirebaseStorage.getInstance()
+                .getReference(eventId + ".jpg");
+
+        storageRef.putFile(imageUri)
+                .addOnSuccessListener(task -> {
+
+                    storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+
+                        // Save the URL inside Realtime Database
+                        Log.i("errorthingwtf", "" + eventId);
+                        imageService.getReference()
+                                .child(eventId)
+                                .child("poster")
+                                .setValue(downloadUri.toString());
+                    });
+                })
+                .addOnFailureListener(e -> Log.i("errorfromimageupload", ""+e));
     }
 
     private void openImageChooser() {
