@@ -105,7 +105,7 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
 
 
 
-        status.setText(notification.getNotificationType() == NotificationType.WAITING ? "WAITING" : notification.getNotificationType() == NotificationType.INVITED ? "INVITED" : notification.getNotificationType() == NotificationType.CANCELLED ? "CANCELLED" : notification.getNotificationType() == NotificationType.SYSTEM ? "SYSTEM" : "NOT CHOSEN");
+        status.setText(notification.getNotificationType() == NotificationType.WAITING ? "WAITING" : notification.getNotificationType() == NotificationType.INVITED ? "INVITED": notification.getNotificationType() == NotificationType.ACCEPTED ? "ACCEPTED" : notification.getNotificationType() == NotificationType.CANCELLED ? "CANCELLED" : notification.getNotificationType() == NotificationType.SYSTEM ? "SYSTEM" : "NOT CHOSEN");
         btnDelete.setOnClickListener(v -> {
             if (listener != null) listener.onItemButtonClick(notification);
         });

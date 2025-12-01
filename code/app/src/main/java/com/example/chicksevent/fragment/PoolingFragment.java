@@ -48,7 +48,7 @@ import java.util.ArrayList;
  *
  * @author Jordan Kwan
  */
-public abstract class PoolingFragment extends Fragment {
+public class PoolingFragment extends Fragment {
 
     /** View binding for the pooling layout. */
     private FragmentPoolingBinding binding;

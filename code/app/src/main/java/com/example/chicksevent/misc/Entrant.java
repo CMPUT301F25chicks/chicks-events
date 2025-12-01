@@ -75,6 +75,7 @@ public class Entrant extends User {
     public String getEventId() { return eventId; }
     public String getEntrantId() { return entrantId; }
     public EntrantStatus getStatus() { return status; }
+
     public void setStatus(EntrantStatus status) {this.status = status;}
 
     /**

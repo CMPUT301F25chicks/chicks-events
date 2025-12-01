@@ -66,8 +66,24 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_bar"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+            app:layout_constraintBottom_toTopOf="@+id/btn_notification1"
             tools:listitem="@layout/item_user" />
+
+        <Button
+            android:id="@+id/btn_notification1"
+            android:layout_width="71dp"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/purpleText"
+            android:drawableTop="@drawable/ic_notification"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/darkPurple"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_buttons_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_finalList" />
+
 
 
         <LinearLayout

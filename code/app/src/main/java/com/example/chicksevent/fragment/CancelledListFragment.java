@@ -149,7 +149,7 @@ public class CancelledListFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
 
                     organizer.sendWaitingListNotification(EntrantStatus.CANCELLED, userInput);
-//                    organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
+//                      organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

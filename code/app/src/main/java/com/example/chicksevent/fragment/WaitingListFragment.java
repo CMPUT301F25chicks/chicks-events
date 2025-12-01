@@ -115,11 +115,6 @@ public class WaitingListFragment extends Fragment {
 ////
         userView.setAdapter(waitingListAdapter);
 
-        ImageButton back = view.findViewById(R.id.btn_check);
-
-        if (back != null) back.setOnClickListener(v ->
-                NavHostFragment.findNavController(this).popBackStack()
-        );
 
         poolingButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(WaitingListFragment.this);

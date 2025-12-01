@@ -1,6 +1,8 @@
 package com.example.chicksevent.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.example.chicksevent.R;
 import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.User;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -57,12 +60,12 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
      * @param parent the parent view group that this view will be attached to
      * @return a populated view representing the {@link User} at the given position
      */
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view;
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.item_chosen_user, parent, false);
+            view = LayoutInflater.from(getContext())
+                    .inflate(R.layout.item_chosen_user, parent, false);
         } else {
             view = convertView;
         }
@@ -72,25 +75,59 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
         TextView statusView = view.findViewById(R.id.tv_status);
         ImageButton deleteBtn = view.findViewById(R.id.btn_delete);
 
+        // Load name as usual
         entrant.getName().addOnCompleteListener(name -> {
             userName.setText(name.getResult());
         });
 
-        statusView.setText("TODO");
+        String uid = entrant.getEntrantId();
+        String eventId = entrant.getEventId();
+
+        // Load live status from database
+        DatabaseReference statusRef = FirebaseDatabase.getInstance()
+                .getReference("WaitingList")
+                .child(eventId);
+
+        statusRef.get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || task.getResult() == null) return;
+
+            DataSnapshot snapshot = task.getResult();
+            EntrantStatus status = EntrantStatus.INVITED; // default fallback
+
+            if (snapshot.child("ACCEPTED").hasChild(uid)) {
+                status = EntrantStatus.ACCEPTED;
+            } else if (snapshot.child("INVITED").hasChild(uid)) {
+                status = EntrantStatus.INVITED;
+            } else if (snapshot.child("CANCELLED").hasChild(uid)) {
+                status = EntrantStatus.CANCELLED;
+            }
+
+            statusView.setText(status.name());
+
+            // Update the entrant object so it stays consistent
+            entrant.setStatus(status);
+
+            // Set up delete button using updated status
+            setupDeleteButton(deleteBtn, entrant, userName, status);
+        });
+
+        return view;
+    }
+
+    private void setupDeleteButton(ImageButton deleteBtn, Entrant entrant,
+                                   TextView userName, EntrantStatus status) {
 
         deleteBtn.setOnClickListener(v -> {
             String uid = entrant.getEntrantId();
             String eventId = entrant.getEventId();
-            EntrantStatus status = entrant.getStatus();
 
             if (eventId == null || eventId.isEmpty()) {
                 Toast.makeText(getContext(), "Missing eventId!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // If NOT in INVITED, they cannot be cancelled
-            if (!"INVITED".equals(status)) {
-                new androidx.appcompat.app.AlertDialog.Builder(getContext())
+            if (status != EntrantStatus.INVITED) {
+                new AlertDialog.Builder(getContext())
                         .setTitle("Cannot Cancel")
                         .setMessage("This entrant is already signed up, so they cannot be cancelled.")
                         .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
@@ -98,8 +135,7 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
                 return;
             }
 
-            // Only INVITED entrants can be cancelled
-            new androidx.appcompat.app.AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(getContext())
                     .setTitle("Cancel Entrant")
                     .setMessage("Are you sure you want to cancel " + userName.getText() + "?")
                     .setPositiveButton("Yes", (dialog, which) -> {
@@ -111,15 +147,12 @@ public class EntrantAdapter extends ArrayAdapter<Entrant> {
                         root.child("CANCELLED").child(uid).setValue(true);
 
                         Toast.makeText(getContext(),
-                                "Cancelled entrant " + uid,
+                                "Cancelled " + uid,
                                 Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
-
-
-        return view;
     }
 
     // Test helper (ignored by app)
