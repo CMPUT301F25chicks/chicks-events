@@ -345,8 +345,10 @@ public class EventDetailOrgFragment extends Fragment {
 
                         // Waiting count
                         getFinalCount().addOnSuccessListener(count -> {
+                            if (binding == null) return;  // <-- safe guard
                             binding.tvEntrantsCount.setText(count + " / " + limit);
                         });
+
                     } else {
                         Log.e("EventDetail", "Event not found for id: " + eventId);
                     }

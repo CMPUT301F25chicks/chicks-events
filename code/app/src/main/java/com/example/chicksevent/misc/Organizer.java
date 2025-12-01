@@ -182,6 +182,9 @@ public class Organizer extends User {
                     case CANCELLED:
                         notifType = NotificationType.CANCELLED;
                         break;
+                    case ACCEPTED:
+                        notifType = NotificationType.ACCEPTED;
+                        break;
                     default:
                         notifType = NotificationType.UNINVITED;
                 }

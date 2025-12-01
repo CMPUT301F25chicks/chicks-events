@@ -48,6 +48,7 @@ public enum NotificationType {
      * </p>
      */
     UNINVITED,
+    ACCEPTED,
 
     CANCELLED,
     SYSTEM

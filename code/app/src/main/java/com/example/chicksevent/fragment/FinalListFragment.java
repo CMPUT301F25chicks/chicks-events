@@ -1,11 +1,17 @@
 package com.example.chicksevent.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +23,7 @@ import com.example.chicksevent.databinding.FragmentFinalListBinding;
 import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
+import com.example.chicksevent.misc.Organizer;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -95,6 +102,7 @@ public class FinalListFragment extends Fragment {
         if (args != null) eventId = args.getString("eventId");
 
         userView = view.findViewById(R.id.recycler_finalList);
+        Button sendNotificationButton = view.findViewById(R.id.btn_notification1);
 
 //        Button eventButton = view.findViewById(R.id.btn_events);
 //        Button createEventButton = view.findViewById(R.id.btn_addEvent);
@@ -111,8 +119,49 @@ public class FinalListFragment extends Fragment {
 //        notificationButton.setOnClickListener(v -> NavHostFragment.findNavController(this)
 //                .navigate(R.id.action_FinalListFragment_to_NotificationFragment));
 
-        // Load cancelled entrants by default
+        // Load final entrants by default
         listEntrants(EntrantStatus.ACCEPTED);
+
+        sendNotificationButton.setOnClickListener(v -> {
+            Log.i("notification", "sending notif");
+            Organizer organizer = new Organizer(Settings.Secure.getString(
+                    getContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID
+            ), eventId);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Send Final List Notification");
+
+            final EditText input = new EditText(getContext());
+            input.setHint("Type here...");
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String userInput = input.getText().toString().trim();
+
+                    Toast.makeText(getContext(),
+                            "You entered: " + userInput,
+                            Toast.LENGTH_SHORT).show();
+
+                    organizer.sendWaitingListNotification(EntrantStatus.ACCEPTED, userInput);
+//                    organizer.sendWaitingListNotification(EntrantStatus.UNINVITED, "NOT chosen list notification");
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+
+
+
+            Toast.makeText(getContext(), "chosen list notfication sent", Toast.LENGTH_SHORT).show();
+        });
 
     }
 
