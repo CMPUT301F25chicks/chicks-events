@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.05.05: As an entrant, I want to be informed about the criteria 
  * or guidelines for the lottery selection process.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Entrants can access lottery criteria/guidelines information</li>
@@ -40,8 +39,6 @@ import org.junit.runner.RunWith;
  *   <li>Information about entrant limits and selection rules is accessible</li>
  *   <li>Edge cases (no help button, missing information) are handled properly</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -55,8 +52,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Full end-to-end testing requires:
  * <ul>
  *   <li>Navigation to EventDetailFragment with valid eventId</li>
@@ -64,7 +59,6 @@ import org.junit.runner.RunWith;
  *   <li>Help/info button or section implemented in UI</li>
  * </ul>
  * These tests focus on UI element visibility and basic interactions.
- * </p>
  *
  * @author Jinn Kasai
  */

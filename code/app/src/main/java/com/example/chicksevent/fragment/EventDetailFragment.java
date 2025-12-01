@@ -55,14 +55,12 @@ import java.util.Locale;
  * It provides navigation to related fragments (Notification, Events, Create Event)
  * and enables users to join the event's waiting list as an {@link Entrant}.
  * </p>
- *
- * <p><b>Navigation:</b>
+ * <b>Navigation:</b>
  * <ul>
  *   <li>Navigate to {@code NotificationFragment}</li>
  *   <li>Navigate to {@code EventFragment}</li>
  *   <li>Navigate to {@code CreateEventFragment}</li>
  * </ul>
- * </p>
  *
  * <p>
  * Joining the waiting list uses the device's Android ID as the entrant ID and calls

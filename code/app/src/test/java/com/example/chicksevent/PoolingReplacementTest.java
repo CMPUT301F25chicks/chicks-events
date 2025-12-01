@@ -1,7 +1,16 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.example.chicksevent.misc.FirebaseService;
 import com.example.chicksevent.misc.Lottery;
@@ -18,7 +27,6 @@ import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +34,8 @@ import java.util.Map;
  * Unit tests for {@link Lottery} replacement applicant functionality.
  *
  * <h2>User stories handled</h2>
- *   <li>US 02.05.03: As an organizer I want to be able to draw a replacement applicant from the pooling system
- *       when a previously selected applicant cancels or rejects the invitation.</li>
- * <p>
+ *   <p>US 02.05.03: As an organizer I want to be able to draw a replacement applicant from the pooling system
+ *       when a previously selected applicant cancels or rejects the invitation.</p>
  * These tests validate that the pooling system correctly handles replacement applicants, ensuring that:
  * <ul>
  *     <li>The fragment identifies cancelled or rejected entrants correctly.</li>
@@ -36,7 +43,6 @@ import java.util.Map;
  *     <li>Adapter and UI updates correctly reflect the replacement in the list.</li>
  *     <li>No real Firebase interactions are required; all entrant and pool data are mocked.</li>
  * </ul>
- * </p>
  *
  * <p>
  * All Firebase interactions are mocked to allow isolated unit testing without network dependencies.

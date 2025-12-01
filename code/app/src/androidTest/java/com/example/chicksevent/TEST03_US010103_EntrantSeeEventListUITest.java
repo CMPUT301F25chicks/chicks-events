@@ -1,14 +1,12 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 
 import android.view.View;
@@ -30,7 +28,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.01.03: As an entrant, I want to be able to see a list of events 
  * that I can join the waiting list for.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Events list screen is accessible</li>
@@ -39,7 +36,6 @@ import org.junit.runner.RunWith;
  *   <li>List is scrollable when there are many events</li>
  *   <li>Events are clickable to view details</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

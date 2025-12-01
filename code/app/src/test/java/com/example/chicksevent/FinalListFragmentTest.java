@@ -1,7 +1,14 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,9 +19,9 @@ import com.example.chicksevent.enums.EntrantStatus;
 import com.example.chicksevent.fragment.FinalListFragment;
 import com.example.chicksevent.misc.Entrant;
 import com.example.chicksevent.misc.FirebaseService;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.ValueEventListener;
 
 import org.junit.After;
@@ -23,7 +30,6 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -31,8 +37,7 @@ import java.util.Iterator;
  * Unit tests for {@link FinalListFragment} final list functionality.
  *
  * <h2>User stories handled</h2>
- *   <li>US 02.06.03: As an organizer I want to see a final list of entrants who enrolled for the event.</li>
- * <p>
+ *   <p>US 02.06.03: As an organizer I want to see a final list of entrants who enrolled for the event.</p>
  * These tests validate that the fragment correctly populates the final list of enrolled entrants
  * from Firebase data snapshots, ensuring that:
  * <ul>
@@ -40,7 +45,6 @@ import java.util.Iterator;
  *     <li>Data from mocked Firebase snapshots is correctly transformed into {@link com.example.chicksevent.misc.Entrant} objects.</li>
  *     <li>Fragment handles the Firebase database reference chain correctly without requiring real Firebase initialization.</li>
  * </ul>
- * </p>
  *
  * <p>
  * All Firebase interactions are mocked to allow isolated unit testing without network dependencies.

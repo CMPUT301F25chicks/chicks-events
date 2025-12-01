@@ -41,13 +41,12 @@ import java.util.ArrayList;
  * Also exposes navigation to Notifications, Events, Create Event, and Pooling screens.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *   <li>Resolve and persist the current event id from fragment arguments.</li>
  *   <li>Fetch and render the list of user ids in a given waiting-list status.</li>
  *   <li>Provide navigation to related organizer workflows.</li>
  * </ul>
- * </p>
  *
  * @author Jordan Kwan
  */

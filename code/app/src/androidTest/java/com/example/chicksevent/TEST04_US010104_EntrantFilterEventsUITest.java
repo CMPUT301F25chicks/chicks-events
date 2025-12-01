@@ -34,7 +34,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.01.04: As an entrant, I want to filter events based on 
  * my interests and availability.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Filter button/panel is accessible</li>
@@ -43,7 +42,6 @@ import org.junit.runner.RunWith;
  *   <li>Event list updates based on filters</li>
  *   <li>Filters can be cleared</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

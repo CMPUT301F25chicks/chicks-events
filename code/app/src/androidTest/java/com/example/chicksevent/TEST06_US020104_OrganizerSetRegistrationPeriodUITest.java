@@ -1,7 +1,6 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -25,14 +24,12 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 02.01.04: As an organizer, I want to set a registration period.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Registration period fields are visible in create/update event screen</li>
  *   <li>Start and end dates can be selected</li>
  *   <li>Dates are saved correctly</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

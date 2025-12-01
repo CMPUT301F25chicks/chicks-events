@@ -32,7 +32,6 @@ import java.util.List;
 
 /**
  * Fragment that displays a map showing locations where entrants joined the waiting list.
- * <p>
  * This fragment allows organizers to:
  * <ul>
  *   <li>View locations of entrants who joined with geolocation (WAITING and INVITED status only)</li>
@@ -40,7 +39,6 @@ import java.util.List;
  *   <li>Search entrants by name or ID</li>
  *   <li>Click markers to see entrant details</li>
  * </ul>
- * </p>
  * Uses OpenStreetMap (OSMDroid) - free and no API key required.
  *
  * @author Jinn Kasai

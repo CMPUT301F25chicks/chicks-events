@@ -27,18 +27,17 @@ import java.util.ArrayList;
  * the entrant ID associated with each {@link Entrant} instance.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *     <li>Inflate the {@code item_entrant} layout for each list entry.</li>
  *     <li>Populate the layout with data from a {@link Entrant} object.</li>
  *     <li>Reuse views efficiently through view recycling.</li>
  * </ul>
- * </p>
  *
  * <p>This adapter can be extended to include additional entrant details (e.g.,
  * name, email, phone number) as the application evolves.</p>
  *
- * @author Jordan and Hanh </3
+ * @author Jordan and Hanh &lt;/3
  */
 public class EntrantAdapter extends ArrayAdapter<Entrant> {
     /**

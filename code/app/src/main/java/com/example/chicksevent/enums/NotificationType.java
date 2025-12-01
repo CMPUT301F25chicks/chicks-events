@@ -6,14 +6,12 @@ import com.example.chicksevent.misc.User;
 /**
  * Enumeration representing the different types of notifications that can be sent
  * to users in the ChicksEvent application.
- * <p>
  * Each notification type corresponds to a specific event lifecycle action:
  * <ul>
  *   <li>{@link #WAITING} — User is on the waiting list for an event</li>
  *   <li>{@link #INVITED} — User has been selected and invited to the event</li>
  *   <li>{@link #UNINVITED} — User was previously invited but has been removed</li>
  * </ul>
- * </p>
  *
  * <p>
  * These values are used to categorize notifications stored in Firebase under

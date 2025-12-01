@@ -21,7 +21,6 @@ import java.util.HashMap;
 /**
  * Unit tests for US 01.06.02: As an entrant I want to be able to join 
  * the waitlist from the event details.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Entrants can join the waiting list from event details</li>
@@ -31,7 +30,6 @@ import java.util.HashMap;
  *   <li>Firebase operations are called correctly</li>
  *   <li>Edge cases are handled properly</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

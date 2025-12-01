@@ -34,24 +34,21 @@ import java.util.ArrayList;
  * Fragment displaying a list of accepted entrants for a specific event, allowing the organizer
  * to view entrants by status and send notifications.
  *
- * <p>
  * Users (organizers) can:
  * <ul>
  *   <li>View the list of accepted entrants filtered by {@link EntrantStatus}.</li>
  *   <li>Navigate to event listing, event creation, and notification screens.</li>
  * </ul>
- * </p>
  *
- * <p><b>Firebase roots used:</b>
+ * <b>Firebase roots used:</b>
  * <ul>
  *   <li><code>WaitingList</code> — stores the entrants grouped by status for each event.</li>
  * </ul>
- * </p>
  *
- * <p><b>Arguments:</b> If a {@link Bundle} argument contains a string under the key
- * <code>"eventName"</code>, the fragment loads entrants for that event.</p>
+ * <b>Arguments:</b> If a {@link Bundle} argument contains a string under the key
+ * <code>"eventName"</code>, the fragment loads entrants for that event.
  *
- * <p><b>UI Components (via ViewBinding):</b>
+ * <b>UI Components (via ViewBinding):</b>
  * <ul>
  *   <li>{@link ListView} {@link #userView} — displays the list of entrants (binding: recyclerFinalList).</li>
  *   <li>Buttons for navigation:
@@ -62,7 +59,6 @@ import java.util.ArrayList;
  *       </ul>
  *   </li>
  * </ul>
- * </p>
  *
  */
 public class FinalListFragment extends Fragment {

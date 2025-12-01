@@ -23,7 +23,7 @@ import java.util.List;
  * and use the Play Services {@link Task} API for asynchronous completion.
  * </p>
  *
- * <h3>Key user stories</h3>
+ * <p>Key user stories</p>
  * <ul>
  *   <li><b>US 03.01.01</b> — Admin can delete an event.</li>
  *   <li><b>US 03.05.01</b> — Admin can browse events.</li>

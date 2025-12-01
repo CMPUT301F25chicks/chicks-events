@@ -10,7 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
@@ -31,7 +30,6 @@ import org.junit.runner.RunWith;
  * UpdateEventFragment, allowing organizers to enable or disable the
  * geolocation requirement for their events.
  * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -45,7 +43,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
  *
  * @author Jinn Kasai
  */

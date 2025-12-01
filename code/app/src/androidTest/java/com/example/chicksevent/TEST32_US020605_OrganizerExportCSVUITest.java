@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.06.05: As an organizer I want to export a final list of entrants
  * who enrolled for the event in CSV format.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can see the export CSV button on the event detail screen</li>
@@ -33,8 +32,6 @@ import org.junit.runner.RunWith;
  *   <li>Error handling works for missing event data</li>
  *   <li>The button is accessible in scrollable views</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -48,8 +45,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Full end-to-end testing requires:
  * <ul>
  *   <li>Firebase test data with events that the organizer manages</li>
@@ -57,7 +52,6 @@ import org.junit.runner.RunWith;
  *   <li>Cloud Function availability for CSV generation</li>
  * </ul>
  * These tests focus on UI element visibility, button interactions, and Intent verification.
- * </p>
  *
  * @author Jinn Kasai
  */

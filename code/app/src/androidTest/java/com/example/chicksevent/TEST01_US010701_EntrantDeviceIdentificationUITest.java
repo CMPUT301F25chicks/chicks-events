@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.07.01: As an entrant, I want to be identified by my device, 
  * so that I don't have to use a username and password.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>App uses device ID for identification</li>
@@ -28,7 +27,6 @@ import org.junit.runner.RunWith;
  *   <li>User is automatically identified on app launch</li>
  *   <li>Profile is accessible without authentication</li>
  * </ul>
- * </p>
  * <p>
  * <b>Note:</b> This is more of a system-level test. The app should automatically
  * identify users by Android ID without requiring login credentials.

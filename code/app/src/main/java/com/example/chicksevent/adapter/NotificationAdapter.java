@@ -26,12 +26,11 @@ import java.util.Locale;
  * notification data to the corresponding view components.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *     <li>Inflate and recycle views for efficient list rendering.</li>
  *     <li>Bind notification data to text views within each item layout.</li>
  * </ul>
- * </p>
  *
  * @author Jordan Kwan
  */

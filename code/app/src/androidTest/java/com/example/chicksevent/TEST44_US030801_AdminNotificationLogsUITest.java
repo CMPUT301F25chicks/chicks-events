@@ -1,14 +1,11 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
-import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 
 import android.view.View;
@@ -30,7 +27,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 03.08.01: As an administrator, I want to review logs of all 
  * notifications sent to entrants by organizers.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Administrators can navigate to the notification logs screen</li>
@@ -40,8 +36,6 @@ import org.junit.runner.RunWith;
  *   <li>Notification list is scrollable when there are many notifications</li>
  *   <li>Edge cases (empty list, multiple notifications) are handled properly</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -55,8 +49,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Full end-to-end testing requires:
  * <ul>
  *   <li>Firebase test data (notifications sent by organizers to entrants)</li>
@@ -64,7 +56,6 @@ import org.junit.runner.RunWith;
  *   <li>Admin user authentication</li>
  * </ul>
  * These tests focus on UI element visibility and basic interactions.
- * </p>
  *
  * @author Jinn Kasai
  */

@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.06.01: As an entrant I want to view event details 
  * within the app by scanning the promotional QR code.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Entrants can navigate to the QR code scanner screen</li>
@@ -28,8 +27,6 @@ import org.junit.runner.RunWith;
  *   <li>After scanning a valid QR code, navigation to event details occurs</li>
  *   <li>Event details are displayed correctly (name, description, poster)</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -43,12 +40,9 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Actual QR code scanning requires camera permission and a physical
  * QR code. These tests focus on UI navigation and display. For full end-to-end
  * testing, manual testing with a real QR code is recommended.
- * </p>
  *
  * @author Jinn Kasai
  */

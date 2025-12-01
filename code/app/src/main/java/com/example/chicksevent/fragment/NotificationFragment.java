@@ -31,13 +31,12 @@ import java.util.HashMap;
  * Create Event flows.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *   <li>Resolve device Android ID and use it to fetch the user's notification list.</li>
  *   <li>Initialize and bind the {@link NotificationAdapter}.</li>
  *   <li>Provide quick navigation to related screens.</li>
  * </ul>
- * </p>
  *
  * @author Jordan Kwan
  */

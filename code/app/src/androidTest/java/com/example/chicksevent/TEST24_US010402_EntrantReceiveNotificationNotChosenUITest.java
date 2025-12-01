@@ -19,17 +19,13 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.04.02: As an entrant I want to receive notification of when I am not chosen 
  * on the app (when I "lose" the lottery).
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Notifications screen displays notifications</li>
  *   <li>Not chosen notification appears in notifications list</li>
  *   <li>Notification shows correct message</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> This test requires Firebase test data with UNINVITED notifications.
- * </p>
  *
  * @author Jinn Kasai
  */

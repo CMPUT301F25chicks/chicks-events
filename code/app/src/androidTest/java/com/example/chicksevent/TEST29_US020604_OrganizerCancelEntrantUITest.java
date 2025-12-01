@@ -1,24 +1,17 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.containsString;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -31,7 +24,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 02.06.04: As an organizer, I want to cancel entrants that did not sign up for the event.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can navigate to the chosen entrants (INVITED) list</li>
@@ -43,8 +35,6 @@ import org.junit.runner.RunWith;
  *   <li>Confirmation dialogs work correctly</li>
  *   <li>Edge cases are handled properly (empty lists, multiple cancellations, etc.)</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -52,8 +42,7 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * </pre>
- * </p>
- */
+ * */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class TEST29_US020604_OrganizerCancelEntrantUITest {

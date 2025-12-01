@@ -56,10 +56,7 @@ import java.util.Locale;
 
 /**
  * Fragment that displays and allows navigation from an event update screen.
- * <p>
  * This fragment serves as event editing functionality.
- * </p>
- * </p>
  *
  * @author Jordan Kwan
  */

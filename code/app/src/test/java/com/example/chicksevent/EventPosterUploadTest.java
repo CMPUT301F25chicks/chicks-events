@@ -19,7 +19,6 @@ import java.util.HashMap;
 /**
  * Unit tests for US 02.04.01: As an organizer I want to upload an event poster 
  * to the event details page to provide visual information to entrants.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Events can be created with poster information</li>
@@ -28,7 +27,6 @@ import java.util.HashMap;
  *   <li>Poster field is accessible via getter methods</li>
  *   <li>Poster can be updated after event creation</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

@@ -23,7 +23,6 @@ import java.util.Locale;
 
 /**
  * Custom {@link EventAdapter} subclass for displaying events
- * <p>
  */
 public class EventAdapter extends ArrayAdapter<Event> {
     /** Listener interface for responding to item button clicks. */

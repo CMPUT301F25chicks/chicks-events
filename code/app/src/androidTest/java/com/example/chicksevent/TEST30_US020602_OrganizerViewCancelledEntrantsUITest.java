@@ -1,7 +1,7 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
@@ -10,7 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -23,7 +22,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 02.06.02: As an organizer, I want to see a list of all the cancelled entrants.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can navigate to the cancelled entrants list</li>
@@ -35,8 +33,6 @@ import org.junit.runner.RunWith;
  *   <li>List updates in real-time when entrants are cancelled</li>
  *   <li>Navigation and UI elements are accessible</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -44,7 +40,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * </pre>
- * </p>
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest

@@ -38,13 +38,12 @@ import java.util.ArrayList;
  * It also provides quick navigation to Notifications, Events, and Create Event flows.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *   <li>Resolve the current event id from fragment arguments (key: {@code "eventName"}).</li>
  *   <li>Run the lottery and display the updated entrant list.</li>
  *   <li>Bind a {@link ListView} via {@link UserAdapter} to render user ids.</li>
  * </ul>
- * </p>
  *
  * @author Jordan Kwan
  */
@@ -138,7 +137,7 @@ public class PoolingFragment extends Fragment {
 
 
     /**
-     * Pools replacement entrants if current chosen < target.
+     * Pools replacement entrants if current chosen less than target.
      */
     public void poolReplacementIfNeeded() {
         int target = getTargetEntrants();

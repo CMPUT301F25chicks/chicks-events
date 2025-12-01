@@ -34,7 +34,7 @@ import java.util.HashMap;
  * update flow for that event.
  * </p>
  *
- * <p><b>Navigation:</b>
+ * <b>Navigation:</b>
  * <ul>
  *   <li>To {@code NotificationFragment}</li>
  *   <li>To {@code EventFragment}</li>
@@ -42,7 +42,6 @@ import java.util.HashMap;
  *   <li>To {@code EventDetailOrgFragment} (view action)</li>
  *   <li>To {@code UpdateEventFragment} (update action)</li>
  * </ul>
- * </p>
  *
  * @author Jordan Kwan
  */

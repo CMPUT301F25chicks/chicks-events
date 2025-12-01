@@ -21,8 +21,7 @@ import java.util.ArrayList;
  * Unit tests for {@link EntrantAdapter} cancel logic.
  *
  * <h2>User stories handled</h2>
- *   <li>US 02.06.04: As an organizer I want to cancel entrants that did not sign up for the event</li>
- * <p>
+ *   <p>US 02.06.04: As an organizer I want to cancel entrants that did not sign up for the event</p>
  * These tests validate that the adapter correctly identifies and handles cancelled entrants,
  * ensuring that:
  * <ul>
@@ -30,7 +29,6 @@ import java.util.ArrayList;
  *     <li>Adapter data updates properly reflect cancellation status in the UI.</li>
  *     <li>No real Firebase interactions are required; all entrant data is mocked.</li>
  * </ul>
- * </p>
  *
  * <p>
  * All interactions with entrant data are mocked to allow isolated unit testing without network dependencies.

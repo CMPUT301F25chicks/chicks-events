@@ -1,11 +1,9 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.view.View;
 
@@ -26,7 +24,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.04.01: As an entrant I want to receive notification when I am chosen 
  * to participate from the waiting list (when I "win" the lottery).
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Notifications screen displays notifications</li>
@@ -34,10 +31,7 @@ import org.junit.runner.RunWith;
  *   <li>Notification shows correct message</li>
  *   <li>Notification can be clicked to view details</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> This test requires Firebase test data with notifications sent by organizers.
- * </p>
  *
  * @author Jinn Kasai
  */

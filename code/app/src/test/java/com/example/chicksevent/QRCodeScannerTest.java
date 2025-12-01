@@ -9,7 +9,6 @@ import org.junit.Test;
 /**
  * Unit tests for US 01.06.01: As an entrant I want to view event details 
  * within the app by scanning the promotional QR code.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>QR code deep links are generated in the correct format</li>
@@ -18,7 +17,6 @@ import org.junit.Test;
  *   <li>Invalid QR code formats are detected</li>
  *   <li>Empty and null QR code data is handled</li>
  * </ul>
- * </p>
  * <p>
  * Note: URI parsing using Android's Uri class requires Android runtime and
  * is tested in instrumented tests. These unit tests focus on string-based

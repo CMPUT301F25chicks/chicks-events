@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,20 +22,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Custom {@link ../ArrayAdapter} for displaying {@link Event} objects within a ListView or GridView.
+ * Custom ArrayAdapter for displaying {@link Event} objects within a ListView or GridView.
  * <p>
  * The adapter inflates the {@code item_event.xml} layout for each event, binding event details such as
  * name and time (if available) and providing a clickable arrow button to trigger callback actions.
  * </p>
  *
- * <p><b>Usage:</b>
+ * <b>Usage:</b>
  * <pre>
  * EventAdapter adapter = new EventAdapter(context, events, event -> {
  *     // handle click on event item
  * });
  * listView.setAdapter(adapter);
  * </pre>
- * </p>
  *
  * @author Jordan Kwan
  */

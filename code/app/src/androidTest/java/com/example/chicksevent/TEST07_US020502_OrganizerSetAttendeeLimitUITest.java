@@ -1,15 +1,14 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 
 import androidx.test.espresso.ViewInteraction;
@@ -28,7 +27,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.05.02: As an organizer, I want to set the system to sample 
  * a specified number of attendees to register for the event.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can access the attendee limit setting when creating events</li>
@@ -39,8 +37,6 @@ import org.junit.runner.RunWith;
  *   <li>Attendee limit is saved when creating the event</li>
  *   <li>Edge cases (empty input, invalid values, large numbers) are handled properly</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -54,8 +50,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Full end-to-end testing requires:
  * <ul>
  *   <li>Navigation to CreateEventFragment</li>
@@ -63,7 +57,6 @@ import org.junit.runner.RunWith;
  *   <li>Firebase test data setup</li>
  * </ul>
  * These tests focus on UI element visibility and basic interactions.
- * </p>
  *
  * @author Jinn Kasai
  */

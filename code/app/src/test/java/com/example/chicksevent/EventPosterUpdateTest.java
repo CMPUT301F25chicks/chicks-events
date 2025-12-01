@@ -19,7 +19,6 @@ import java.util.HashMap;
 /**
  * Unit tests for US 02.04.02: As an organizer I want to update an event poster 
  * to provide visual information to entrants.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Events can be updated with a new poster</li>
@@ -28,7 +27,6 @@ import java.util.HashMap;
  *   <li>Poster can be removed (set to null/empty)</li>
  *   <li>Poster updates persist after editEvent()</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

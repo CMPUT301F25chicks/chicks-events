@@ -19,13 +19,12 @@ import java.util.ArrayList;
  * from the supplied user id, and actions are scoped to a specific {@code eventId}.
  * </p>
  *
- * <p><b>Firebase roots used:</b>
+ * <b>Firebase roots used:</b>
  * <ul>
  *   <li><code>WaitingList</code> — read buckets and notify entrants</li>
  *   <li><code>Organizer</code> — reserved for organizer-specific data</li>
  *   <li><code>Event</code> — reserved for event reads/writes</li>
  * </ul>
- * </p>
  *
  * <p><b>Note:</b> This class performs no authorization checks; callers should ensure only
  * permitted users invoke organizer actions.</p>

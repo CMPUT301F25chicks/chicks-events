@@ -38,8 +38,7 @@ import java.util.Iterator;
  * Unit tests for {@link NotificationAdminFragment} notification log functionality.
  *
  * <h2>User stories handled</h2>
- *   <li>US 03.08.01: As an administrator, I want to review logs of all notifications sent to entrants by organizers.</li>
- * <p>
+ *   <p>US 03.08.01: As an administrator, I want to review logs of all notifications sent to entrants by organizers.</p>
  * These tests validate that the fragment correctly retrieves and displays notification logs from Firebase,
  * ensuring that:
  * <ul>
@@ -47,7 +46,6 @@ import java.util.Iterator;
  *     <li>Data from mocked Firebase snapshots is correctly transformed into Notification objects with the correct type and message.</li>
  *     <li>Fragment handles the Firebase database reference chain correctly without requiring real Firebase initialization.</li>
  * </ul>
- * </p>
  *
  * <p>
  * All Firebase interactions are mocked to allow isolated unit testing without network dependencies.

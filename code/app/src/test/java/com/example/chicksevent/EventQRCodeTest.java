@@ -1,6 +1,16 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import com.example.chicksevent.misc.Event;
 import com.example.chicksevent.misc.FirebaseService;
@@ -17,13 +27,10 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import static org.mockito.Mockito.*;
-
 /**
  * Unit tests for US 02.01.01: As an organizer I want to create a new event 
  * and generate a unique promotional QR code that links to the event description 
  * and event poster in the app.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Events can be created with unique IDs</li>
@@ -31,7 +38,6 @@ import static org.mockito.Mockito.*;
  *   <li>QR codes link to the event (which contains description and poster)</li>
  *   <li>Each event gets a unique QR code</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

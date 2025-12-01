@@ -16,10 +16,10 @@ import java.util.HashMap;
  * outcomes to Logcat.
  * </p>
  *
- * <h3>Example usage:</h3>
+ * <p>Example usage:</p>
  * <pre>
  * FirebaseService eventService = new FirebaseService("Event");
- * HashMap<String, Object> data = new HashMap<>();
+ * HashMap&lt;String, Object> data = new HashMap&lt;>();
  * data.put("name", "Hackathon 2025");
  * data.put("location", "Edmonton");
  * String id = eventService.addEntry(data);

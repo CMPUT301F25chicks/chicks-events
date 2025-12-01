@@ -39,13 +39,12 @@ import java.util.ArrayList;
  * {@link Organizer#sendWaitingListNotification}.
  * </p>
  *
- * <p><b>Key Features:</b>
+ * <b>Key Features:</b>
  * <ul>
  *   <li>Real-time display of invited entrants using {@link ValueEventListener}</li>
  *   <li>Send bulk notification to all invited users</li>
  *   <li>Navigation to Events, Create Event, and Notifications</li>
  * </ul>
- * </p>
  *
  * <p>
  * Data is loaded from Firebase under:

@@ -1,11 +1,8 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import android.view.View;
@@ -26,7 +23,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 03.02.01: As an administrator, I want to be able to remove profiles.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Administrators can navigate to profile admin screen</li>
@@ -34,7 +30,6 @@ import org.junit.runner.RunWith;
  *   <li>Profiles can be removed</li>
  *   <li>Confirmation dialog appears</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 03.06.01: As an administrator, I want to be able to browse images 
  * that are uploaded so I can remove them if necessary.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Image browsing button is visible in admin home screen</li>
@@ -36,15 +35,12 @@ import org.junit.runner.RunWith;
  *   <li>Images can be removed/deleted</li>
  *   <li>Image list is scrollable if there are many images</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable Espresso testing, disable animations on the device/emulator:
  * <pre>
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * adb shell settings put global animator_duration_scale 0
  * </pre>
- * </p>
  *
  * @author Jinn Kasai
  */

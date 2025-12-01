@@ -2,29 +2,14 @@ package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
-
-import android.view.View;
-
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.action.GeneralClickAction;
-import androidx.test.espresso.action.GeneralLocation;
-import androidx.test.espresso.action.Press;
-import androidx.test.espresso.action.Tap;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
-
-import org.hamcrest.Matcher;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.view.View;
 
@@ -45,7 +30,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.07.01: As an organizer I want to send notifications to all entrants 
  * on the waiting list.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Organizers can see send notification button on waiting list</li>
@@ -53,7 +37,6 @@ import org.junit.runner.RunWith;
  *   <li>Organizers can enter notification message</li>
  *   <li>Notification can be sent to all waiting list entrants</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

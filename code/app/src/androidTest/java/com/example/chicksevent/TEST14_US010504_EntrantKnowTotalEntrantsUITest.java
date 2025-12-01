@@ -2,16 +2,14 @@ package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 
 import android.view.View;
 
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -24,14 +22,12 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.05.04: As an entrant, I want to know how many total entrants 
  * are on the waiting list for an event.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Total entrants count is displayed on event details</li>
  *   <li>Count is visible and readable</li>
  *   <li>Count updates when entrants join/leave</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

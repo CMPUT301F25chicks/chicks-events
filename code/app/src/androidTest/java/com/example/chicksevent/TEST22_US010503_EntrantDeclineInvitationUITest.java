@@ -1,10 +1,11 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -12,7 +13,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.not;
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 
 import android.view.View;
 
@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.05.03: As an entrant I want to be able to decline an invitation
  * when chosen to participate in an event.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Entrants can see the invitation status when they are invited to an event</li>
@@ -42,8 +41,6 @@ import org.junit.runner.RunWith;
  *   <li>UI updates correctly after declining (invitation status hidden, declined status shown)</li>
  *   <li>Edge cases are handled (event on hold, etc.)</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -57,8 +54,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Full end-to-end testing requires:
  * <ul>
  *   <li>Firebase test data with an event where the user has INVITED status</li>
@@ -66,7 +61,6 @@ import org.junit.runner.RunWith;
  *   <li>User profile setup for successful decline</li>
  * </ul>
  * These tests focus on UI element visibility and basic interactions.
- * </p>
  *
  * @author Jinn Kasai
  */

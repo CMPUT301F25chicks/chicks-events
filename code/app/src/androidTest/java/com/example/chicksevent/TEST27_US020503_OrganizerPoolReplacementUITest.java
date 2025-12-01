@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.05.03: As an organizer, I want to be able to draw a replacement applicant
  * from the pooling system when a previously selected applicant cancels or rejects the invitation.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can navigate to the pooling screen</li>
@@ -38,8 +37,6 @@ import org.junit.runner.RunWith;
  *   <li>Pooling works when applicants cancel or reject</li>
  *   <li>Edge cases are handled (no waiting entrants, already full, etc.)</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -47,7 +44,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * </pre>
- * </p>
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest

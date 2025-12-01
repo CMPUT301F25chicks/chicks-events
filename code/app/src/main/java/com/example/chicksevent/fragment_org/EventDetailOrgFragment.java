@@ -42,14 +42,13 @@ import java.util.Locale;
  * It passes the selected event name between fragments using a {@link Bundle}.
  * </p>
  *
- * <p><b>Navigation:</b>
+ * <b>Navigation:</b>
  * <ul>
  *   <li>Navigate to {@code NotificationFragment}</li>
  *   <li>Navigate to {@code EventFragment}</li>
  *   <li>Navigate to {@code CreateEventFragment}</li>
  *   <li>Navigate to {@code WaitingListFragment} (with event name argument)</li>
  * </ul>
- * </p>
  *
  * <p><b>Usage:</b> Typically accessed when an organizer selects an event they manage.
  * It retrieves the event name from fragment arguments and binds it to the view.

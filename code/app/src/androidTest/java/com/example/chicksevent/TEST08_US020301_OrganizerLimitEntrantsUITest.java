@@ -3,13 +3,9 @@ package com.example.chicksevent;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.CoreMatchers.not;
 
 import android.view.View;
 
@@ -30,7 +26,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.03.01: As an organizer I want to OPTIONALLY limit the number of entrants 
  * who can join my waiting list.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Limit checkbox/option is visible in create event screen</li>
@@ -38,7 +33,6 @@ import org.junit.runner.RunWith;
  *   <li>Limit input field appears when enabled</li>
  *   <li>Organizer can enter a limit number</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

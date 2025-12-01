@@ -4,13 +4,12 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 
 import android.view.View;
 
@@ -30,7 +29,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 01.01.01: As an entrant, I want to join the waiting list for a specific event.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Entrants can see events available to join</li>
@@ -38,7 +36,6 @@ import org.junit.runner.RunWith;
  *   <li>Entrants can join the waiting list from event details</li>
  *   <li>UI updates correctly after joining</li>
  * </ul>
- * </p>
  * <p>
  * <b>Note:</b> This user story is closely related to US 01.06.02 (join waitlist from event details).
  * This test focuses on the complete flow from event list to joining.

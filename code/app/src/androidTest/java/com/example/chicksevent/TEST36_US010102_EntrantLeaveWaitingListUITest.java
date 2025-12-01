@@ -4,13 +4,12 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 
 import android.view.View;
 
@@ -30,7 +29,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 01.01.02: As an entrant, I want to leave the waiting list for a specific event.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Entrants can see leave/remove button when on waiting list</li>
@@ -38,7 +36,6 @@ import org.junit.runner.RunWith;
  *   <li>Confirmation dialog appears (if implemented)</li>
  *   <li>UI updates correctly after leaving (button changes, status updates)</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

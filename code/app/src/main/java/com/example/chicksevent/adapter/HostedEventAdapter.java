@@ -27,16 +27,14 @@ import java.util.Locale;
 
 /**
  * Custom {@link ArrayAdapter} subclass for displaying events hosted by the current organizer.
- * <p>
  * Each list item is inflated from {@code item_hosted_event.xml} and provides UI elements for
  * displaying the event name and interacting with two buttons:
  * <ul>
  *     <li>An arrow button to view event details.</li>
  *     <li>An update button to modify event information.</li>
  * </ul>
- * </p>
  *
- * <p><b>Usage:</b>
+ * <b>Usage:</b>
  * <pre>
  * HostedEventAdapter adapter = new HostedEventAdapter(context, hostedEvents, (event, type) -> {
  *     if (type == 0) {
@@ -47,10 +45,9 @@ import java.util.Locale;
  * });
  * listView.setAdapter(adapter);
  * </pre>
- * </p>
  *
- * <p>The callback interface {@link OnItemButtonClickListener} allows the hosting fragment or
- * activity to differentiate which button was clicked for a given event.</p>
+ * The callback interface {@link OnItemButtonClickListener} allows the hosting fragment or
+ * activity to differentiate which button was clicked for a given event.
  *
  * @author Jordan Kwan
  */

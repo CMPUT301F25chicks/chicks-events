@@ -1,13 +1,10 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.GeneralClickAction;
@@ -24,7 +21,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 03.03.01: As an administrator, I want to be able to remove images.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Administrators can navigate to event admin screen</li>
@@ -34,16 +30,12 @@ import org.junit.runner.RunWith;
  *   <li>Images can be removed after confirmation</li>
  *   <li>UI updates after image removal</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable Espresso testing, disable animations on the device/emulator:
  * <pre>
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * adb shell settings put global animator_duration_scale 0
  * </pre>
- * </p>
- * <p>
  * <b>Note:</b> Full end-to-end testing requires:
  * <ul>
  *   <li>Firebase test data (events with posters)</li>
@@ -51,7 +43,6 @@ import org.junit.runner.RunWith;
  *   <li>Admin user authentication</li>
  * </ul>
  * These tests focus on UI element visibility and basic interactions.
- * </p>
  *
  * @author Jinn Kasai
  */

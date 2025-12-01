@@ -7,13 +7,12 @@ package com.example.chicksevent.enums;
  * list, to being invited, accepting or declining, and finally confirmation or removal.
  * </p>
  *
- * <p><b>Usage:</b>
+ * <b>Usage:</b>
  * The {@link EntrantStatus} values are used to structure Firebase nodes under:
  * <pre>
  * WaitingList/{eventId}/{EntrantStatus}/{entrantId}
  * </pre>
  * This allows efficient querying and management of entrants grouped by their current status.
- * </p>
  *
  * @author Jordan Kwan
  */

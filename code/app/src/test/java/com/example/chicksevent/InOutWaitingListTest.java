@@ -26,7 +26,6 @@ import java.util.HashMap;
  * US 01.01.02 As an entrant, I want to leave the waiting list for a specific event
  * US 01.05.01 As an entrant I want another chance to be chosen from the waiting list if a selected
  * user declines an invitation to sign up
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Entrants can leave the waiting list from event details</li>
@@ -34,7 +33,6 @@ import java.util.HashMap;
  *   <li>Entrants can decline the invitation from event details</li>
  *   <li>Entrants can rejoin the waiting list from event details</li>
  * </ul>
- * </p>
  *
  * @author Dam Dung Nguyen Mong
  */

@@ -1,10 +1,9 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.not;
 
@@ -27,7 +26,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 01.04.03: As an entrant I want to opt out of receiving notifications 
  * from organizers and admins.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Opt-out option is accessible in profile/settings</li>
@@ -35,7 +33,6 @@ import org.junit.runner.RunWith;
  *   <li>Opt-out can be enabled/disabled</li>
  *   <li>Setting persists after navigation</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

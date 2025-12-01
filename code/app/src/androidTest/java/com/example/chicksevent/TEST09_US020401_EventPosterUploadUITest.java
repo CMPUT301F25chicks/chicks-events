@@ -28,7 +28,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.04.01: As an organizer I want to upload an event poster 
  * to the event details page to provide visual information to entrants.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Poster upload button is visible and clickable</li>
@@ -37,15 +36,12 @@ import org.junit.runner.RunWith;
  *   <li>Poster upload is optional (event can be created without poster)</li>
  *   <li>Poster is saved when event is created</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable Espresso testing, disable animations on the device/emulator:
  * <pre>
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * adb shell settings put global animator_duration_scale 0
  * </pre>
- * </p>
  *
  * @author Jinn Kasai
  */

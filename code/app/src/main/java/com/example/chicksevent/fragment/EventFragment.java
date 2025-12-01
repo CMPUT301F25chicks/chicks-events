@@ -37,14 +37,13 @@ import java.util.Map;
  * fragment binds results to a {@link ListView} via {@link EventAdapter}.
  * </p>
  *
- * <p><b>Firebase roots used:</b>
+ * <b>Firebase roots used:</b>
  * <ul>
  *   <li><code>Event</code> — source of event listings</li>
  *   <li><code>WaitingList</code> — used to compute "joined events" for the current device</li>
  * </ul>
- * </p>
  *
- * <p><b>Arguments:</b> If a {@link Bundle} argument contains an <code>ArrayList<String></code>
+ * <p><b>Arguments:</b> If a {@link Bundle} argument contains an <code>ArrayList String</code>
  * under the key <code>"eventList"</code>, the fragment displays only those events whose ids match
  * the provided values.</p>
  *

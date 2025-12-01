@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 02.06.03: As an organizer, I want to see a final list of entrants who enrolled for the event.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can navigate to the final list screen</li>
@@ -35,8 +34,6 @@ import org.junit.runner.RunWith;
  *   <li>CSV export button is accessible</li>
  *   <li>Navigation and UI elements are accessible</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -44,7 +41,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * </pre>
- * </p>
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest

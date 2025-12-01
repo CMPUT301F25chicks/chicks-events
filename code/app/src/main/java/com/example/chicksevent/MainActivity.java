@@ -22,13 +22,12 @@ import com.example.chicksevent.databinding.ActivityMainBinding;
  * provides a floating action button with a placeholder Snackbar action.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *   <li>Inflate and initialize the main activity layout.</li>
  *   <li>Configure the app bar and navigation graph integration.</li>
  *   <li>Handle menu inflation and navigation-up events.</li>
  * </ul>
- * </p>
  *
  * @author Jordan Kwan
  */

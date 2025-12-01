@@ -1,7 +1,6 @@
 package com.example.chicksevent;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -24,7 +23,6 @@ import org.junit.runner.RunWith;
 
 /**
  * UI tests for US 03.05.01: As an administrator, I want to be able to browse profiles.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Administrators can navigate to profile browsing screen</li>
@@ -32,7 +30,6 @@ import org.junit.runner.RunWith;
  *   <li>Profile information is shown</li>
  *   <li>List is scrollable</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

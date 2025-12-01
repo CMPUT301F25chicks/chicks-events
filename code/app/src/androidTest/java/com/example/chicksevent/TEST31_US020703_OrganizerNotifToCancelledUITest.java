@@ -29,7 +29,6 @@ import org.junit.runner.RunWith;
  * UI tests for US 02.07.03: As an organizer I want to send a notification to
  * all cancelled entrants
  *
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can access the CancelledListFragment UI</li>
@@ -39,9 +38,6 @@ import org.junit.runner.RunWith;
  *   <li>The dialog dismisses correctly when "Cancel" is pressed</li>
  *   <li>The dialog dismisses correctly when "OK" is pressed (confirming the action)</li>
  * </ul>
- * </p>
- *
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -55,9 +51,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
- *
- * <p>
  * <b>Note:</b> Full end-to-end testing of notification delivery requires:
  * <ul>
  *   <li>Navigation to {@code CancelledListFragment} for a specific event</li>
@@ -66,7 +59,6 @@ import org.junit.runner.RunWith;
  *       {@link com.example.chicksevent.misc.Organizer}</li>
  * </ul>
  * These tests focus on dialog visibility and basic user interactions in the UI layer.
- * </p>
  *
  * @author Eric Kane
  */
@@ -142,7 +134,6 @@ public class TEST31_US020703_OrganizerNotifToCancelledUITest {
     /**
      * Navigates to the CancelledListFragment.
      *
-     * <p>
      * This helper assumes that:
      * <ul>
      *   <li>The app navigates (or can be navigated) to {@code CancelledListFragment}</li>
@@ -152,7 +143,6 @@ public class TEST31_US020703_OrganizerNotifToCancelledUITest {
      * If your actual navigation requires specific clicks (e.g. open event, switch to
      * "Cancelled" tab), you can insert those interactions here before waiting for
      * {@code btn_notification1}.
-     * </p>
      *
      * @return {@code true} if the fragment appears, {@code false} otherwise.
      */

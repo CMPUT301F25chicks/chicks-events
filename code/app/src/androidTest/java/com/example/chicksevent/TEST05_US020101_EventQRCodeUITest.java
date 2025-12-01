@@ -1,23 +1,19 @@
 package com.example.chicksevent;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
 
 import android.view.View;
-
-import org.hamcrest.Matcher;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.GeneralClickAction;
@@ -27,6 +23,7 @@ import androidx.test.espresso.action.Tap;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +32,6 @@ import org.junit.runner.RunWith;
  * UI tests for US 02.01.01: As an organizer I want to create a new event 
  * and generate a unique promotional QR code that links to the event description 
  * and event poster in the app.
- * <p>
  * These instrumented tests verify that:
  * <ul>
  *   <li>Organizers can access the create event screen</li>
@@ -43,8 +39,6 @@ import org.junit.runner.RunWith;
  *   <li>QR code can be viewed after event creation</li>
  *   <li>QR code display screen shows the QR code image</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable test execution, it's recommended to disable
  * animations on the test device/emulator before running these tests:
  * <pre>
@@ -58,7 +52,6 @@ import org.junit.runner.RunWith;
  * adb shell settings put global window_animation_scale 1
  * adb shell settings put global transition_animation_scale 1
  * </pre>
- * </p>
  *
  * @author Jinn Kasai
  */

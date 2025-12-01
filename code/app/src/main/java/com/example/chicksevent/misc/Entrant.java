@@ -15,19 +15,17 @@ import java.util.HashMap;
  * methods for updating Firebase Realtime Database entries within the "WaitingList" and "Event" roots.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *   <li>Join or leave a waiting list for a given event.</li>
  *   <li>Swap between waiting list states (e.g., WAITING → INVITED).</li>
  *   <li>Provide identification of the entrant within Firebase.</li>
  * </ul>
- * </p>
  *
- * <p><b>Firebase structure:</b> Data is organized under:
+ * <b>Firebase structure:</b> Data is organized under:
  * <pre>
  * WaitingList/{eventId}/{EntrantStatus}/{entrantId}
  * </pre>
- * </p>
  *
  * @author Jordan Kwan
  */

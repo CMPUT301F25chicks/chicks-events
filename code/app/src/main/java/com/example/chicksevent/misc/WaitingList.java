@@ -10,13 +10,12 @@ import java.util.ArrayList;
  * reference for managing waiting list data.
  * </p>
  *
- * <p><b>Responsibilities:</b>
+ * <b>Responsibilities:</b>
  * <ul>
  *     <li>Maintain the in-memory list of entrants for an event.</li>
  *     <li>Hold a reference to the event ID that the waiting list belongs to.</li>
  *     <li>Provide a {@link FirebaseService} instance to interact with the database.</li>
  * </ul>
- * </p>
  *
  * <p>This class serves as a data structure and can be extended with methods for adding,
  * removing, or promoting entrants within the waiting list.</p>

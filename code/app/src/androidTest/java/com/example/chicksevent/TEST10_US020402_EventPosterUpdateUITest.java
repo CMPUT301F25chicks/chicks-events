@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.04.02: As an organizer I want to update an event poster 
  * to provide visual information to entrants.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Poster upload button is visible in update event screen</li>
@@ -33,15 +32,12 @@ import org.junit.runner.RunWith;
  *   <li>Updated poster is saved when event is updated</li>
  *   <li>Poster update is optional</li>
  * </ul>
- * </p>
- * <p>
  * <b>Note:</b> For reliable Espresso testing, disable animations on the device/emulator:
  * <pre>
  * adb shell settings put global window_animation_scale 0
  * adb shell settings put global transition_animation_scale 0
  * adb shell settings put global animator_duration_scale 0
  * </pre>
- * </p>
  *
  * @author Jinn Kasai
  */

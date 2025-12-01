@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.05.01: As an organizer I want to send a notification to chosen entrants 
  * to sign up for events. This is the notification that they "won" the lottery.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Organizers can see send notification button on chosen list</li>
@@ -40,7 +39,6 @@ import org.junit.runner.RunWith;
  *   <li>Notification can be sent</li>
  *   <li>Confirmation appears after sending</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

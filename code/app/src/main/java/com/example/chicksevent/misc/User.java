@@ -27,13 +27,12 @@ import java.util.Map;
  * delegated to {@link FirebaseService} wrappers for the corresponding roots.
  * </p>
  *
- * <p><b>Firebase roots used:</b>
+ * <b>Firebase roots used:</b>
  * <ul>
- *   <li><code>User</code> — user profile & preferences</li>
+ *   <li><code>User</code> — user profile and preferences</li>
  *   <li><code>Event</code> — event catalog (read for filtering)</li>
  *   <li><code>Notification</code> — per-user notification tree</li>
  * </ul>
- * </p>
  *
  * <p><b>Note:</b> This class does not enforce authorization; callers should ensure appropriate
  * access control before invoking read/write operations tied to a user.</p>

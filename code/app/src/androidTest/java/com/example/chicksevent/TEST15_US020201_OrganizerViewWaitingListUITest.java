@@ -7,7 +7,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.view.View;
 
@@ -28,7 +27,6 @@ import org.junit.runner.RunWith;
 /**
  * UI tests for US 02.02.01: As an organizer I want to view the list of entrants 
  * who joined my event waiting list.
- * <p>
  * These tests verify that:
  * <ul>
  *   <li>Organizers can navigate to waiting list screen</li>
@@ -37,7 +35,6 @@ import org.junit.runner.RunWith;
  *   <li>List is scrollable</li>
  *   <li>Send notification button is available</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */

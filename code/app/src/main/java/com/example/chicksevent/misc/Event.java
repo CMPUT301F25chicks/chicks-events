@@ -18,7 +18,7 @@ import java.util.HashMap;
  * {@code entrantId}.
  * </p>
  *
- * <h3>Firebase Structure</h3>
+ * <p>Firebase Structure</p>
  * <pre>
  * Event/{eventId} : {
  *   id: string,

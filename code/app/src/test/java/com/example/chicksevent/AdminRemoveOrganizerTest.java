@@ -1,15 +1,22 @@
 package com.example.chicksevent;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.util.Log;
 
 import com.example.chicksevent.misc.Admin;
-import com.example.chicksevent.misc.Notification;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
@@ -21,11 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,7 +37,6 @@ import java.util.List;
 /**
  * Unit tests for US 03.07.01: As an administrator I want to remove organizers 
  * that violate app policy.
- * <p>
  * These tests validate that:
  * <ul>
  *   <li>Administrators can delete organizer profiles</li>
@@ -43,7 +45,6 @@ import java.util.List;
  *   <li>Firebase operations are called correctly</li>
  *   <li>Error handling works for invalid inputs</li>
  * </ul>
- * </p>
  *
  * @author Jinn Kasai
  */
