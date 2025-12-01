@@ -30,7 +30,7 @@
             android:fontFamily="@font/michroma"
             android:text="Chosen Entrants"
             android:textColor="@color/purpleText"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

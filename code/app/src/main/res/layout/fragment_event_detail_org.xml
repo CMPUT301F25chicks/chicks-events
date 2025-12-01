@@ -32,12 +32,11 @@
                 android:layout_width="368dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/michroma"
-                android:text="           Event Detail"
+                android:text="         Event Detail"
                 android:textColor="@color/purpleText"
-                android:textSize="25sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.263"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
